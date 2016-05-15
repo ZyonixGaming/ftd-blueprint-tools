@@ -39,7 +39,8 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
-	<script src="https://cdn.rawgit.com/ZyonixGaming/6ddf7f1022dea210bc6b8c0651e4006a/raw/1c2981d769c2b096af7d196590cb7d5c0f367b78/ftditemtable.js"></script>	
+	<script src="itemtable.js"></script>
+	<script src="links.js"></script>	
 	<!--	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 tbody tr:nth-child(even) td:nth-child(odd){background: #D0D0EE}
@@ -50,7 +51,6 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #E0E0E0}
 	
 	<script src="https://cdn.rawgit.com/ZyonixGaming/6ddf7f1022dea210bc6b8c0651e4006a/raw/41ef4f36adea5d7edfc18d2c721b0eb482396bba/ftditemtable.js"></script>
 	-->
-	
 	
 <script>
 
@@ -97,6 +97,8 @@ var CurrentFilename = ["",""]
 
 
 $(document).ready(function(){
+
+	loadLinks();
 
 	$( ".lb" ).click(function() {
 	  $($(this).attr("btarget")).click();
@@ -375,13 +377,7 @@ function roundToTwo(num) {
 	</div><!-- /header -->
 	<div data-role="content">	
 	<div data-role="popup" id="popupMenu">
-        <ul data-role="listview" data-inset="true" style="min-width:210px;">
-            <li data-role="list-divider">My Pages</li>
-            <li><a href="http://zyonixgaming.blogspot.com/p/ftd.html">Blueprint Modification Tool</a></li>
-            <li><a href="http://www.fromthedepthsgame.com/forum/showthread.php?tid=19547">Forum thread for this tool</a></li>
-			<li data-role="list-divider">Other Links</li>
-			<li><a href="http://fromthedepthsgame.com/forum/">From the Depths Official Forums</a></li>
-			<li><a href="http://store.steampowered.com/app/268650">From the Depths on Steam</a></li>
+        <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
 	<p>Last updated with FTD v1.9514 and v1.1952</p>
