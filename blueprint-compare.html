@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<title>Jquery Version</title>
+	<title>FTD Blueprint Compare Tool</title>
 	<link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/ >
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
@@ -98,8 +98,8 @@ var CurrentFilename = ["",""]
 
 $(document).ready(function(){
 
-	loadLinks();
-
+	
+	
 	$( ".lb" ).click(function() {
 	  $($(this).attr("btarget")).click();
 	});
@@ -146,7 +146,13 @@ $(document).ready(function(){
 
 });
 
-
+function loadLinks(){
+	$('#linklist').empty();
+	for(var i=0;i<LinkList.length;i++){
+		$('#linklist').append(LinkList[i]);
+	}
+	
+}
 
 function loadError(message){
 	if(message){
@@ -451,6 +457,7 @@ function roundToTwo(num) {
 
 </div><!-- /page -->
 <script>
+loadLinks();
 </script>
 
 </body>
