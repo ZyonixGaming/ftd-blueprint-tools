@@ -1,0 +1,434 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<title>Jquery Version</title>
+
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
+<style>
+.hidden{
+	display:none;
+}
+.ui-header {
+background: #D0D0FF !important;
+}
+
+.ui-collapsible-content {
+    padding: 0px;
+}
+
+.tablesorter-blue{
+	margin:0 0;
+	text-align: center;
+}
+tbody tr:nth-child(even) td:nth-child(odd){background: #E0E0F0}
+tbody tr:nth-child(odd) td:nth-child(even){background: #FFFFFF}
+tbody tr:nth-child(even) td:nth-child(even){background: #F0F0FF}
+tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
+
+</style>	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
+	<script src="https://cdn.rawgit.com/ZyonixGaming/6ddf7f1022dea210bc6b8c0651e4006a/raw/1c2981d769c2b096af7d196590cb7d5c0f367b78/ftditemtable.js"></script>	
+	<!--	
+	
+tbody tr:nth-child(even) td:nth-child(odd){background: #D0D0EE}
+tbody tr:nth-child(odd) td:nth-child(even){background: #F0F0F0}
+tbody tr:nth-child(even) td:nth-child(even){background: #E0E0FF}
+tbody tr:nth-child(odd) td:nth-child(odd){background: #E0E0E0}
+
+	
+	<script src="https://cdn.rawgit.com/ZyonixGaming/6ddf7f1022dea210bc6b8c0651e4006a/raw/41ef4f36adea5d7edfc18d2c721b0eb482396bba/ftditemtable.js"></script>
+	-->
+	
+	
+<script>
+
+var fileInputIndex = {"blueprint1":0,"blueprint2":1}
+
+//blockID:blockname
+var nameID = {}
+
+//blockID:blockcount
+var countID = {}
+
+//blockname:blockcount
+var blockCountData = {}
+
+//store stats
+var totalstats = {
+		"Block Count":[0,0],
+		"Natural Cost":[0,0],
+		"Metal Cost":[0,0],
+		"Oil Cost":[0,0],
+		"Scrap Cost":[0,0],
+		"Crystal Cost":[0,0],
+		"RP Cost":[0,0],
+		"Volume":[0,0],
+		"Max Power*":[0,0],
+		"Max Battery Capacity*":[0,0],
+		"Max Ammo Capacity*":[0,0],
+		"Max Fuel Capacity*":[0,0],
+		"Max Natural Storage*":[0,0],
+		"Max Metal Storage*":[0,0],
+		"Max Oil Storage*":[0,0],
+		"Max Scrap Storage*":[0,0],
+		"Max Crystal Storage*":[0,0],
+		"Blueprint Modified*":[false,false]
+	}
+
+var selectedFile
+var ItemDic = [{},{}]
+var CurrentBlueprint = [{},{}]
+var CurrentFilename = ["",""]
+
+
+
+
+
+$(document).ready(function(){
+
+	$( ".lb" ).click(function() {
+	  $($(this).attr("btarget")).click();
+	});
+	
+	$(function() {
+  // simple reflow widget (table with 1 header row)
+  
+  $("#table1").tablesorter({
+    theme: 'blue',
+    widgets: ['reflow'],
+    widgetOptions : {
+      // class name added to make it responsive (class name within media query)
+      reflow_className    : 'ui-table-reflow',
+      // header attribute containing modified header name
+      reflow_headerAttrib : 'data-name',
+      // data attribute added to each tbody cell
+      // it contains the header cell text, visible upon reflow
+      reflow_dataAttrib   : 'data-title',
+    },	
+	selectorHeaders: "thead th"
+  });
+  
+});
+
+	$(function() {
+  // simple reflow widget (table with 1 header row)
+  $("#table2").tablesorter({
+    theme: 'blue',
+    widgets: ['reflow'],
+    widgetOptions : {
+      // class name added to make it responsive (class name within media query)
+      reflow_className    : 'ui-table-reflow',
+      // header attribute containing modified header name
+      reflow_headerAttrib : 'data-name',
+      // data attribute added to each tbody cell
+      // it contains the header cell text, visible upon reflow
+      reflow_dataAttrib   : 'data-title',
+    },	
+	selectorHeaders: "thead th"
+  });
+  
+});
+	
+
+});
+
+
+
+function loadError(message){
+	if(message){
+		alert(message);
+	}else{
+		alert("failure");
+	}	
+}
+
+function openFile(fileinput) {	
+	
+	var selectedFile = fileinput.files[0];
+	if (selectedFile){
+		var reader = new FileReader();
+		reader.onload = function(evt) {
+			try{				
+				if(evt){
+					//alert(fileinput.id+" : "+fileInputIndex[fileinput.id]);
+					CurrentBlueprint[fileInputIndex[fileinput.id]] = {};
+					CurrentFilename[fileInputIndex[fileinput.id]] = "";	
+					CurrentBlueprint[fileInputIndex[fileinput.id]] = JSON.parse(evt.target.result);						
+					CurrentFilename[fileInputIndex[fileinput.id]] = selectedFile.name;
+					if (!processData(fileInputIndex[fileinput.id])){
+						throw "unable to process blueprint"
+					}
+					
+				}else{
+					throw "unable to load blueprint"
+				}
+			}
+			catch(err){
+				loadError(err);
+			 } 
+		};
+		reader.readAsText(selectedFile);
+	}else{
+		//no file selected;
+	}
+	fileinput.value="";
+}
+
+function processData(i){
+	var tempresult=0;
+	totalstats["Block Count"][i]=0;
+	totalstats["Natural Cost"][i]=0;
+	totalstats["Metal Cost"][i]=0;
+	totalstats["Oil Cost"][i]=0;
+	totalstats["Scrap Cost"][i]=0;
+	totalstats["Crystal Cost"][i]=0;
+	totalstats["RP Cost"][i]=0;
+	totalstats["Volume"][i]=0;
+	totalstats["Max Power*"][i]=0;
+	totalstats["Max Battery Capacity*"][i]=0;
+	totalstats["Max Ammo Capacity*"][i]=0;
+	totalstats["Max Fuel Capacity*"][i]=0;
+	totalstats["Max Natural Storage*"][i]=0;
+	totalstats["Max Metal Storage*"][i]=0;
+	totalstats["Max Oil Storage*"][i]=0;
+	totalstats["Max Scrap Storage*"][i]=0;
+	totalstats["Max Crystal Storage*"][i]=0;
+	totalstats["Blueprint Modified*"][i]=false;
+	
+
+	
+	if(CurrentBlueprint[i]){
+		
+		$("#table1 tbody").empty(); 
+		$("#table2 tbody").empty(); 
+		ItemDic[i] =  CurrentBlueprint[i].ItemDictionary;
+		for(var key in ItemDic[i]) {
+			val = ItemDic[i][key];
+		
+			if(countID[val]==undefined){
+				countID[val]=[0,0];
+			}
+		}
+		for(var j in countID){
+			countID[j][i]=0;
+		}
+		
+		countblocks((CurrentBlueprint[i]).Blueprint,i);
+		totalstats["Volume"][i]=roundToTwo(totalstats["Volume"][i]);
+		tempresult+=1;
+	}
+	
+	
+	
+	
+	displayData();
+	return tempresult;
+}
+
+
+function displayData(){
+	var outputstring = "";
+	
+	var totalcount1 = 0;
+	var totalcount2 = 0;
+
+	
+	if(CurrentFilename[0]){
+		$(".b1name").html(CurrentFilename[0]);
+	}
+	if(CurrentFilename[1]){
+		$(".b2name").html(CurrentFilename[1]);
+	}
+	
+	
+	blockCountData = {}
+	for(var blockGuid in countID) {
+		
+		if(countID[blockGuid][0]+countID[blockGuid][1] >0) {			
+			blockCountData[ItemTable[blockGuid].Name]=[countID[blockGuid][0],countID[blockGuid][1]];			
+			totalcount1+=countID[blockGuid][0]
+			totalcount2+=countID[blockGuid][1];
+		}
+	}	
+	totalstats["Block Count"][0] = totalcount1;
+	totalstats["Block Count"][1] = totalcount2;
+	keysSorted = Object.keys(blockCountData).sort(function(b,a){return (blockCountData[a][0]+blockCountData[a][1])-(blockCountData[b][0]+blockCountData[b][1])});
+	for (var bName in keysSorted){
+		var num1=blockCountData[keysSorted[bName]][0];
+		var num2=blockCountData[keysSorted[bName]][1];
+		outputstring +=  "<tr><td>"+ (num1-num2) + "</td><td><b>" + num1  + "</b></td><td colspan='2'>" + keysSorted[bName]  + "</td><td><b>" + num2 + "</b></td><td>"+ (num2-num1) + "</td></tr>";		
+	}
+	
+	$("#table1 tbody").append(outputstring); 
+	
+	$("#table1").trigger("update");
+	$("#blockcountpanel").collapsible("expand");
+
+	
+	
+	var statisticsString = "";
+
+	for (var stats in totalstats){	
+		var num1=totalstats[stats][0];
+		var num2=totalstats[stats][1];
+		statisticsString +=  "<tr><td>"+ (num1-num2) + "</td><td><b>" + num1  + "</b></td><td colspan='2'>" + stats  + "</td><td><b>" + num2 + "</b></td><td>"+ (num2-num1) + "</td></tr>";
+	
+	
+	}
+
+	
+	
+	$("#table2 tbody").append(statisticsString); 
+		
+
+
+	$("#table2").trigger("update");
+		
+	$("#blockstatpanel").collapsible("expand");
+	return true;
+}
+
+
+//counts blocks and accumulate vehicle data
+function countblocks(blocks,index){	
+	var SClist=blocks.SCs;
+	for(var scID = 0; scID < SClist.length; scID++){
+		countblocks(SClist[scID],index);
+	}
+	
+	totalstats["Max Power*"][index] += Math.max(0,blocks.CSI[7]);
+	totalstats["Max Battery Capacity*"][index] += Math.max(0,blocks.CSI[49]);
+	totalstats["Max Ammo Capacity*"][index] += Math.max(0,blocks.CSI[38]);
+	totalstats["Max Fuel Capacity*"][index] += Math.max(0,blocks.CSI[40]);
+	totalstats["Max Natural Storage*"][index] += Math.max(0,blocks.CSI[23]);
+	totalstats["Max Metal Storage*"][index] += Math.max(0,blocks.CSI[24]);
+	totalstats["Max Oil Storage*"][index] += Math.max(0,blocks.CSI[25]);
+	totalstats["Max Scrap Storage*"][index] += Math.max(0,blocks.CSI[26]);
+	totalstats["Max Crystal Storage*"][index] += Math.max(0,blocks.CSI[27]);
+	
+	if(blocks.designChanged){
+		totalstats["Blueprint Modified*"][index] = true;
+	}	
+	var blocklist=blocks.BlockIds;
+	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){		
+		countID[ItemDic[index][blocklist[blockIndex]]][index] += 1;		
+		var currentBlock = getBlock(blocklist[blockIndex],index);
+		totalstats["Natural Cost"][index]+=currentBlock.Natural;
+		totalstats["Metal Cost"][index]+=currentBlock.Metal;
+		totalstats["Oil Cost"][index]+=currentBlock.Oil;
+		totalstats["Scrap Cost"][index]+=currentBlock.Scrap;
+		totalstats["Crystal Cost"][index]+=currentBlock.Crystal;
+		totalstats["RP Cost"][index]+=currentBlock.SparesCost;
+		totalstats["Volume"][index]+=currentBlock.Volume;
+	}
+}
+
+
+//accepts natural,metal,oil,scrap,crystal, returns RP value
+function calculateRP(r1,r2,r3,r4,r5){
+	return r1+r2*2+r3*3+r4*4+r5*10;
+}
+
+//check for numeric
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+//change colors to hex format
+function rgb2hex(red, green, blue) {
+        var rgb = blue | (green << 8) | (red << 16);
+        return '#' + (0x1000000 + rgb).toString(16).slice(1)
+}
+
+
+//getblockdata
+function getBlock(bid,index){
+	return ItemTable[ItemDic[index][bid]];
+}
+
+function roundToTwo(num) {    
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+
+</script>
+	
+</head>
+<body> 
+
+<div data-role="page">
+	
+	<div data-role="header">
+		<h1>Blueprint Compare</h1>
+	</div><!-- /header -->
+	<div data-role="content">	
+	<p>Last updated with FTD v1.9514 and v1.1952</p>
+	<p>Click on the buttons to load blueprints for comparison</p>
+	<div class="hidden">
+	<input type="file" class="hidden" id="blueprint1" accept=".blueprint" onchange="openFile(this);"> <label></label><br>
+	<input type="file" class="hidden" id="blueprint2" accept=".blueprint" onchange="openFile(this);"> <label></label>
+	</div>
+	<div class="ui-grid-a">
+		<div class="ui-block-a"><input class="lb" type="button" btarget="#blueprint1" value="Load Blueprint 1"></div>
+		<div class="ui-block-b"><input class="lb" type="button" btarget="#blueprint2" value="Load Blueprint 2"></div>
+	</div>
+	<div id="blockcountpanel" data-role="collapsible" >
+		<h4>Block Count</h4>
+		<table id="table1"  class="table1 tablesorter">
+		  <thead>
+			<tr>
+			  <td colspan="3" align="center" class="b1name">Blueprint 1</th>
+			  
+			  <td colspan="3" align="center" class="b2name">Blueprint 2</th>
+			</tr>
+		  <tr>
+			  <th>Diff</th>
+			  <th>Count</th>
+			  <th colspan="2">Block</th>
+			  <th>Count</th>
+			  <th>Diff</th>
+			</tr>
+		  </thead>
+		  <tbody>
+
+		  </tbody>
+		</table>
+
+	</div>
+	<div id="blockstatpanel" data-role="collapsible">
+		<h4>Blueprint Statistics</h4>
+		<table id="table2"  class="table2 tablesorter">
+		  <thead>
+			<tr>
+			  <td colspan="3" align="center" class="b1name">Blueprint 1</th>
+			  
+			  <td colspan="3" align="center" class="b2name">Blueprint 2</th>
+			</tr>
+		  <tr>
+			  <th>Diff</th>
+			  <th>Value</th>
+			  <th colspan="2">Statistic</th>
+			  <th>Value</th>
+			  <th>Diff</th>
+			</tr>
+		  </thead>
+		  <tbody>
+
+		  </tbody>
+		</table>
+		<i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i>
+	</div>
+
+	</div><!-- /content -->
+	
+	
+</div><!-- /page -->
+<script>
+</script>
+
+</body>
+</html>
