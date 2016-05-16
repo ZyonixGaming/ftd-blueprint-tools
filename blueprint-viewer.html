@@ -145,9 +145,9 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 		var drawnObject = new THREE.Mesh( geometry, defaultMaterial );
 		scene.add( drawnObject );
 		
-
-		var light = new THREE.SpotLight( 0xffffff, 1.1 );
-		light.position.set( maxx*-10+250, maxy*10+300, maxz*10 );
+		var intensity=Math.sqrt(maxz-minz)/5
+		var light = new THREE.PointLight( 0xffffff, intensity );
+		light.position.set( (maxx*-10)+250, (maxy+Math.sqrt(maxy-miny))*11, maxz*11 );
 		scene.add( light );
 		
 
@@ -159,21 +159,23 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 		container.innerHTML = "";
 		container.appendChild( renderer.domElement );
 		camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 5000 );
-		camera.position.x = (minx-Math.sqrt(maxz-minz))*-9;
-		camera.position.y = (maxy)*9;
+		camera.position.x = (minx-Math.sqrt(maxz-minz))*-10;
+		camera.position.y = (maxy+(Math.sqrt(maxz-minz)*0.5))*9;
 		camera.position.z = (maxz+Math.sqrt(maxx-minx))*9;
+		//camera.lookAt(new THREE.Vector3( midx*-10, (maxy-(miny*1.3))*10, ((maxz*1.1)-minz)*10 ));
 		controls = new THREE.OrbitControls( camera ,renderer.domElement);
 		controls.rotateSpeed = 1.0;
 		controls.zoomSpeed = 1.2;
 		controls.panSpeed = 0.8;
 		controls.enableZoom = true;
 		controls.enablePan = true;
-		controls.target.set( midx*-10, midy*10, (midz+maxz)*5 );
+		controls.target.set(midx*-10, (((maxy+(miny*1.3))/2)*10), (((minz+(maxz*1.4))/2)*10) );
+		camera.lookAt(new THREE.Vector3(midx*-10, (((maxy+(miny*1.3))/2)*10), (((minz+(maxz*1.4))/2)*10)));
 		
 		// EVENTS
 		window.addEventListener( 'resize', onWindowResize, false );
 		onWindowResize();
-
+		onWindowResize();
 
 	}
 
