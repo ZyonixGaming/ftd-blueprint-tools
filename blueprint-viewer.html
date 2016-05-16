@@ -202,7 +202,13 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	function onWindowResize() {
 
 		var canvasWidth = $("#container").innerWidth();
-		var canvasHeight = Math.round(canvasWidth*window.innerHeight/window.innerWidth)
+		var canvasratio= window.innerHeight/window.innerWidth;
+		if(canvasratio>1){
+			canvasratio=1;
+		}else if (canvasratio<0.5){
+			canvasratio=0.5;
+		}
+		var canvasHeight = Math.round(canvasWidth*canvasratio);
 		
 		renderer.setSize( canvasWidth, canvasHeight );
 
@@ -707,7 +713,7 @@ $(".b1name").html(selectedFileName);
 $( "#renderpanel" ).collapsible({
   expand: function( event, ui ) {
  	if(!alreadyrender){
-		$("#container").width($("#renderpanel").innerWidth());
+		//$("#container").width($("#renderpanel").innerWidth());
 		alreadyrender=true;
 		init();
 		animate();
