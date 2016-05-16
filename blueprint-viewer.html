@@ -25,7 +25,10 @@ background: #D0D0FF !important;
 	margin:0 0;
 	text-align: center;
 }
-
+#HCB_comment_box{
+	margin: 0 0;
+	padding: 0.8em;
+}
 #container{
 	background-color:#8CCFFF;
 }
@@ -913,7 +916,8 @@ function roundToTwo(num) {
 	</div>
 	<p>Last updated for FTD v1.9514 and v1.1952</p>
 	<p>To start, click on the button below and choose a blueprint file.</p>
-	<p><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></p>
+	<div class="hidden"><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></div>
+	<div><input class="lb" type="button" btarget="#blueprintfile" value="Load Blueprint"></div>
 	
 	<div id="renderpanel" data-role="collapsible">
 	<h4>3D Preview</h4>
