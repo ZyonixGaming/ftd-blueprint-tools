@@ -112,6 +112,8 @@ $(document).ready(function(){
     },	
 	selectorHeaders: "thead th"
   });
+	$(".lb").prop('disabled',false);		
+	$(".lb").parent().removeClass('ui-state-disabled');		  
   
 });
 
@@ -384,8 +386,8 @@ function roundToTwo(num) {
 	<input type="file" class="hidden" id="blueprint2" accept=".blueprint" onchange="openFile(this);"> <label></label>
 	</div>
 	<div class="ui-grid-a">
-		<div class="ui-block-a"><input class="lb" type="button" btarget="#blueprint1" value="Load Blueprint 1"></div>
-		<div class="ui-block-b"><input class="lb" type="button" btarget="#blueprint2" value="Load Blueprint 2"></div>
+		<div class="ui-block-a"><input class="lb" type="button" btarget="#blueprint1" value="Open Blueprint 1" disabled></div>
+		<div class="ui-block-b"><input class="lb" type="button" btarget="#blueprint2" value="Open Blueprint 2" disabled></div>
 	</div>
 	<div id="blockcountpanel" data-role="collapsible" >
 		<h4>Block Count</h4>
@@ -431,7 +433,7 @@ function roundToTwo(num) {
 
 		  </tbody>
 		</table>
-		<i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i>
+		<p><i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i></p>
 	</div>
 	<div id="commentpanel" data-role="collapsible">
 		<h4>Comments</h4>

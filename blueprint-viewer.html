@@ -39,9 +39,6 @@ tbody tr:nth-child(even) td:nth-child(even){background: #F0F0FF}
 tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 
 
-
-
-
 </style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
@@ -52,8 +49,6 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="OrbitControls.js"></script>	
 	<script src="ConvexGeometry.js"></script>	
 		
-		
-
 
 <script>
 
@@ -303,7 +298,11 @@ $(document).ready(function(){
 	
 	$( ".lb" ).click(function() {
 	  $($(this).attr("btarget")).click();
+	  
+  
 	});
+	
+	
 	
 	$(function() {
   // simple reflow widget (table with 1 header row)
@@ -343,7 +342,10 @@ $(document).ready(function(){
   });
   
 });
+
 	
+	$(".lb").prop('disabled',false);		
+	$(".lb").parent().removeClass('ui-state-disabled');		
 
 });
 
@@ -919,7 +921,7 @@ function roundToTwo(num) {
 	<p>Last updated for FTD v1.9514 and v1.1952</p>
 	<p>To start, click on the button below and choose a blueprint file.</p>
 	<div class="hidden"><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></div>
-	<div><input class="lb" type="button" btarget="#blueprintfile" value="Load Blueprint"></div>
+	<div><input class="lb" type="button" btarget="#blueprintfile" value="Open Blueprint" disabled></div>
 	
 	<div id="renderpanel" data-role="collapsible">
 	<h4>3D Preview</h4>
@@ -960,7 +962,7 @@ function roundToTwo(num) {
 
 		  </tbody>
 		</table>
-		<i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i>
+		<p><i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i></p>
 	</div>
 	<div id="commentpanel" data-role="collapsible">
 		<h4>Comments</h4>
