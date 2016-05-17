@@ -921,7 +921,10 @@ function roundToTwo(num) {
 	<p>Last updated for FTD v1.9514 and v1.1952</p>
 	<p>To start, click on the button below and choose a blueprint file.</p>
 	<div class="hidden"><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></div>
-	<div><input class="lb" type="button" btarget="#blueprintfile" value="Open Blueprint" disabled></div>
+	<div class="ui-grid-solo">
+		<div class="ui-block-a"><input class="lb" type="button" btarget="#blueprintfile" value="Open Blueprint" disabled>
+		</div>
+	</div>	
 	
 	<div id="renderpanel" data-role="collapsible">
 	<h4>3D Preview</h4>
