@@ -1,69 +1,13 @@
-<!DOCTYPE html> 
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<title>FTD Blueprint Modification Tool</title>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>FTD Blueprint Modification Tool</title>
+		<meta charset="utf-8">
+		
 	<link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/ >
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
-
-
 <style>
-
-.biglabel
-{
- padding-left:8px;
- color: #000070;
- font-weight: bold;
- font-size: 18pt;
-}
-
-.sublabel
-{
- padding-left:8px;
-}
-
-#input {
-    width: 80%;
-} 
-
-#blueprintinfo_panel{
- display:none;
-}
-
-#modification_panel{
- display:none;
-}
-
-label{
- font-size:14pt;
- padding-left:8px;
- font-weight: bold;
- color: #000070;
-}
-
-table, th, td {
-   border: none;
-   padding: 2px 8px 2px 8px;
-}
-.small {
- width: 35pt;
-}
-
-#count_table tr:nth-child(even){background: #E0E0FF}
-#count_table tr:nth-child(odd) {background: #F0F0F0}
-
-
-
-
-#filecontent {
- display:none;
-}
-input[type='file'] {
-  color: transparent;
-}
-
 
 .hidden{
 	display:none;
@@ -73,18 +17,41 @@ background: #D0D0FF !important;
 }
 
 .ui-collapsible-content {
+	margin-left:4px !important;
+	margin-right:4px !important;
     padding: 0px;
+}
+
+.ui-collapsible-heading{
+	margin-left:4px;
+	margin-right:4px;
+}
+.ui-listview{
+	margin: 0px !important;
 }
 
 .tablesorter-blue{
 	margin:0 0;
 	text-align: center;
 }
-
 #HCB_comment_box{
 	margin: 0 0;
 	padding: 0.8em;
 }
+#container{
+	background-color:#8CCFFF;
+}
+
+
+.checkbox{
+	margin: 0 0;
+	vertical-align:middle; 
+	display:inline;
+	width:22px;
+	height:22px;
+}
+
+
 
 tbody tr:nth-child(even) td:nth-child(odd){background: #E0E0F0}
 tbody tr:nth-child(odd) td:nth-child(even){background: #FFFFFF}
@@ -98,205 +65,193 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
 	<script src="itemtable.js"></script>
 	<script src="links.js"></script>
-	
-</head>
-<body>
+	<script src="three.min.js"></script>
+	<script src="OrbitControls.js"></script>	
+	<script src="ConvexGeometry.js"></script>	
+		
 
-<div data-role="page">
-	
-	<div data-role="header">
-	<a href="#popupMenu" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">Links</a>
-		<h1>Blueprint Modification</h1>
-	</div><!-- /header -->
-	<div data-role="content">	
-	<div data-role="popup" id="popupMenu">
-        <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
-        </ul>
-	</div>
-	<p>Last updated for FTD v1.9514 and v1.1952</p>
-	<p>To start, click on the button below and choose a blueprint file.</p>
-
-
-
-<br>
-<input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();">
-<br><br>
-<div id="blueprintinfo_panel"><a name="vi"></a>
- <hr> 
- <span id="label_filename" class="biglabel"></span>
- <hr>
- <a href="#top"> top </a> | <a href="#vi"> info </a> | <a href="#bm"> block tools </a> | <a href="#vm"> vehicle tools </a> | <a href="#dl"> download </a><br>
- <br> 
- <label>Block Count:</label>
- <br>
- <span id="blockcount"></span>
-  <br>
- <label>Statistics:</label>
- <br> 
- <span id="stats1"></span>
- <i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i><br><br>
-</div>
-<div id="modification_panel">
-<hr>
-<span class="biglabel"><a name="bm"></a>Block Modifications</span><br>
-<span class="sublabel">Make changes to specific blocks. You can restrict the changes to blocks painted a certain color </span><br><hr>
-<a href="#top"> top </a> | <a href="#vi"> info </a> | <a href="#bm"> block tools </a> | <a href="#vm"> vehicle tools </a> | <a href="#dl"> download </a><br>
-<br>
-
-<label><input id="wood" type="checkbox" class="convert" openx="#cwood">Convert Wood: </label>
-<div id="cwood" data-role="collapsible"><select id="woodto"><option value="wood" selected="selected"> to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select></div>
-<label><input id="alloy" type="checkbox" class="convert" openx="#calloy">Convert Alloy: </label>
-<div id="calloy" data-role="collapsible"><select id="alloyto"><option value="wood" > to Wood</option><option value="alloy" selected="selected">to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select></div>
-<label><input id="metal" type="checkbox" class="convert" openx="#cmetal">Convert Metal: </label>
-<div id="cmetal" data-role="collapsible"><select id="metalto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal" selected="selected">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select></div>
-<label><input id="glass" type="checkbox" class="convert" openx="#cglass">Convert Glass: </label>
-<div id="cglass" data-role="collapsible"><select id="glassto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass" selected="selected">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select></div>
-<label><input id="stone" type="checkbox" class="convert" openx="#cstone">Convert Stone: </label>
-<div id="cstone" data-role="collapsible"><select id="stoneto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option>  <option value="stone" selected="selected">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select></div>
-<label><input id="lead" type="checkbox" class="convert" openx="#clead">Convert Lead: </label>
-<div id="clead" data-role="collapsible"><select id="leadto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead" selected="selected">to Lead</option><option value="0" >delete!</option></select></div>
-<br>
-<input id="shieldcolor" type="checkbox">*Modify all shield color changers - R:<input class ="small" type="number" min="0" max="1.0" size="1" width="30" step="0.01" value="1.0" id="shieldr"> G:<input class ="small" type="number" min="0" max="1.0" size="1" width="30" step="0.01" value="1.0" id="shieldg"> B:<input class ="small" type="number" min="0" max="1.0" size="1" width="30" step="0.01" value="1.0" id="shieldb"> Alpha:<input class ="small" type="number" min="0" max="10.0" size="1" width="30" step="0.01" value="1.0" id="shielda"><br>
-<i>* Only affect shields with shield color changers. Limits: R, G, B between 0 and 1, Alpha between 0.10 and 10.</i><br>
-<br>
-<input id="paint" type="checkbox">Paint main vehicle <select id="painttarget"><option value="all" selected="selected"> all blocks</option> <option value="wood"> Wood </option> <option value="metal"> Metal </option><option value="alloy"> Alloy </option><option value="glass"> Glass </option><option value="stone"> Stone </option><option value="lead"> Lead </option><option value="paintstruct"> Wood/Metal/Alloy/Glass/Stone/Lead </option><option value="paintothers"> Not Wood/Metal/Alloy/Glass/Stone/Lead </option></select>
- to
- <select id="tocolor">
-	<option id="pal00" value="0" selected="selected">00</option>
-	<option id="pal01" value="1">01</option>
-	<option id="pal02" value="2">02</option>
-	<option id="pal03" value="3">03</option>
-	<option id="pal04" value="4">04</option>
-	<option id="pal05" value="5">05</option>
-	<option id="pal06" value="6">06</option>
-	<option id="pal07" value="7">07</option>
-	<option id="pal08" value="8">08</option>
-	<option id="pal09" value="9">09</option>
-	<option id="pal10" value="10">10</option>
-	<option id="pal11" value="11">11</option>
-	<option id="pal12" value="12">12</option>
-	<option id="pal13" value="13">13</option>
-	<option id="pal14" value="14">14</option>
-	<option id="pal15" value="15">15</option>
-	<option id="pal16" value="16">16</option>
-	<option id="pal17" value="17">17</option>
-	<option id="pal18" value="18">18</option>
-	<option id="pal19" value="19">19</option>
-	<option id="pal20" value="20">20</option>
-	<option id="pal21" value="21">21</option>
-	<option id="pal22" value="22">22</option>
-	<option id="pal23" value="23">23</option>
-	<option id="pal24" value="24">24</option>
-	<option id="pal25" value="25">25</option>
-	<option id="pal26" value="26">26</option>
-	<option id="pal27" value="27">27</option>
-	<option id="pal28" value="28">Detail</option>
-	<option id="pal29" value="29">Trim</option>
-	<option id="pal30" value="30">Secondary</option>
-	<option id="pal31" value="31">Main</option>
- </select><br>
-<br>
-<input id="paintrestrict" type="checkbox">Restrict block modifications to blocks colored: <select id="paintallow">
-<option id="co00" value="0" selected="selected">00</option>
-<option id="co01" value="1">01</option>
-<option id="co02" value="2">02</option>
-<option id="co03" value="3">03</option>
-<option id="co04" value="4">04</option>
-<option id="co05" value="5">05</option>
-<option id="co06" value="6">06</option>
-<option id="co07" value="7">07</option>
-<option id="co08" value="8">08</option>
-<option id="co09" value="9">09</option>
-<option id="co10" value="10">10</option>
-<option id="co11" value="11">11</option>
-<option id="co12" value="12">12</option>
-<option id="co13" value="13">13</option>
-<option id="co14" value="14">14</option>
-<option id="co15" value="15">15</option>
-<option id="co16" value="16">16</option>
-<option id="co17" value="17">17</option>
-<option id="co18" value="18">18</option>
-<option id="co19" value="19">19</option>
-<option id="co20" value="20">20</option>
-<option id="co21" value="21">21</option>
-<option id="co22" value="22">22</option>
-<option id="co23" value="23">23</option>
-<option id="co24" value="24">24</option>
-<option id="co25" value="25">25</option>
-<option id="co26" value="26">26</option>
-<option id="co27" value="27">27</option>
-<option id="co28" value="28">Detail</option>
-<option id="co29" value="29">Trim</option>
-<option id="co30" value="30">Secondary</option>
-<option id="co31" value="31">Main</option>
-</select><br>
-<br>
-<hr>
-<span class="biglabel"><a name="vm"></a>Vehicle Modification Tools</span><br>
-<span class="sublabel">Changes are applied to the whole vehicle.</span><br><hr>
-<a href="#top"> top </a> | <a href="#vi"> info </a> | <a href="#bm"> block tools </a> | <a href="#vm"> vehicle tools </a> | <a href="#dl"> download </a><br>
-<br>
-
-<input id="highlightAI" type="checkbox">Highlight AI, ACB, PID blocks on main vehicle (will overwrite paint settings)<br>
-<input id="randomcolor"  type="checkbox">Randomize colors on main vehicle (will overwrite paint settings)<br>
-<br>
-<input id="clearhull" type="checkbox">Delete all blocks except Wood/Alloy/Metal/Glass/Stone/Lead.<br>
-<input id="cutinhalf" type="checkbox">Cut the blueprint in half! Only left side remains! &nbsp; Split position: <input class ="small" type="number" size="1" width="20" step="1" value="0" id="centershift"><br>
-<input id="cutandmirror" type="checkbox">Replace the right side with a mirrored copy of the left! &nbsp; Split position: <input class ="small" type="number" size="1" width="20" step="1" value="0" id="cloneshift"> &nbsp; Even width? <input id="evenclone1" type="checkbox"><br>
-<input id="jointmirror" type="checkbox">Attach a mirrored copy of the vehicle on the right! &nbsp; Even width? <input id="evenclone2" type="checkbox"><br>
-<input id="widen" type="checkbox">Split the vehicle apart! &nbsp; Distance: <input class ="small" type="number" size="1" width="20" step="1" value="1" id="widendistance"> &nbsp; Split position: <input class ="small" type="number" size="1" width="20" step="1" value="0" id="widenshift"><br>
-<!--<input id="removeoverlap" type="checkbox">Remove Overlapped blocks<br>-->
-<input id="replaceold" type="checkbox">Replace old armor blocks! (e.g. 1m and 2m left,right,and up slopes)<br>
-<br>
-<input id="becomeVehicle" type="checkbox">Turn blueprint into a vehicle (Invalid blocks on a vehicle will be deleted!)<br>
-<input id="becomeStructure" type="checkbox">Turn blueprint into a Structure (Invalid blocks on a structure will be deleted!)<br>
-<br>
-<input id="rotateVehicle" type="checkbox">Rotate vehicle: <select id="rotatedir">
-	<option value="1" selected="selected">Turn Right</option>
-	<option value="3" >Turn Left</option>
-	<option value="10" >Nose Up</option>
-	<option value="4" >Nose Down</option>
-	<option value="16" >Roll Right</option>
-	<option value="18" >Roll Left</option>	
-</select><br>
-<input id="mirrorLateral" type="checkbox">Mirror vehicle laterally (flip left and right sides)<br>
-<br>
-<input id="debeamify" type="checkbox">DeBeamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 4m beams and diagonal slopes into 1m blocks and slopes.<br>
-<input id="beamify2" type="checkbox">Beamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 1m blocks and slopes into 4m beams and diagonal slopes.<br>
-<input id="beamifyOptimized" type="checkbox">Beamify using an optimization algorithm. Slower but will fit in more beams. It can take up to a few minutes for large unbeamed vehicles.
-
-<br>
-<br>
-<a name="dl"></a><input type="button" value="Apply Modifications & Download" onclick="downloadBlueprint();"><br>
-<div id="filecontent">
-<a href="#filetext" onClick="togglefiletext();"><i>Blueprint not downloading?</i></a>
-<div id="filetext" name="filetext">
-<br>
-Copy and paste the following into a new .blueprint file!<br>
-<textarea id="filetextbox" wrap="hard" cols="45" rows="30" readonly></textarea>
-</div>
-</div>
-<br>
-</div>
-<div id="debug"></div>
-<br><br>
-	</div><!-- content -->
-</div><!-- page -->
 <script>
 
-$(document).ready(function(){
-	    $('.convert').click(function() {
-			if(($(this).is(':checked'))){			
-				$($(this).attr("openx")).collapsible("expand");
-			}else{
-				$($(this).attr("openx")).collapsible("collapse");
+	var container;
+	var camera, controls, scene, renderer;
+	var animateid;
+
+
+	function init() {
+	
+	
+		if(animateid){
+			cancelAnimationFrame(animateid);
+		}
+		container = document.getElementById( "container" );
+
+		scene = new THREE.Scene();
+		scene.add( new THREE.AmbientLight( 0x555555 ) );
+
+		var geometry = new THREE.Geometry(),
+		defaultMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors, shininess: 0	} );
+
+		function applyVertexColors( g, c ) {
+			g.faces.forEach( function( f ) {
+				var n = ( f instanceof THREE.Face3 ) ? 3 : 4;
+				for( var j = 0; j < n; j ++ ) {
+					f.vertexColors[ j ] = c;
+				}
+			} );
+		}
+
+
+		
+		var color = new THREE.Color();
+		var matrix = new THREE.Matrix4();
+		var quaternion = new THREE.Quaternion();	
+		
+		
+		var sizescale=3;
+		for(renderIndex in blockRenderData){
+			var tempRender = blockRenderData[renderIndex];
+			
+			var position = new THREE.Vector3();
+			position.x = (tempRender.position[0])*-sizescale;
+			position.y = (tempRender.position[1])*sizescale;
+			position.z = (tempRender.position[2])*sizescale;
+
+
+			quaternion = new THREE.Quaternion(-tempRender.rotation[0],tempRender.rotation[1],tempRender.rotation[2],-tempRender.rotation[3]);			
+			//quaternion = new THREE.Quaternion(0,0,0,1);			
+			var scale = new THREE.Vector3();
+			scale.x = sizescale;
+			scale.y = sizescale;
+			scale.z = sizescale;
+			
+			matrix.compose( position, quaternion, scale );
+			
+			var points = [
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.negy-0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.negy-0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.posy+0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.posy+0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.negy-0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.negy-0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.posy+0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.posy+0.5, tempRender.posz+0.5 ),
+			];
+			var geom =  new THREE.ConvexGeometry( points );		
+
+		
+			//var geom = new THREE.BoxGeometry( 1, 1, 1 );
+			//applyVertexColors( geom, color.setHex( Math.random() * 0xffffff ) );
+			applyVertexColors(geom, color.set(tempRender.color));
+			geometry.merge( geom, matrix );	
+			
+		}
+		
+		
+		var minx=minc[0];
+		var maxx=maxc[0];
+		var miny=minc[1];
+		var maxy=maxc[1];
+		var minz=minc[2];
+		var maxz=maxc[2];
+		
+		var midx=(minx+maxx)/2;
+		var midy=(miny+maxy)/2;
+		var midz=(minz+maxz)/2;
+		
+		var maxdist=Math.sqrt((Math.pow(Math.max(maxx-minx,maxy-miny,maxz-minz)/1.4,2))/3);
+		maxdist=maxdist/2;
+		maxdist=maxdist+10/maxdist;
+		maxdist=Math.sqrt(Math.pow(maxdist,2)/3);
+		
+		
+
+		var drawnObject = new THREE.Mesh( geometry, defaultMaterial );
+		scene.add( drawnObject );
+		
+		var intensity=Math.sqrt(maxz-minz)/6
+		var light = new THREE.PointLight( 0xffffff, intensity );
+		light.position.set( (maxx*(-sizescale))+250, (maxy+Math.sqrt(maxy-miny))*(sizescale+1), maxz*(sizescale+1) );
+		scene.add( light );
+		
+
+		renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+		renderer.setClearColor( 0xffffff,0 );
+		//renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setPixelRatio(1);
+		renderer.sortObjects = false;
+		container.innerHTML = "";
+		container.appendChild( renderer.domElement );
+		camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 5000 );
+		camera.position.x = (minx-maxdist)*(-sizescale);
+		camera.position.y = (maxy*1.2)*(sizescale);
+		camera.position.z = (((midz+(maxz*2.5))/3.5)*sizescale)
+		//camera.lookAt(new THREE.Vector3( midx*-10, (maxy-(miny*1.3))*10, ((maxz*1.1)-minz)*10 ));
+		controls = new THREE.OrbitControls( camera ,renderer.domElement);
+		controls.rotateSpeed = 1.0;
+		controls.zoomSpeed = 1.2;
+		controls.panSpeed = 0.8;
+		controls.enableZoom = true;
+		controls.enablePan = true;
+		controls.target.set(midx*(-sizescale), (((maxy+(miny*1.3))/2)*sizescale), (((minz+(maxz*2.5))/3.5)*sizescale));
+		camera.lookAt(new THREE.Vector3(midx*(-sizescale), (((maxy+(miny*1.5))/2.5)*sizescale), (((minz+(maxz*2.5))/3.5)*sizescale)));
+		
+		// EVENTS
+		window.addEventListener( 'resize', onWindowResize, false );
+		onWindowResize();
+		
+		
+
+	}
+
+
+
+	var lastani=0;
+	function animate() {
+		animateid=requestAnimationFrame( animate );
+		if($("#renderpanel").hasClass("ui-collapsible-collapsed")){
+			//do nothing
+		}else{
+			
+			var tempnow=Date.now();
+			if(tempnow-lastani>100){
+				lastani=tempnow;
+				render();
 			}
-        
-    });
-});
+		}
+	}
 
+	function render() {
+		//controls.update();
+		renderer.render( scene, camera );
+	}
+	
+	
+	
+	
+	function onWindowResize() {
 
-//main lookup table for block data
+		var canvasWidth = $("#container").innerWidth();
+		var canvasratio= window.innerHeight/window.innerWidth;
+		if(canvasratio>1){
+			canvasratio=1;
+		}else if (canvasratio<0.5){
+			canvasratio=0.5;
+		}
+		var canvasHeight = Math.round(canvasWidth*canvasratio);
+		
+		renderer.setSize( canvasWidth, canvasHeight );
+
+		camera.aspect = canvasWidth / canvasHeight;
+		camera.updateProjectionMatrix();
+
+		render();
+
+	}	
+
+</script>
+	
+<script>
+
 
 var QuatTable = {0:"0,0,0,1",1:"0,0.707106781186547,0,0.707106781186547",2:"0,1,0,0",3:"0,0.707106781186547,0,-0.707106781186547",4:"0.707106781186547,0,0,0.707106781186547",5:"0.5,0.5,-0.5,0.5",6:"0,-0.707106781186547,0.707106781186547,0",7:"-0.5,0.5,-0.5,-0.5",8:"0,-0.707106781186547,-0.707106781186547,0",9:"0.5,0.5,0.5,-0.5",10:"-0.707106781186547,0,0,0.707106781186547",11:"-0.5,0.5,0.5,0.5",12:"0,0,-1,0",13:"-0.707106781186547,0,-0.707106781186547,0",14:"1,0,0,0",15:"0.707106781186547,0,-0.707106781186547,0",16:"0,0,-0.707106781186547,0.707106781186547",17:"0.707106781186547,0.707106781186547,0,0",18:"0,0,0.707106781186547,0.707106781186547",19:"-0.707106781186547,0.707106781186547,0,0",20:"0.5,0.5,0.5,0.5",21:"0.5,-0.5,-0.5,0.5",22:"-0.5,0.5,-0.5,0.5",23:"-0.5,-0.5,0.5,0.5",}
 var RotTable = {"0,0,0,1":0,"0,1,0,1":1,"0,1,0,0":2,"0,1,0,-1":3,"1,0,0,1":4,"1,1,-1,1":5,"0,1,-1,0":6,"1,-1,1,1":7,"0,1,1,0":8,"1,1,1,-1":9,"1,0,0,-1":10,"1,-1,-1,-1":11,"0,0,1,0":12,"1,0,1,0":13,"1,0,0,0":14,"1,0,-1,0":15,"0,0,1,-1":16,"1,1,0,0":17,"0,0,1,1":18,"1,-1,0,0":19,"1,1,1,1":20,"1,-1,-1,1":21,"1,-1,1,-1":22,"1,1,-1,-1":23}
@@ -304,8 +259,6 @@ var RotTable = {"0,0,0,1":0,"0,1,0,1":1,"0,1,0,0":2,"0,1,0,-1":3,"1,0,0,1":4,"1,
 var BeamAxisRot = [1,8,0];
 var BeamAxisPriority = [3,2,1];
 
-//stores information for switching blocks from one material to another
-var shapedBlocks = {"wood":{"blockIds":[357,365,448,447,366,367,428,424,426,427,443,425,444,418,419,416,417,422,423,445,420,421,446],"blockGuid":{"9a0ae372-beb4-4009-b14e-36ed0715af73":0,"05475442-0e52-4e0b-9fbb-2715f0e54f97":1,"d077c2a4-4578-4965-9318-c14bb7ac1bd6":2,"2ee817c1-f2a3-407a-847d-b97ffb844e45":3,"bdafa446-f615-49cb-94f3-d7652dde6cec":4,"b88679fb-0325-4c85-942f-ad9c6ed6545b":5,"3296c67d-6ace-44dd-8e86-335b9a90ad80":6,"c545a97c-6ac6-4181-a704-28031244aeb1":7,"17575457-18fa-43e0-a8cb-1331efc1c77e":8,"90ca403c-ddb5-4a55-ac6f-2ca2c970d6ad":9,"ba05b02a-f2b2-4c5e-ba73-00a519535763":10,"6cc4ec54-404c-4989-9f85-9b59824faf96":11,"fe628646-64da-462c-ac5c-1d4f976a129a":12,"9c0d97cf-0c99-4565-a931-b1c5bdf8fc1b":13,"c7b07df3-6afe-4616-9dd4-64f7687e98e9":14,"f878fa09-cb47-4e1c-8f1e-df2544a6882a":15,"12bfb5a0-772e-4d14-bb1a-00077211f70b":16,"1ae7e9fe-c0c4-4bb4-a0d6-28e21789a66c":17,"dee106ea-3e91-4b03-92ef-33038c5681a0":18,"ae98ddb2-901d-402b-8ab0-149b778acdb8":19,"6448ddc8-a3df-465f-b819-52f1cf347983":20,"92159a6b-a1b6-4f8b-9c08-503f2cbbd572":21,"e2ea58d4-ee32-432b-8086-29bf5675e5f7":22}},"metal":{"blockIds":[359,383,432,431,384,385,430,412,414,415,433,413,434,406,407,404,405,410,411,435,408,409,436],"blockGuid":{"ab699540-efc8-4592-bc97-204f6a874b3a":0,"a7f5d8de-4882-4111-9d01-436493e5b2d8":1,"e5d065f6-907b-450d-b998-213cdc54eec1":2,"0d554a9d-7d06-48b3-8aea-ffaeaa30380a":3,"5548037e-8428-43f8-bcb6-d730dbcd0a79":4,"8477bbec-974c-45bf-a1ce-49a48d5b5307":5,"db9ed060-d556-435b-945c-19c923e233d3":6,"de50f4f6-3d7e-4d6b-ae34-e6a34b24b104":7,"442f3ea3-c7cd-4759-84ee-a0d2fac5a711":8,"b9d21957-633f-4926-9562-4cfab38badee":9,"ac09f902-8921-4a58-aad5-c679706697f6":10,"2ddec223-13c2-4bf9-ba05-66338c51bd45":11,"5f07c608-acf2-4cc5-97d0-1a0a96acb9e3":12,"2f5f91c0-bebf-4de2-bf70-8d9bc1816997":13,"f6f120ee-fbc3-49f8-a2a3-a49e8674b8c8":14,"6f820954-63e4-4bc9-a299-8266e712d838":15,"686e9438-d86e-4504-b9f6-7029b264924e":16,"bcaf33a4-98c3-41d7-b416-438670e97d53":17,"40659614-1b34-497a-b745-78497e4b2025":18,"52a61c5e-07be-4bb9-9649-d3375c66e97e":19,"ee18a848-1319-4ff9-b5e5-3f3710635dbf":20,"369eefd9-0c39-412e-a294-d0bb2251c509":21,"d48733e2-f003-4643-86a2-cb350fd0dc04":22}},"alloy":{"blockIds":[360,374,438,437,375,376,429,400,402,403,439,401,440,394,395,392,393,398,399,441,396,397,442],"blockGuid":{"3cc75979-18ac-46c4-9a5b-25b327d99410":0,"9411e401-27da-4546-b805-3334f200f055":1,"b5d46bb7-d49e-42f6-817b-323fbf6d62b0":2,"9af822b3-80d9-46bd-9ce0-e6e5c2e61da4":3,"911fe222-f9b2-4892-9cd6-8b154d55b2aa":4,"c6176cb5-0a32-4d68-a749-8ee33b2230c1":5,"2a3905ff-2030-421d-a2bf-90fba71c1c5e":6,"62f61c31-a453-44ce-87a2-b5ce142fb052":7,"95a626e6-f1b8-491a-aa31-8de5a2beb513":8,"51b37dbf-2beb-425b-a817-89434838c857":9,"ba5c8d03-9093-47a9-a8cd-b721ceeee1dd":10,"967f98c3-d708-4602-9c71-0f34562cdfca":11,"afb33fc2-3071-408a-b312-da22478c0a14":12,"f2df1943-1ebf-47c6-9b81-ad613b7c5d5b":13,"272f0dea-8aac-4ca9-98e6-79897e7df0f9":14,"902446c4-ff32-4118-83ac-1f4bf89c56d1":15,"29c40e04-59fb-45dc-a80b-31ee1c4f82ac":16,"a4b0d100-c480-4697-b606-489d80a6d376":17,"90c9965a-1dcc-4786-a2d2-6299fed7260f":18,"a6cfd078-bc39-4ad8-a47f-49097913a27b":19,"ad3e7665-cf63-4135-835f-2f743c69bb36":20,"27692d7a-c05f-4ac4-ac98-f25e359faebc":21,"2b1b3011-0b81-472e-aa42-26383f453268":22}},"glass":{"blockIds":[451,473,456,455,452,453,454,462,461,467,471,468,472,459,465,460,466,457,463,469,458,464,470],"blockGuid":{"2d519ca8-1f12-4a8e-9340-aa6648b5e799":0,"395179c1-37a0-4250-851b-5bc19fd601b6":1,"0c64d302-c6df-42eb-a0ff-7c90f867ba4b":2,"35abb89b-33b8-4cb4-b3d0-ee132247de8d":3,"174b5b41-b70e-485d-b00a-a61cc9826b2c":4,"69feebc3-e241-4dff-a000-736def80c851":5,"c4ef6072-822a-4fa5-b618-e7fc0508c499":6,"729b7ea3-59d5-4182-9177-684da6fbe0a9":7,"e42929f1-ccd0-4fff-8413-6cb94cf08405":8,"bb0337d9-69f7-48f1-9c12-2de83ceff42d":9,"04993e98-6b77-46d3-ad80-5278550e9b65":10,"5e73653e-519c-4f13-9f69-1d80c19151d8":11,"7434948c-1b56-4dd0-bb0c-a3d291653f09":12,"d3a729d9-c25f-419c-ba7e-63cd2cac1a4d":13,"09957acb-9916-41ea-8799-66b0359ccb31":14,"87103032-b0e5-47c4-a632-ba33da2cbe1b":15,"585d7b93-955d-4099-b9f5-2ea41797f419":16,"0375d846-a203-4813-a330-0d8fd1e6586e":17,"3f349a8a-e5a1-4f43-9cc4-cea2f0f5b623":18,"48360916-a894-4bd8-b8b5-4595bb7ccf2e":19,"787524d3-1b60-44d8-bef2-d42156c55446":20,"d9952f54-1e40-4e5e-87af-b1011ca18b83":21,"37999ce4-4189-4d46-bd77-4b7b5ec4be62":22}},"stone":{"blockIds":[358,450],"blockGuid":{"710ee212-563b-42f8-acd1-57515479524d":0,"c7a19161-b361-4074-8c51-2398a0a70d1b":1}},"lead":{"blockIds":[362,449],"blockGuid":{"e71e6f97-fbe8-4bf5-9645-d15179ba0c17":0,"f5d2db25-114e-473a-8313-96831ccd011e":1}}}
 
 //to replace old blocks
 var oldBlocks = {"23a5c7f7-43bd-4329-8411-f5ab019125e7":{"Guid":"911fe222-f9b2-4892-9cd6-8b154d55b2aa","Rot":12},"35300339-2491-495c-a178-42c1121915bc":{"Guid":"c6176cb5-0a32-4d68-a749-8ee33b2230c1","Rot":12},"d2f5d5f0-9e7d-4c22-839f-0d9c04c34736":{"Guid":"5548037e-8428-43f8-bcb6-d730dbcd0a79","Rot":12},"71902772-b8a8-4663-a309-f9abb46ef0c7":{"Guid":"8477bbec-974c-45bf-a1ce-49a48d5b5307","Rot":12},"00d4381b-501d-4d6a-be06-fc89e0c6c6b8":{"Guid":"bdafa446-f615-49cb-94f3-d7652dde6cec","Rot":12},"70be6ef4-15b0-4dbb-bf7b-1f536c554659":{"Guid":"b88679fb-0325-4c85-942f-ad9c6ed6545b","Rot":12},"c28f4f27-55f0-4dcb-8fa0-125e560f09e0":{"Guid":"911fe222-f9b2-4892-9cd6-8b154d55b2aa","Rot":18},"fb83e6db-7c65-4bef-be39-f4762d7d2d66":{"Guid":"c6176cb5-0a32-4d68-a749-8ee33b2230c1","Rot":18},"7639e07d-9913-4b4a-ba6b-0804ee956d7a":{"Guid":"5548037e-8428-43f8-bcb6-d730dbcd0a79","Rot":18},"764b7977-dbe5-4ee7-929d-c6ad8b944b15":{"Guid":"8477bbec-974c-45bf-a1ce-49a48d5b5307","Rot":18},"ea8f9703-91bf-4406-8563-75215816556c":{"Guid":"bdafa446-f615-49cb-94f3-d7652dde6cec","Rot":18},"2ad766bd-3d33-471b-be53-5d6708553a46":{"Guid":"b88679fb-0325-4c85-942f-ad9c6ed6545b","Rot":18},"a1048d4d-3037-4970-84ba-9b5517ae4b4b":{"Guid":"911fe222-f9b2-4892-9cd6-8b154d55b2aa","Rot":16},"e71e02e9-5680-47bd-a5d9-053918b9a6db":{"Guid":"c6176cb5-0a32-4d68-a749-8ee33b2230c1","Rot":16},"fe51f44a-f400-41f3-8c05-b45aadbcc797":{"Guid":"5548037e-8428-43f8-bcb6-d730dbcd0a79","Rot":16},"82a57761-2027-4f63-b27b-ffd2b1eed419":{"Guid":"8477bbec-974c-45bf-a1ce-49a48d5b5307","Rot":16},"b00e9689-722d-4995-902b-0ef1b1f05780":{"Guid":"bdafa446-f615-49cb-94f3-d7652dde6cec","Rot":16},"c2da1fed-694a-4d3f-b565-953d1e36aa91":{"Guid":"b88679fb-0325-4c85-942f-ad9c6ed6545b","Rot":16}}
@@ -315,6 +268,12 @@ var blockToBeam = {}
 
 //maps block ID of beam to block
 var beamToBlock = {}
+
+var maxc=[0,0,0,0];
+var minc=[0,0,0,0];
+
+var blockRenderData = {}
+var blockRenderIndex = 0;
 
 var slopeBlockToBeam = {}
 var slopeBeamToBlock = {}
@@ -337,6 +296,8 @@ var nameID = {}
 //blockID:blockcount
 var countID = {}
 
+var colorID = {}
+
 //blockname:blockcount
 var blockCountData = {}
 
@@ -355,6 +316,71 @@ var allowedcolor = -1;
 var blocksBeamed = 0;
 
 var blocksDebeamed = 0;
+
+var alreadyrender=false;
+
+
+
+$(document).ready(function(){
+
+	
+	
+	$( ".lb" ).click(function() {
+	  $($(this).attr("btarget")).click();
+	  
+  
+	});
+	
+
+	
+
+	
+	
+	$(function() {
+  // simple reflow widget (table with 1 header row)
+  
+  $("#table1").tablesorter({
+    theme: 'blue',
+    widgets: ['reflow'],
+    widgetOptions : {
+      // class name added to make it responsive (class name within media query)
+      reflow_className    : 'ui-table-reflow',
+      // header attribute containing modified header name
+      reflow_headerAttrib : 'data-name',
+      // data attribute added to each tbody cell
+      // it contains the header cell text, visible upon reflow
+      reflow_dataAttrib   : 'data-title',
+    },	
+	selectorHeaders: "thead th"
+  });
+  
+});
+
+	$(function() {
+  // simple reflow widget (table with 1 header row)
+  $("#table2").tablesorter({
+    theme: 'blue',
+    widgets: ['reflow'],
+    widgetOptions : {
+      // class name added to make it responsive (class name within media query)
+      reflow_className    : 'ui-table-reflow',
+      // header attribute containing modified header name
+      reflow_headerAttrib : 'data-name',
+      // data attribute added to each tbody cell
+      // it contains the header cell text, visible upon reflow
+      reflow_dataAttrib   : 'data-title',
+    },	
+	selectorHeaders: "thead th"
+  });
+  
+});
+
+	
+	$(".lb").prop('disabled',false);		
+	$(".lb").parent().removeClass('ui-state-disabled');		
+
+});
+
 
 //rotation*vector*rotation_conjugate
 //alert(JSON.stringify(RotTable));
@@ -380,6 +406,12 @@ function posTransform(pos,quat){
 	return [Math.round(transpos[0]),Math.round(transpos[1]),Math.round(transpos[2])]
 }
 
+function posTransformNR(pos,quat){
+	var p = [pos[0],pos[1],pos[2],0];
+	var transpos = quatmul(quat,quatmul(p,quatconj(quat)));
+	return [(transpos[0]),(transpos[1]),(transpos[2])]
+}
+
 //combining 2 quat transforms e.g. q1 then q2 = applying q2*q1 or quatmul(q2,q1);
 
 
@@ -398,6 +430,12 @@ function stoa(s){
 	var temp=s.split(",");
 	return [parseFloat(temp[0]),parseFloat(temp[1]),parseFloat(temp[2]),parseFloat(temp[3])];
 }
+
+function stoa3(s){
+	var temp=s.split(",");
+	return [parseFloat(temp[0]),parseFloat(temp[1]),parseFloat(temp[2])];
+}
+
 
 function stoar(s){
 	var temp=s.split(",");
@@ -460,30 +498,29 @@ function quatmul(q,r){
      q[3] * r[3] - q[0] * r[0] - q[1] * r[1] - q[2] * r[2]];
 }
 
-
-function loadError(message){
- if(message){	
-  throw message;
-  alert(message);
- }else{
-  alert("failure");
- } 
+function loadLinks(){
+	$('#linklist').empty();
+	for(var i=0;i<LinkList.length;i++){
+		$('#linklist').append(LinkList[i]);
+	}
+	
 }
 
-//opens file and parse file to CurrentBlueprint object
+function loadError(message){
+	if(message){
+		alert(message);
+	}else{
+		alert("failure");
+	}	
+}
+
 function openFile() {
  var selectedFile = document.getElementById('blueprintfile').files[0];
  if (selectedFile){
   var reader = new FileReader();
   reader.onload = function(evt) {
    try{    
-    document.getElementById('blueprintinfo_panel').style.display="none";
-    document.getElementById('modification_panel').style.display="none";
-    document.getElementById("filecontent").style.display="none";
-
-    document.getElementById('label_filename').innerHTML = "";
-    document.getElementById('blockcount').innerHTML = "";    
-    if(evt){
+     if(evt){
      CurrentBlueprint = JSON.parse(evt.target.result);    
      selectedFileName = selectedFile.name;
      if (!processData()){
@@ -503,19 +540,22 @@ function openFile() {
   //no file selected;
  }
  document.getElementById('blueprintfile').value="";
-}
+};
 
-
-//reads and display CurrentBlueprint object
 function processData(){
- document.getElementById('label_filename').innerHTML = selectedFileName;
+
+
+
     nameID = {}
     countID = {}
  blockCountData = {}
- document.getElementById('blockcount').innerHTML = "";
- document.getElementById('stats1').innerHTML = ""; 
  ItemDic =  CurrentBlueprint.ItemDictionary;
  
+ 		$("#table1 tbody").empty(); 
+		$("#table2 tbody").empty(); 
+		$("#renderpanel").collapsible("collapse");
+		document.getElementById("container").innerHTML="";
+		alreadyrender=false;
  
  var a1;
  var a2;
@@ -613,12 +653,13 @@ function processData(){
    ad3=keyint;//glass
   }
 
-  
+  colorID[keyint]=[80,80,80,1];
  
   for(var mat in shapedBlocks){
    var tempindex = shapedBlocks[mat].blockGuid; 
    var matID = tempindex[val];
-    if(matID!==undefined){     
+    if(matID!==undefined){
+	 colorID[keyint]= shapedBlocks[mat].color;
      shapedBlocks[mat].blockIds[matID] = keyint;
     }
   }
@@ -679,7 +720,7 @@ function processData(){
  totalstats["Volume"]=roundToTwo(totalstats["Volume"]);
  getpalette(CurrentBlueprint.Blueprint);
 
- var outputstring = "<table id='count_table' cellspacing='0' cellpadding='0'>";
+ var outputstring = "";
  var totalcount = 0;
  for(var blockID in countID) {
   if(countID[blockID] >0) {
@@ -691,89 +732,45 @@ function processData(){
  
  keysSorted = Object.keys(blockCountData).sort(function(b,a){return blockCountData[a]-blockCountData[b]})
  for (var bName in keysSorted){ 
-  outputstring +=  "<tr><td>" + keysSorted[bName]  + "</td><td>&nbsp;</td><td><b>" + blockCountData[keysSorted[bName]] + "</b></td></tr>";
+  outputstring +=  "<tr><td>" + keysSorted[bName]  + "</td><td><b>" + blockCountData[keysSorted[bName]] + "</b></td></tr>";
   
  }
- outputstring += "</table>";
- document.getElementById('blockcount').innerHTML = outputstring;
+$("#table1 tbody").append(outputstring); 
 
- var statisticsString = "<table id='count_table' cellspacing='0' cellpadding='0'>";
+$("#table1").trigger("update");
+$("#blockcountpanel").collapsible("expand");
+
+ var statisticsString = "";
  for (var stats in totalstats){ 
-  statisticsString +=  "<tr><td>" + stats  + "</td><td>&nbsp;</td><td><b>" + totalstats[stats] + "</b></td></tr>";  
+  statisticsString +=  "<tr><td>" + stats  + "</td><td><b>" + totalstats[stats] + "</b></td></tr>";  
  }
- statisticsString += "</table>"; 
- 
- document.getElementById('stats1').innerHTML = statisticsString;
 
- 
- document.getElementById('blueprintinfo_panel').style.display="block";
- document.getElementById('modification_panel').style.display="block";
+$("#table2 tbody").append(statisticsString); 
+$("#table2").trigger("update");
+$("#blockstatpanel").collapsible("expand");
+
+$(".b1name").html(selectedFileName);
+
+
+$( "#renderpanel" ).collapsible({
+  expand: function( event, ui ) {
+ 	if(!alreadyrender){
+		//$("#container").width($("#renderpanel").innerWidth());
+		alreadyrender=true;
+		init();
+		animate();
+	} 
+  }
+  
+     
+});
+
+ $("#renderpanel").collapsible("expand");
+ $(".dl").prop('disabled',false);		
+ $(".dl").parent().removeClass('ui-state-disabled');	
  return true;
 }
 
-//loads color palette
-function getpalette(blocks){
- var palettedata = blocks.COL;
- for(var palID = 0; palID < palettedata.length; palID++){
-  palStr = "" + palID;
-  if (palStr.length<2){
-   palStr = "0" + palStr;
-  }
-  var colorString = palettedata[palID];
-  var colorArray = colorString.split(',');
-  
-  var tempr = (colorArray[0] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var tempg = (colorArray[1] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var tempb = (colorArray[2] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  
-  var rtempr = ((1-colorArray[0]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var rtempg = ((1-colorArray[1]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var rtempb = ((1-colorArray[2]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  
-  
-  
-  document.getElementById("pal" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
-  document.getElementById("pal" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb);  
-  document.getElementById("co" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
-  document.getElementById("co" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb);  
- }
-}
-
-//counts blocks and accumulate vehicle data
-function countblocks(blocks){
- var SClist=blocks.SCs;
- for(var scID = 0; scID < SClist.length; scID++){
-  countblocks(SClist[scID]);
- }
- 
- totalstats["Max Power*"] += Math.max(0,blocks.CSI[7]);
- totalstats["Max Battery Capacity*"] += Math.max(0,blocks.CSI[49]);
- totalstats["Max Ammo Capacity*"] += Math.max(0,blocks.CSI[38]);
- totalstats["Max Fuel Capacity*"] += Math.max(0,blocks.CSI[40]);
- totalstats["Max Natural Storage*"] += Math.max(0,blocks.CSI[23]);
- totalstats["Max Metal Storage*"] += Math.max(0,blocks.CSI[24]);
- totalstats["Max Oil Storage*"] += Math.max(0,blocks.CSI[25]);
- totalstats["Max Scrap Storage*"] += Math.max(0,blocks.CSI[26]);
- totalstats["Max Crystal Storage*"] += Math.max(0,blocks.CSI[27]);
- 
- if(blocks.designChanged){
-  totalstats["Blueprint Modified*"] = true;
- } 
- var blocklist=blocks.BlockIds;
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  countID[blocklist[blockIndex]] +=1;
-  var currentBlock = getBlock(blocklist[blockIndex]);
- if(currentBlock){
-   totalstats["Natural Cost"]+=currentBlock.Natural;
-   totalstats["Metal Cost"]+=currentBlock.Metal;
-   totalstats["Oil Cost"]+=currentBlock.Oil;
-   totalstats["Scrap Cost"]+=currentBlock.Scrap;
-   totalstats["Crystal Cost"]+=currentBlock.Crystal;
-   totalstats["RP Cost"]+=currentBlock.SparesCost;
-   totalstats["Volume"]+=currentBlock.Volume;
- }
- }
-}
 
 //convert blocks between materials. also changes shield color.
 function convertblocks(blocks){
@@ -1453,7 +1450,6 @@ function cutInHalf(blocks,xshift){
 	}
 	cleanBlueprint(blocks);
 }
-
 
 
 
@@ -2334,7 +2330,8 @@ function calculateRP(r1,r2,r3,r4,r5){
  return r1+r2*2+r3*3+r4*4+r5*10;
 }
 
-//applies selected options and trigger file download
+
+
 function downloadBlueprint(){
  try{
  
@@ -2461,6 +2458,7 @@ function downloadBlueprint(){
   loadError(err);
  }
 }
+
 
 function togglefiletext(){
  if(document.getElementById("filetext").style.display=="none"){
@@ -2790,6 +2788,8 @@ function slopeBlockToBeamOrientation(beamrotate, negative){
  return -1;
 }
 
+
+
 function quatMirror(quat){
 	var resquat = stoa(quat);
 	resquat[0] = -resquat[0];
@@ -2910,6 +2910,149 @@ function download(filename, data) {
     }
 }
 
+
+
+//loads color palette
+function getpalette(blocks){
+ var palettedata = blocks.COL;
+ for(var palID = 0; palID < palettedata.length; palID++){
+  palStr = "" + palID;
+  if (palStr.length<2){
+   palStr = "0" + palStr;
+  }
+  var colorString = palettedata[palID];
+  var colorArray = colorString.split(',');
+  
+  var tempr = (colorArray[0] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var tempg = (colorArray[1] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var tempb = (colorArray[2] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  
+  var rtempr = ((1-colorArray[0]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var rtempg = ((1-colorArray[1]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var rtempb = ((1-colorArray[2]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  
+  
+ 
+  document.getElementById("pal" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
+  document.getElementById("pal" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb);  
+  document.getElementById("co" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
+  document.getElementById("co" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb); 
+
+ }
+}
+
+function countblocks(blocks){
+	blockRenderData={};
+	blockRenderIndex=0;
+	maxc=[0,0,0,0];
+	minc=[0,0,0,0];	
+	return countblocksR(blocks,false,{});	
+}
+
+//counts blocks and accumulate vehicle data
+function countblocksR(blocks,notmain,parentpalette){
+	var SClist=blocks.SCs;
+	for(var scID = 0; scID < SClist.length; scID++){
+		countblocksR(SClist[scID],true,blocks.COL);
+	}
+
+	totalstats["Max Power*"] += Math.max(0,blocks.CSI[7]);
+	totalstats["Max Battery Capacity*"] += Math.max(0,blocks.CSI[49]);
+	totalstats["Max Ammo Capacity*"] += Math.max(0,blocks.CSI[38]);
+	totalstats["Max Fuel Capacity*"] += Math.max(0,blocks.CSI[40]);
+	totalstats["Max Natural Storage*"] += Math.max(0,blocks.CSI[23]);
+	totalstats["Max Metal Storage*"] += Math.max(0,blocks.CSI[24]);
+	totalstats["Max Oil Storage*"] += Math.max(0,blocks.CSI[25]);
+	totalstats["Max Scrap Storage*"] += Math.max(0,blocks.CSI[26]);
+	totalstats["Max Crystal Storage*"] += Math.max(0,blocks.CSI[27]);
+
+	if(blocks.designChanged){
+		totalstats["Blueprint Modified*"] = true;
+	}
+
+	var shiftPosition =[0,0,0];
+	var shiftRotation =[0,0,0,1];
+
+	if(notmain){
+		shiftposition=stoa3(blocks.LocalPosition);
+		shiftRotation=stoa(blocks.LocalRotation); 
+	}
+
+	var blocklist=blocks.BlockIds;
+	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
+		countID[blocklist[blockIndex]] +=1;
+		var currentBlock = getBlock(blocklist[blockIndex]);
+		var tempRender={}
+
+		var tempPosition=stoa3(blocks.BLP[blockIndex]);
+		var tempRotation=getQuat(blocks.BLR[blockIndex]);
+		if(notmain){
+			tempPosition=posTransformNR(tempPosition,shiftRotation);
+			tempPosition=[tempPosition[0]+shiftposition[0],tempPosition[1]+shiftposition[1],tempPosition[2]+shiftposition[2]];
+			tempRotation=quatmul(shiftRotation,tempRotation);  
+		}
+		
+		var tempColor=[80,80,80,1];
+		if(colorID[blocklist[blockIndex]]){
+			tempColor=colorID[blocklist[blockIndex]];
+		}
+		var paintColor=[0,0,0,0];
+		if(blocks.COL){
+			paintColor=stoa(blocks.COL[blocks.BCI[blockIndex]]);
+		}else{
+			paintColor=stoa(parentpalette[blocks.BCI[blockIndex]]);
+		}
+		
+		var tempr = (paintColor[0] * 255 * (paintColor[3])) +(tempColor[0]*(1-paintColor[3]));
+		var tempg = (paintColor[1] * 255 * (paintColor[3])) +(tempColor[1]*(1-paintColor[3]));
+		var tempb = (paintColor[2] * 255 * (paintColor[3])) +(tempColor[2]*(1-paintColor[3]));		
+		var tempa = Math.max(paintColor[3]+tempColor[3],1);
+		
+		//tempColor = [tempr,tempg,tempb,tempa];
+		tempColor=rgb2hex(tempr, tempg, tempb);
+			
+		var posx=0;
+		var negx=0;
+		var posy=0;
+		var negy=0;
+		var posz=0;
+		var negz=0;
+
+		if(currentBlock){
+			posx=currentBlock.posx;
+			negx=currentBlock.negx;
+			posy=currentBlock.posy;
+			negy=currentBlock.negy;
+			posz=currentBlock.posz;
+			negz=currentBlock.negz;   
+			totalstats["Natural Cost"]+=currentBlock.Natural;
+			totalstats["Metal Cost"]+=currentBlock.Metal;
+			totalstats["Oil Cost"]+=currentBlock.Oil;
+			totalstats["Scrap Cost"]+=currentBlock.Scrap;
+			totalstats["Crystal Cost"]+=currentBlock.Crystal;
+			totalstats["RP Cost"]+=currentBlock.SparesCost;
+			totalstats["Volume"]+=currentBlock.Volume;			
+		}
+		tempRender.position=tempPosition;
+		tempRender.rotation=tempRotation;
+		tempRender.posx=posx;
+		tempRender.negx=negx;
+		tempRender.posy=posy;
+		tempRender.negy=negy;
+		tempRender.posz=posz;
+		tempRender.negz=negz;
+		tempRender.color=tempColor;
+		maxc[0]=Math.max(maxc[0],tempPosition[0]);
+		maxc[1]=Math.max(maxc[1],tempPosition[1]);
+		maxc[2]=Math.max(maxc[2],tempPosition[2]);
+		minc[0]=Math.min(minc[0],tempPosition[0]);
+		minc[1]=Math.min(minc[1],tempPosition[1]);
+		minc[2]=Math.min(minc[2],tempPosition[2]);		
+		blockRenderData[blockRenderIndex]=tempRender;
+		blockRenderIndex++
+	}
+}
+
 //check for numeric
 function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
@@ -2929,6 +3072,7 @@ function getBlock(bid){
 function roundToTwo(num) {
     return +(Math.round(num + "e+2")  + "e-2");
 }
+
 
 function cleanBlueprint(blocks){
 	var SClist=blocks.SCs;
@@ -3010,15 +3154,374 @@ function getType(blockid){
 	}
 }
 
-function loadLinks(){
-	$('#linklist').empty();
-	for(var i=0;i<LinkList.length;i++){
-		$('#linklist').append(LinkList[i]);
-	}
-	
-}
 
-</script>
+
+</script>	
+		
+	</head>
+	<body>
+	
+	
+
+<div data-role="page">
+	
+	<div data-role="header">
+	<a href="#popupMenu" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">Links</a>
+		<h1>Blueprint Modification Tool</h1>
+	</div><!-- /header -->
+	<div data-role="content">	
+	<div data-role="popup" id="popupMenu">
+        <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
+        </ul>
+	</div>
+	<p>Last updated for FTD v1.9514 and v1.1952</p>
+	<p>To start, click on the button below and choose a blueprint file.</p>
+	<div class="hidden"><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></div>
+	<div class="ui-grid-solo">
+		<div class="ui-block-a"><input class="lb" type="button" btarget="#blueprintfile" value="Open Blueprint" disabled>
+		</div>
+	</div>	
+	<div class="ui-grid-a">
+		<div class="ui-block-a">
+	<div id="blocktoolpanel" data-role="collapsible">
+		<h4>Block Modification Tools</h4>
+	
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="wood" type="checkbox">Convert Wood: </label></div>
+<div class="ui-block-b"><select id="woodto"><option value="wood" selected="selected"> to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select></div>
+</div>
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="alloy" type="checkbox">Convert Alloy: </label></div>
+<div class="ui-block-b"><select id="alloyto"><option value="wood" > to Wood</option><option value="alloy" selected="selected">to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+</div>
+</div>
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="metal" type="checkbox">Convert Metal: </label></div>
+<div class="ui-block-b">
+<select id="metalto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal" selected="selected">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+</div>
+</div>
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="glass" type="checkbox">Convert Glass: </label></div>
+<div class="ui-block-b"><select id="glassto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass" selected="selected">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+</div>
+</div>
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="stone" type="checkbox">Convert Stone: </label></div>
+<div class="ui-block-b"><select id="stoneto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option>  <option value="stone" selected="selected">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+</div>
+</div>
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="lead" type="checkbox">Convert Lead: </label></div>
+<div class="ui-block-b"><select id="leadto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead" selected="selected">to Lead</option><option value="0" >delete!</option></select>
+</div>
+</div>
+
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="shieldcolor" type="checkbox">Modify all shield color changers </label><p><i>* Only affect shields with shield color changers. <br>Limits: <br>R, G, B between 0 and 1,<br>Alpha between 0.10 and 10.</i></p></div>
+<div class="ui-block-b">
+<div class="ui-field-contain"><label for="shieldr">R</label><input type="range" name="shieldr" id="shieldr" min="0" max="1" step="0.01" value="1"></div>
+<div class="ui-field-contain"><label for="shieldg">G</label><input type="range" name="shieldg" id="shieldg" min="0" max="1" step="0.01" value="1"></div>
+<div class="ui-field-contain"><label for="shieldb">B</label><input type="range" name="shieldb" id="shieldb" min="0" max="1" step="0.01" value="1"></div>
+<div class="ui-field-contain"><label for="shielda">A</label><input type="range" name="shielda" id="shielda" min="0.1" max="10" step="0.01" value="1"></div>
+</div>
+</div>
+
+<div class="ui-grid-b">
+<div class="ui-block-a"><label><input id="paint" type="checkbox">Paint main vehicle</label></div>
+<div class="ui-block-b">
+<select id="painttarget"><option value="all" selected="selected"> all blocks</option> <option value="wood"> Wood </option> <option value="metal"> Metal </option><option value="alloy"> Alloy </option><option value="glass"> Glass </option><option value="stone"> Stone </option><option value="lead"> Lead </option><option value="paintstruct"> Wood/Metal/Alloy/Glass/Stone/Lead </option><option value="paintothers"> Not Wood/Metal/Alloy/Glass/Stone/Lead </option></select>
+</div>
+<div class="ui-block-c">
+<select id="tocolor">
+	<option id="pal00" value="0" selected="selected">00</option>
+	<option id="pal01" value="1">01</option>
+	<option id="pal02" value="2">02</option>
+	<option id="pal03" value="3">03</option>
+	<option id="pal04" value="4">04</option>
+	<option id="pal05" value="5">05</option>
+	<option id="pal06" value="6">06</option>
+	<option id="pal07" value="7">07</option>
+	<option id="pal08" value="8">08</option>
+	<option id="pal09" value="9">09</option>
+	<option id="pal10" value="10">10</option>
+	<option id="pal11" value="11">11</option>
+	<option id="pal12" value="12">12</option>
+	<option id="pal13" value="13">13</option>
+	<option id="pal14" value="14">14</option>
+	<option id="pal15" value="15">15</option>
+	<option id="pal16" value="16">16</option>
+	<option id="pal17" value="17">17</option>
+	<option id="pal18" value="18">18</option>
+	<option id="pal19" value="19">19</option>
+	<option id="pal20" value="20">20</option>
+	<option id="pal21" value="21">21</option>
+	<option id="pal22" value="22">22</option>
+	<option id="pal23" value="23">23</option>
+	<option id="pal24" value="24">24</option>
+	<option id="pal25" value="25">25</option>
+	<option id="pal26" value="26">26</option>
+	<option id="pal27" value="27">27</option>
+	<option id="pal28" value="28">Detail</option>
+	<option id="pal29" value="29">Trim</option>
+	<option id="pal30" value="30">Secondary</option>
+	<option id="pal31" value="31">Main</option>
+ </select>
+</div>
+</div>
+
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label><input id="paintrestrict" type="checkbox">Restrict block modifications to blocks colored: </label></div>
+<div class="ui-block-b">
+<select id="paintallow">
+<option id="co00" value="0" selected="selected">00</option>
+<option id="co01" value="1">01</option>
+<option id="co02" value="2">02</option>
+<option id="co03" value="3">03</option>
+<option id="co04" value="4">04</option>
+<option id="co05" value="5">05</option>
+<option id="co06" value="6">06</option>
+<option id="co07" value="7">07</option>
+<option id="co08" value="8">08</option>
+<option id="co09" value="9">09</option>
+<option id="co10" value="10">10</option>
+<option id="co11" value="11">11</option>
+<option id="co12" value="12">12</option>
+<option id="co13" value="13">13</option>
+<option id="co14" value="14">14</option>
+<option id="co15" value="15">15</option>
+<option id="co16" value="16">16</option>
+<option id="co17" value="17">17</option>
+<option id="co18" value="18">18</option>
+<option id="co19" value="19">19</option>
+<option id="co20" value="20">20</option>
+<option id="co21" value="21">21</option>
+<option id="co22" value="22">22</option>
+<option id="co23" value="23">23</option>
+<option id="co24" value="24">24</option>
+<option id="co25" value="25">25</option>
+<option id="co26" value="26">26</option>
+<option id="co27" value="27">27</option>
+<option id="co28" value="28">Detail</option>
+<option id="co29" value="29">Trim</option>
+<option id="co30" value="30">Secondary</option>
+<option id="co31" value="31">Main</option>
+</select>
+</div>
+</div>
+
+	
+	</div>
+		
+		
+		
+
+<div id="vehicletoolpanel" data-role="collapsible">
+<h4>Vehicle Modification Tools</h4>
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="highlightAI" type="checkbox">Highlight AI, ACB, PID blocks on main vehicle (will overwrite paint settings)</label>
+</div>
+</div>
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="randomcolor"  type="checkbox">Randomize colors on main vehicle (will overwrite paint settings)</label>
+</div>
+</div>
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="clearhull" type="checkbox">Delete all blocks except Wood/Alloy/Metal/Glass/Stone/Lead.</label>
+</div>
+</div>
+
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="replaceold" type="checkbox">Replace old armor blocks! (e.g. 1m and 2m left,right,and up slopes)</label>
+</div>
+</div>
+
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="becomeVehicle" type="checkbox">Turn blueprint into a vehicle (Invalid blocks on a vehicle will be deleted!)</label>
+</div>
+</div>
+
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="becomeStructure" type="checkbox">Turn blueprint into a Structure (Invalid blocks on a structure will be deleted!</label>
+</div>
+</div>
+
+
+
+<div class="ui-grid-a">
+<div class="ui-block-a">
+<label><input id="rotateVehicle" type="checkbox">Rotate vehicle: </label>
+</div>
+<div class="ui-block-b">
+<select id="rotatedir">
+	<option value="1" selected="selected">Turn Right</option>
+	<option value="3" >Turn Left</option>
+	<option value="10" >Nose Up</option>
+	<option value="4" >Nose Down</option>
+	<option value="16" >Roll Right</option>
+	<option value="18" >Roll Left</option>	
+</select>
+</div>
+</div>
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="mirrorLateral" type="checkbox">Mirror vehicle laterally (flip left and right sides)</label>
+</div>
+</div>
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="debeamify" type="checkbox">DeBeamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 4m beams and diagonal slopes into 1m blocks and slopes.</label>
+</div>
+</div>
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="beamify2" type="checkbox">Beamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 1m blocks and slopes into 4m beams and diagonal slopes.</label>
+</div>
+</div>
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="beamifyOptimized" type="checkbox">Beamify using an optimization algorithm. Slower but will fit in more beams. It can take up to a few minutes for large unbeamed vehicles.</label>
+</div>
+</div>
+
+
+<div class="ui-grid-a">
+<div class="ui-block-a">
+<label><input id="cutinhalf" type="checkbox">Cut the blueprint in half! Only left side remains!</label>
+</div>
+<div class="ui-block-b">
+<div class="ui-field-contain"><label for="centershift">Split position:</label><input type="range" min="-1000" max="1000" name="centershift" id="centershift"  step="1" value="0"></div>
+</div>
+</div>
+
+<div class="ui-grid-a">
+<div class="ui-block-a">
+<label><input id="jointmirror" type="checkbox">Attach a mirrored copy of the vehicle on the right!</label>
+</div>
+<div class="ui-block-b">
+<label><input data-iconpos="right" id="evenclone2" type="checkbox">Even Width?</label>
+</div>
+</div>
+
+<div class="ui-grid-b">
+<div class="ui-block-a">
+<label><input id="cutandmirror" type="checkbox">Replace the right side with a mirrored copy of the left!</label>
+</div>
+<div class="ui-block-b">
+<label><input data-iconpos="right" id="evenclone1" type="checkbox">Even Width?</label>
+</div>
+<div class="ui-block-c">
+<div class="ui-field-contain"><label for="cloneshift">Split position:</label><input type="range" min="-1000" max="1000" name="cloneshift" id="cloneshift"  step="1" value="0"></div>
+</div>
+</div>
+
+<div class="ui-grid-a">
+<div class="ui-block-a">
+<label><input id="widen" type="checkbox">Widen the vehicle by splitting it apart!</label>
+</div>
+<div class="ui-block-b">
+<div class="ui-field-contain"><label for="widendistance">Distance:</label><input type="range" min="-1000" max="1000" name="widendistance" id="widendistance"  step="1" value="1"></div>
+<div class="ui-field-contain"><label for="widenshift">Split position:</label><input type="range" min="-1000" max="1000" name="widenshift" id="widenshift"  step="1" value="0"></div>
+</div>
+</div>
+
+<!--<input id="removeoverlap" type="checkbox">Remove Overlapped blocks<br>-->
+
+
+</div>	
+
+<input type="button" class="dl" value="Apply Modifications & Download" onclick="downloadBlueprint();" disabled>	
+<div id="filecontent" class="hidden">
+<a href="#filetext" onClick="togglefiletext();"><i>Blueprint not downloading?</i></a>
+<div id="filetext" name="filetext">
+<br>
+Copy and paste the following into a new .blueprint file!<br>
+<textarea id="filetextbox" wrap="hard" cols="45" rows="30" readonly></textarea>
+</div>
+</div>
+</div><!--end of left block-->
+		
+		
+		<div class="ui-block-b">
+	<div id="renderpanel" data-role="collapsible">
+	<h4>3D Preview</h4>
+		<div id="container"></div>
+	
+	</div>
+	<div id="blockcountpanel" data-role="collapsible" >
+		<h4>Block Count</h4>
+		<table id="table1"  class="table1 tablesorter">
+		  <thead>
+			<tr>
+			  <td colspan="2" align="center" class="b1name">Blueprint</td>
+			</tr>
+		  <tr>
+			  <th>Block</th>
+			  <th>Count</th>
+			</tr>
+		  </thead>
+		  <tbody>
+
+		  </tbody>
+		</table>
+
+	</div>
+	<div id="blockstatpanel" data-role="collapsible">
+		<h4>Blueprint Statistics</h4>
+		<table id="table2"  class="table2 tablesorter">
+		  <thead>
+			<tr>
+			  <td colspan="2" align="center" class="b1name">Blueprint</td>
+			</tr>
+		  <tr>
+			  <th>Statistic</th>
+			  <th>Value</th>
+			</tr>
+		  </thead>
+		  <tbody>
+
+		  </tbody>
+		</table>
+		<p><i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i></p>
+	</div>		
+		
+		</div>
+	</div>
+
+	<div id="commentpanel" data-role="collapsible">
+		<h4>Comments</h4>
+<!-- begin wwww.htmlcommentbox.com -->
+ <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">Comment Box</a> is loading comments...</div>
+ <link rel="stylesheet" type="text/css" href="http://www.htmlcommentbox.com/static/skins/bootstrap/twitter-bootstrap.css?v=0" />
+ <script type="text/javascript" id="hcb"> /*<!--*/ if(!window.hcb_user){hcb_user={};} hcb_user.PAGE="http://zyonixgaming.github.io/ftd-blueprint-tools/";(function(){var s=document.createElement("script"), l=hcb_user.PAGE || (""+window.location).replace(/'/g,"%27"), h="http://www.htmlcommentbox.com";s.setAttribute("type","text/javascript");s.setAttribute("src", h+"/jread?page="+encodeURIComponent(l).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24TL9IWcbJsERm2sQFposUO%2F"+"&opts=16862&num=10&ts=1463318440233");if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})(); /*-->*/ </script>
+<!-- end www.htmlcommentbox.com -->
+	</div>
+	<p></p>
+	<p>Copyright &copy; 2016 Zyonix Gaming</p>	
+	</div>
+</div>
+
 
 <script>
 loadLinks();
@@ -3031,5 +3534,6 @@ loadLinks();
   ga('create', 'UA-77242087-2', 'auto');
   ga('send', 'pageview');
 </script>
-</body>
+		
+	</body>
 </html>
