@@ -608,6 +608,7 @@ function openFile() {
 	cameratarget=false;
 	cameraposition=false;
 	CurrentImgurID="";
+	description="";
  var selectedFile = document.getElementById('blueprintfile').files[0];
  if (selectedFile){
   var reader = new FileReader();
@@ -1118,7 +1119,7 @@ function download(filename, data) {
 		<img id="thumb"></img>
 
 		<textarea id="description">Test</textarea>	
-		<input class="ul" type="button" value="Upload Blueprint" disabled onclick="sendBlueprint();">
+		<input class="ul" type="button" value="Upload Blueprint" disabled onclick="sendImgur();">
 	</div>
 
 		
