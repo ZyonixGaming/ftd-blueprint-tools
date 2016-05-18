@@ -27,6 +27,10 @@ background: #D0D0FF !important;
 	margin-right:4px;
 }
 
+#thumb{
+display:none;
+}
+
 
 .tablesorter-blue{
 	margin:0 0;
@@ -162,7 +166,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 		
 
 		renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
-		renderer.setClearColor( 0xffffff,0 );
+		renderer.setClearColor( 0x8ccfff,1 );
 		//renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setPixelRatio(1);
 		renderer.sortObjects = false;
@@ -386,7 +390,13 @@ function sendBlueprint(){
 	}
 	if(controls){
 		tempthing.ct=[controls.target.x,controls.target.y,controls.target.z];
-	}	
+	}
+	if(renderer){
+		var strMime = "image/jpeg;base64";
+		var imgData = renderer.domElement.toDataURL(strMime);
+		something.tn=strMime;
+	}
+
 	var params = JSON.stringify(tempthing);
 	request.open('POST', posturl + "?" + apikey, true);
 	request.onreadystatechange = function() {
@@ -414,6 +424,7 @@ function getBlueprint(id){
 			cameraposition=tempthing.cp;
 			cameratarget=tempthing.ct;
 			description=tempthing.de;
+			$("#thumb").attr('src', tempthing.tn);
 			processData();
 			
 		}
@@ -1062,6 +1073,8 @@ function download(filename, data) {
 		<div id="renderpanel" data-role="collapsible">
 	<h4>3D Preview</h4>
 		<div id="container"></div>
+		<img id="thumb"></img>
+
 		<textarea id="description">Test</textarea>	
 		<input class="ul" type="button" value="Upload Blueprint" disabled onclick="sendBlueprint();">
 	</div>
