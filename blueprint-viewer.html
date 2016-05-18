@@ -778,14 +778,22 @@ function countblocks(blocks){
 	blockRenderIndex=0;
 	maxc=[0,0,0,0];
 	minc=[0,0,0,0];	
-	return countblocksR(blocks,false,{});	
+	return countblocksR(blocks,false,{},[0,0,0],[0,0,0,1]);	
 }
 
 //counts blocks and accumulate vehicle data
-function countblocksR(blocks,notmain,parentpalette){
+function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation){
+	var shiftposition =[0,0,0];
+	var shiftRotation =[0,0,0,1];
+
+	if(notmain){
+		shiftposition=stoa3(blocks.LocalPosition);
+		shiftRotation=stoa(blocks.LocalRotation); 
+	}
+	
 	var SClist=blocks.SCs;
 	for(var scID = 0; scID < SClist.length; scID++){
-		countblocksR(SClist[scID],true,blocks.COL);
+		countblocksR(SClist[scID],true,blocks.COL,shiftposition,shiftRotation);
 	}
 
 	totalstats["Max Power*"] += Math.max(0,blocks.CSI[7]);
@@ -802,13 +810,7 @@ function countblocksR(blocks,notmain,parentpalette){
 		totalstats["Blueprint Modified*"] = true;
 	}
 
-	var shiftPosition =[0,0,0];
-	var shiftRotation =[0,0,0,1];
 
-	if(notmain){
-		shiftposition=stoa3(blocks.LocalPosition);
-		shiftRotation=stoa(blocks.LocalRotation); 
-	}
 
 	var blocklist=blocks.BlockIds;
 	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
@@ -818,10 +820,19 @@ function countblocksR(blocks,notmain,parentpalette){
 
 		var tempPosition=stoa3(blocks.BLP[blockIndex]);
 		var tempRotation=getQuat(blocks.BLR[blockIndex]);
+		
+		
 		if(notmain){
+			var ttPosition=posTransformNR(shiftposition,parentrotation);
+			//tempPosition=(tempPosition[0]+shiftRotation[0],tempPosition[1]+shiftRotation[1],tempPosition[2]+shiftRotation[2]);
 			tempPosition=posTransformNR(tempPosition,shiftRotation);
-			tempPosition=[tempPosition[0]+shiftposition[0],tempPosition[1]+shiftposition[1],tempPosition[2]+shiftposition[2]];
-			tempRotation=quatmul(shiftRotation,tempRotation);  
+			tempPosition=posTransformNR(tempPosition,parentrotation);
+			
+			tempPosition=[tempPosition[0]+ttPosition[0]+parentposition[0],tempPosition[1]+ttPosition[1]+parentposition[1],tempPosition[2]+ttPosition[2]+parentposition[2]];
+			var ttrotation=quatmul(parentrotation,shiftRotation);
+			//tempRotation=quatmul(shiftRotation,tempRotation);  
+			//tempRotation=quatmul(parentrotation,tempRotation);  
+			tempRotation=quatmul(ttrotation,tempRotation);  
 		}
 		
 		var tempColor=[80,80,80,1];
@@ -884,6 +895,7 @@ function countblocksR(blocks,notmain,parentpalette){
 		blockRenderIndex++
 	}
 }
+
 
 //check for numeric
 function isNumeric(n) {
