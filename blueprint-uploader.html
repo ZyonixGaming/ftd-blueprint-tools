@@ -391,11 +391,13 @@ function sendBlueprint(){
 	if(controls){
 		tempthing.ct=[controls.target.x,controls.target.y,controls.target.z];
 	}
+	/*
 	if(renderer){
 		var strMime = "image/jpeg;base64";
 		var imgData = renderer.domElement.toDataURL(strMime);
 		tempthing.tn=strMime;
 	}
+	*/
 
 	var params = JSON.stringify(tempthing);
 	request.open('POST', posturl + "?" + apikey, true);
@@ -424,7 +426,7 @@ function getBlueprint(id){
 			cameraposition=tempthing.cp;
 			cameratarget=tempthing.ct;
 			description=tempthing.de;
-			$("#thumb").attr('src', tempthing.tn);
+			//$("#thumb").attr('src', tempthing.tn);
 			processData();
 			
 		}
@@ -573,6 +575,7 @@ function loadError(message){
 function openFile() {
 	cameratarget=false;
 	cameraposition=false;
+	description="";
  var selectedFile = document.getElementById('blueprintfile').files[0];
  if (selectedFile){
   var reader = new FileReader();
