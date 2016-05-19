@@ -9,6 +9,15 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
 <style>
 
+
+hr{
+	width:90%;
+}
+
+.subtext{
+margin:4px;
+}
+
 .hidden{
 	display:none;
 }
@@ -42,15 +51,27 @@ background: #D0D0FF !important;
 	background-color:#8CCFFF;
 }
 
-
-.checkbox{
-	margin: 0 0;
-	vertical-align:middle; 
-	display:inline;
+.bigbox{
 	width:22px;
 	height:22px;
+	vertical-align:middle; 
 }
 
+.checkbox{
+	margin: 0px;
+	font-weight:bold !important;
+	padding-top:12px;
+	padding-left:8px;
+	align:right;
+	vertical-align:middle; 
+	display:inline;
+}
+
+.box{
+	
+    border: 2px solid black;
+
+}
 
 
 tbody tr:nth-child(even) td:nth-child(odd){background: #E0E0F0}
@@ -319,12 +340,23 @@ var blocksDebeamed = 0;
 
 var alreadyrender=false;
 
-
+var colorTable=[];
+var colorTableInverse=[];
 
 $(document).ready(function(){
 
+	$( ".palette" )
+	  .change(function () {
+		
+		var value = $( this ).val();
+		value=parseInt(value);
+		if(colorTable[value]){
+			$(this).parent().css("background-color",colorTable[value]);
+		}
 
-
+		//$(this).hide(1500).show(1500);
+	  });
+	//$( ".palette" ).change();
 	
 	
 	$( ".lb" ).click(function() {
@@ -381,7 +413,7 @@ $(document).ready(function(){
 	$(".lb").prop('disabled',false);		
 	$(".lb").parent().removeClass('ui-state-disabled');	
 
-alert("Warning:\r\nThe interface is currently quite terrible and is being worked on.\r\nFor a simpler and easier to use interface, go to the 'Modification Tool with basic interface' page from the links provided (top left corner)");
+//alert("Warning:\r\nThe interface is currently quite terrible and is being worked on.\r\nFor a simpler and easier to use interface, go to the 'Modification Tool with basic interface' page from the links provided (top left corner)");
 
 });
 
@@ -2918,6 +2950,8 @@ function download(filename, data) {
 
 //loads color palette
 function getpalette(blocks){
+	colorTableInverse=[];
+	colorTable=[];
  var palettedata = blocks.COL;
  for(var palID = 0; palID < palettedata.length; palID++){
   palStr = "" + palID;
@@ -2936,13 +2970,15 @@ function getpalette(blocks){
   var rtempb = ((1-colorArray[2]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
   
   
- 
-  document.getElementById("pal" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
-  document.getElementById("pal" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb);  
-  document.getElementById("co" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
-  document.getElementById("co" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb); 
+  colorTable[palID]=rgb2hex(tempr,tempg,tempb);
+  colorTableInverse[palID]=rgb2hex(rtempr,rtempg,rtempb);
+  document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
+  document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
+  document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
+  document.getElementById("co" + palStr).style.color = colorTableInverse[palID];
 
  }
+ $( ".palette" ).change();
 }
 
 function countblocks(blocks){
@@ -3200,102 +3236,13 @@ function getType(blockid){
 		<div class="ui-block-a">
 	<div id="blocktoolpanel" data-role="collapsible">
 		<h4>Block Modification Tools</h4>
-	
-<div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="wood" type="checkbox">Convert Wood: </label></div>
-<div class="ui-block-b"><select id="woodto"><option value="wood" selected="selected"> to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select></div>
-</div>
 
+		
+<br>
 <div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="alloy" type="checkbox">Convert Alloy: </label></div>
-<div class="ui-block-b"><select id="alloyto"><option value="wood" > to Wood</option><option value="alloy" selected="selected">to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
-</div>
-</div>
-
-<div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="metal" type="checkbox">Convert Metal: </label></div>
+<div class="ui-block-a"><label class="checkbox" ><input class="bigbox" id="paintrestrict" type="checkbox" data-role="none">Restrict block modifications to blocks colored: </label></div>
 <div class="ui-block-b">
-<select id="metalto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal" selected="selected">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
-</div>
-</div>
-
-<div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="glass" type="checkbox">Convert Glass: </label></div>
-<div class="ui-block-b"><select id="glassto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass" selected="selected">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
-</div>
-</div>
-
-<div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="stone" type="checkbox">Convert Stone: </label></div>
-<div class="ui-block-b"><select id="stoneto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option>  <option value="stone" selected="selected">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
-</div>
-</div>
-
-<div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="lead" type="checkbox">Convert Lead: </label></div>
-<div class="ui-block-b"><select id="leadto"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead" selected="selected">to Lead</option><option value="0" >delete!</option></select>
-</div>
-</div>
-
-
-<div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="shieldcolor" type="checkbox">Modify all shield color changers </label><p><i>* Only affect shields with shield color changers. <br>Limits: <br>R, G, B between 0 and 1,<br>Alpha between 0.10 and 10.</i></p></div>
-<div class="ui-block-b">
-<div class="ui-field-contain"><label for="shieldr">R</label><input type="range" name="shieldr" id="shieldr" min="0" max="1" step="0.01" value="1"></div>
-<div class="ui-field-contain"><label for="shieldg">G</label><input type="range" name="shieldg" id="shieldg" min="0" max="1" step="0.01" value="1"></div>
-<div class="ui-field-contain"><label for="shieldb">B</label><input type="range" name="shieldb" id="shieldb" min="0" max="1" step="0.01" value="1"></div>
-<div class="ui-field-contain"><label for="shielda">A</label><input type="range" name="shielda" id="shielda" min="0.1" max="10" step="0.01" value="1"></div>
-</div>
-</div>
-
-<div class="ui-grid-b">
-<div class="ui-block-a"><label><input id="paint" type="checkbox">Paint main vehicle</label></div>
-<div class="ui-block-b">
-<select id="painttarget"><option value="all" selected="selected"> all blocks</option> <option value="wood"> Wood </option> <option value="metal"> Metal </option><option value="alloy"> Alloy </option><option value="glass"> Glass </option><option value="stone"> Stone </option><option value="lead"> Lead </option><option value="paintstruct"> Wood/Metal/Alloy/Glass/Stone/Lead </option><option value="paintothers"> Not Wood/Metal/Alloy/Glass/Stone/Lead </option></select>
-</div>
-<div class="ui-block-c">
-<select id="tocolor">
-	<option id="pal00" value="0" selected="selected">00</option>
-	<option id="pal01" value="1">01</option>
-	<option id="pal02" value="2">02</option>
-	<option id="pal03" value="3">03</option>
-	<option id="pal04" value="4">04</option>
-	<option id="pal05" value="5">05</option>
-	<option id="pal06" value="6">06</option>
-	<option id="pal07" value="7">07</option>
-	<option id="pal08" value="8">08</option>
-	<option id="pal09" value="9">09</option>
-	<option id="pal10" value="10">10</option>
-	<option id="pal11" value="11">11</option>
-	<option id="pal12" value="12">12</option>
-	<option id="pal13" value="13">13</option>
-	<option id="pal14" value="14">14</option>
-	<option id="pal15" value="15">15</option>
-	<option id="pal16" value="16">16</option>
-	<option id="pal17" value="17">17</option>
-	<option id="pal18" value="18">18</option>
-	<option id="pal19" value="19">19</option>
-	<option id="pal20" value="20">20</option>
-	<option id="pal21" value="21">21</option>
-	<option id="pal22" value="22">22</option>
-	<option id="pal23" value="23">23</option>
-	<option id="pal24" value="24">24</option>
-	<option id="pal25" value="25">25</option>
-	<option id="pal26" value="26">26</option>
-	<option id="pal27" value="27">27</option>
-	<option id="pal28" value="28">Detail</option>
-	<option id="pal29" value="29">Trim</option>
-	<option id="pal30" value="30">Secondary</option>
-	<option id="pal31" value="31">Main</option>
- </select>
-</div>
-</div>
-
-
-<div class="ui-grid-a">
-<div class="ui-block-a"><label><input id="paintrestrict" type="checkbox">Restrict block modifications to blocks colored: </label></div>
-<div class="ui-block-b">
-<select id="paintallow">
+<select id="paintallow" class="palette">
 <option id="co00" value="0" selected="selected">00</option>
 <option id="co01" value="1">01</option>
 <option id="co02" value="2">02</option>
@@ -3331,9 +3278,128 @@ function getType(blockid){
 </select>
 </div>
 </div>
+		<hr>
+		
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="wood" type="checkbox" data-role="none">Convert Wood: 
+		<select id="woodto" data-role="none"><option value="wood" selected="selected"> to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		</label>
+	</div>
+</div>		
+
+
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="metal" type="checkbox" data-role="none">Convert Metal: 
+		<select id="metalto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal" selected="selected">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		</label>
+	</div>
+</div>
+
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="alloy" type="checkbox" data-role="none">Convert Alloy: 
+		<select id="alloyto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" selected="selected">to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		</label>
+	</div>
+</div>
+
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="glass" type="checkbox" data-role="none">Convert Glass: 
+		<select id="glassto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass" selected="selected">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		</label>
+	</div>
+</div>
+
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="stone" type="checkbox" data-role="none">Convert Stone: 
+		<select id="stoneto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option>  <option value="stone" selected="selected">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>	
+		</label>
+	</div>
+</div>
+
+
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="lead" type="checkbox" data-role="none">Convert Lead: 
+		<select id="leadto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead" selected="selected">to Lead</option><option value="0" >delete!</option></select>
+		</label>
+	</div>
+</div>
+<hr>
+<div class="ui-grid-a">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="paint" type="checkbox" data-role="none">Paint:
+		<select id="painttarget" data-role="none"><option value="all" selected="selected"> all blocks</option> <option value="wood"> Wood </option> <option value="metal"> Metal </option><option value="alloy"> Alloy </option><option value="glass"> Glass </option><option value="stone"> Stone </option><option value="lead"> Lead </option><option value="paintstruct"> All of the above </option><option value="paintothers"> None of the above</option></select>
+		</label>
+	</div>
+	<div class="ui-block-b">
+<select id="tocolor" class="palette">
+	<option id="pal00" value="0" selected="selected">00</option>
+	<option id="pal01" value="1">01</option>
+	<option id="pal02" value="2">02</option>
+	<option id="pal03" value="3">03</option>
+	<option id="pal04" value="4">04</option>
+	<option id="pal05" value="5">05</option>
+	<option id="pal06" value="6">06</option>
+	<option id="pal07" value="7">07</option>
+	<option id="pal08" value="8">08</option>
+	<option id="pal09" value="9">09</option>
+	<option id="pal10" value="10">10</option>
+	<option id="pal11" value="11">11</option>
+	<option id="pal12" value="12">12</option>
+	<option id="pal13" value="13">13</option>
+	<option id="pal14" value="14">14</option>
+	<option id="pal15" value="15">15</option>
+	<option id="pal16" value="16">16</option>
+	<option id="pal17" value="17">17</option>
+	<option id="pal18" value="18">18</option>
+	<option id="pal19" value="19">19</option>
+	<option id="pal20" value="20">20</option>
+	<option id="pal21" value="21">21</option>
+	<option id="pal22" value="22">22</option>
+	<option id="pal23" value="23">23</option>
+	<option id="pal24" value="24">24</option>
+	<option id="pal25" value="25">25</option>
+	<option id="pal26" value="26">26</option>
+	<option id="pal27" value="27">27</option>
+	<option id="pal28" value="28">Detail</option>
+	<option id="pal29" value="29">Trim</option>
+	<option id="pal30" value="30">Secondary</option>
+	<option id="pal31" value="31">Main</option>
+ </select>	
+	</div>
+</div>
+
+
+<hr>
+
+<div class="ui-grid-a">
+<div class="ui-block-a"><label class="checkbox"><input class="bigbox" id="shieldcolor" type="checkbox" data-role="none">Modify all shield color changers </label><div class="subtext"><i>Limits: <br>R, G, B between 0 and 1,<br>Alpha between 0.10 and 10.<br><br>Only affect shields with shield color changers. <br></i></div></div>
+<div class="ui-block-b">
+<div class="ui-field-contain"><label for="shieldr">R</label><input type="range" name="shieldr" style="background-color:#FF7F7F;" id="shieldr" min="0" max="1" step="0.01" value="1"></div>
+<div class="ui-field-contain"><label for="shieldg">G</label><input type="range" name="shieldg" style="background-color:#7FFF7F;" id="shieldg" min="0" max="1" step="0.01" value="1"></div>
+<div class="ui-field-contain"><label for="shieldb">B</label><input type="range" name="shieldb" style="background-color:#7F7FFF;" id="shieldb" min="0" max="1" step="0.01" value="1"></div>
+<div class="ui-field-contain"><label for="shielda">A</label><input type="range" name="shielda" id="shielda" min="0.1" max="10" step="0.01" value="1"></div>
+</div>
+</div>
+
+
+</div>
+
 
 	
-	</div>
+
 		
 		
 		
@@ -3518,7 +3584,7 @@ Copy and paste the following into a new .blueprint file!<br>
 
 		  </tbody>
 		</table>
-		<p><i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i></p>
+		<div class="subtext"><i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i></div>
 	</div>		
 		
 		</div>
