@@ -67,6 +67,10 @@ background: #D0D0FF !important;
 	display:inline;
 }
 
+.ui-slider-track.ui-mini {
+	margin-left:58px;
+}
+
 .box{
 	
     border: 2px solid black;
@@ -3407,52 +3411,44 @@ function getType(blockid){
 <div id="vehicletoolpanel" data-role="collapsible">
 <h4>Vehicle Modification Tools</h4>
 
-<div class="ui-grid-solo">
+<br>
+<div class="ui-grid-a">
 <div class="ui-block-a">
-<label><input id="highlightAI" type="checkbox">Highlight AI, ACB, PID blocks on main vehicle (will overwrite paint settings)</label>
+<label><input id="highlightAI" type="checkbox" data-mini="true">Highlight AI, ACB, PID blocks (will overwrite paint settings)</label>
+</div>
+<div class="ui-block-b">
+<label><input id="randomcolor"  type="checkbox" data-mini="true">Randomly paint main vehicle (will overwrite paint settings)</label>
 </div>
 </div>
-<div class="ui-grid-solo">
+
+<div class="ui-grid-a">
 <div class="ui-block-a">
-<label><input id="randomcolor"  type="checkbox">Randomize colors on main vehicle (will overwrite paint settings)</label>
+<label><input id="replaceold" type="checkbox" data-mini="true">Replace old armor blocks (1m and 2m left,right,and up slopes)</label>
+</div>
+<div class="ui-block-b">
+<label><input id="clearhull" type="checkbox" data-mini="true">Delete all blocks except Wood/Alloy/Metal/Glass/Stone/Lead.</label>
 </div>
 </div>
-
-<div class="ui-grid-solo">
-<div class="ui-block-a">
-<label><input id="clearhull" type="checkbox">Delete all blocks except Wood/Alloy/Metal/Glass/Stone/Lead.</label>
-</div>
-</div>
-
-
-<div class="ui-grid-solo">
-<div class="ui-block-a">
-<label><input id="replaceold" type="checkbox">Replace old armor blocks! (e.g. 1m and 2m left,right,and up slopes)</label>
-</div>
-</div>
-
-
-<div class="ui-grid-solo">
-<div class="ui-block-a">
-<label><input id="becomeVehicle" type="checkbox">Turn blueprint into a vehicle (Invalid blocks on a vehicle will be deleted!)</label>
-</div>
-</div>
-
-
-<div class="ui-grid-solo">
-<div class="ui-block-a">
-<label><input id="becomeStructure" type="checkbox">Turn blueprint into a Structure (Invalid blocks on a structure will be deleted!</label>
-</div>
-</div>
-
 
 
 <div class="ui-grid-a">
 <div class="ui-block-a">
-<label><input id="rotateVehicle" type="checkbox">Rotate vehicle: </label>
+<label><input id="becomeVehicle" type="checkbox" data-mini="true">Turn blueprint into a Vehicle (Invalid blocks will be deleted!)</label>
 </div>
 <div class="ui-block-b">
-<select id="rotatedir">
+<label><input id="becomeStructure" type="checkbox" data-mini="true">Turn blueprint into a Structure (Invalid blocks will be deleted!)</label>
+</div>
+</div>
+
+<hr>
+
+
+<div class="ui-grid-a">
+<div class="ui-block-a">
+<label class="checkbox"><input class="bigbox" id="rotateVehicle" type="checkbox" data-role="none">Rotate vehicle: </label>
+</div>
+<div class="ui-block-b">
+<select id="rotatedir" data-mini="true" >
 	<option value="1" selected="selected">Turn Right</option>
 	<option value="3" >Turn Left</option>
 	<option value="10" >Nose Up</option>
@@ -3462,68 +3458,78 @@ function getType(blockid){
 </select>
 </div>
 </div>
+<hr>
+
+
 
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="mirrorLateral" type="checkbox">Mirror vehicle laterally (flip left and right sides)</label>
+<label><input id="debeamify" type="checkbox" data-mini="true">DeBeamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 4m beams and diagonal slopes into 1m blocks and slopes.</label>
+</div>
+</div>
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="beamify2" type="checkbox" data-mini="true">Beamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 1m blocks and slopes into 4m beams and diagonal slopes.</label>
 </div>
 </div>
 
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="debeamify" type="checkbox">DeBeamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 4m beams and diagonal slopes into 1m blocks and slopes.</label>
-</div>
-</div>
-<div class="ui-grid-solo">
-<div class="ui-block-a">
-<label><input id="beamify2" type="checkbox">Beamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 1m blocks and slopes into 4m beams and diagonal slopes.</label>
+<label><input id="beamifyOptimized" type="checkbox" data-mini="true">Beamify using an optimization algorithm. Slower but will fit in more beams. It can take up to a few minutes for large unbeamed vehicles.</label>
 </div>
 </div>
 
+<hr>
+
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="beamifyOptimized" type="checkbox">Beamify using an optimization algorithm. Slower but will fit in more beams. It can take up to a few minutes for large unbeamed vehicles.</label>
+<label><input id="mirrorLateral" type="checkbox" data-mini="true">Mirror vehicle laterally (flip left and right sides)</label>
 </div>
 </div>
+<hr>
+
 
 
 <div class="ui-grid-a">
 <div class="ui-block-a">
-<label><input id="cutinhalf" type="checkbox">Cut the blueprint in half! Only left side remains!</label>
+<label class="checkbox"><input class="bigbox" id="cutinhalf" type="checkbox" data-role="none">Cut the blueprint in half! Only left side remains!</label>
 </div>
-<div class="ui-block-b">
-<div class="ui-field-contain"><label for="centershift">Split position:</label><input type="range" min="-1000" max="1000" name="centershift" id="centershift"  step="1" value="0"></div>
+<div class="ui-block-b" >
+<div class="ui-field-contain"><label for="centershift">Cut position</label><input  data-mini="true" type="range" min="-100" max="100" name="centershift" id="centershift"  step="1" value="0"></div>
 </div>
 </div>
+<hr>
 
 <div class="ui-grid-a">
 <div class="ui-block-a">
-<label><input id="jointmirror" type="checkbox">Attach a mirrored copy of the vehicle on the right!</label>
+<label class="checkbox"><input class="bigbox" id="jointmirror" type="checkbox" data-role="none">Attach a mirrored copy of the vehicle on the right!</label>
 </div>
 <div class="ui-block-b">
-<label><input data-iconpos="right" id="evenclone2" type="checkbox">Even Width?</label>
+<label><input  id="evenclone2" type="checkbox" data-mini="true">Even Width?</label>
 </div>
 </div>
-
-<div class="ui-grid-b">
-<div class="ui-block-a">
-<label><input id="cutandmirror" type="checkbox">Replace the right side with a mirrored copy of the left!</label>
-</div>
-<div class="ui-block-b">
-<label><input data-iconpos="right" id="evenclone1" type="checkbox">Even Width?</label>
-</div>
-<div class="ui-block-c">
-<div class="ui-field-contain"><label for="cloneshift">Split position:</label><input type="range" min="-1000" max="1000" name="cloneshift" id="cloneshift"  step="1" value="0"></div>
-</div>
-</div>
+<hr>
 
 <div class="ui-grid-a">
 <div class="ui-block-a">
-<label><input id="widen" type="checkbox">Widen the vehicle by splitting it apart!</label>
+<label class="checkbox"><input class="bigbox" id="cutandmirror" type="checkbox" data-role="none">Replace the right side with a mirrored copy of the left!</label>
 </div>
 <div class="ui-block-b">
-<div class="ui-field-contain"><label for="widendistance">Distance:</label><input type="range" min="-1000" max="1000" name="widendistance" id="widendistance"  step="1" value="1"></div>
-<div class="ui-field-contain"><label for="widenshift">Split position:</label><input type="range" min="-1000" max="1000" name="widenshift" id="widenshift"  step="1" value="0"></div>
+<label><input id="evenclone1" type="checkbox" data-mini="true">Even Width?</label>
+<div class="ui-field-contain"><label for="cloneshift">Flip position:</label><input data-mini="true" type="range" min="-100" max="100" name="cloneshift" id="cloneshift"  step="1" value="0"></div>
+</div>
+</div>
+
+<hr>
+
+
+<div class="ui-grid-a">
+<div class="ui-block-a">
+<label  class="checkbox"><input class="bigbox" id="widen" type="checkbox" data-role="none">Widen the vehicle by splitting it apart!</label>
+</div>
+<div class="ui-block-b">
+<div class="ui-field-contain"><label for="widendistance">Distance:</label><input data-mini="true" type="range" min="-100" max="100" name="widendistance" id="widendistance"  step="1" value="1"></div>
+<div class="ui-field-contain"><label for="widenshift">Split position:</label><input data-mini="true" type="range" min="-100" max="100" name="widenshift" id="widenshift"  step="1" value="0"></div>
 </div>
 </div>
 
