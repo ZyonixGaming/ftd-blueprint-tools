@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Schematic to Blueprint converter</title>
+		<meta charset="utf-8">
+		
+	<link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/ >
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
+<style>
+
+.hidden{
+	display:none;
+}
+.ui-header {
+background: #D0D0FF !important;
+}
+
+.ui-collapsible-content {
+    padding: 0px;
+}
+
+
+.tablesorter-blue{
+	margin:0 0;
+	text-align: center;
+}
+#HCB_comment_box{
+	margin: 0 0;
+	padding: 0.8em;
+}
+#container{
+	background-color:#8CCFFF;
+}
+
+tbody tr:nth-child(even) td:nth-child(odd){background: #E0E0F0}
+tbody tr:nth-child(odd) td:nth-child(even){background: #FFFFFF}
+tbody tr:nth-child(even) td:nth-child(even){background: #F0F0FF}
+tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
+
+
+</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
+	<script src="itemtable.js"></script>
+	<script src="links.js"></script>
+	<script src="three.min.js"></script>
+	<script src="OrbitControls.js"></script>	
+	<script src="ConvexGeometry.js"></script>	
+	<script src="pako.min.js"></script>	
+		
+
+<script>
+
+	var container;
+	var camera, controls, scene, renderer;
+	var animateid;
+
+
+	function init() {
+		if(animateid){
+			cancelAnimationFrame(animateid);
+		}
+		container = document.getElementById( "container" );
+
+		scene = new THREE.Scene();
+		scene.add( new THREE.AmbientLight( 0x555555 ) );
+
+		var geometry = new THREE.Geometry(),
+		defaultMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors, shininess: 0	} );
+
+		function applyVertexColors( g, c ) {
+			g.faces.forEach( function( f ) {
+				var n = ( f instanceof THREE.Face3 ) ? 3 : 4;
+				for( var j = 0; j < n; j ++ ) {
+					f.vertexColors[ j ] = c;
+				}
+			} );
+		}
+
+
+		
+		var color = new THREE.Color();
+		var matrix = new THREE.Matrix4();
+		var quaternion = new THREE.Quaternion();	
+		
+		
+		var sizescale=3;
+		for(renderIndex in blockRenderData){
+			var tempRender = blockRenderData[renderIndex];
+			
+			var position = new THREE.Vector3();
+			position.x = (tempRender.position[0])*-sizescale;
+			position.y = (tempRender.position[1])*sizescale;
+			position.z = (tempRender.position[2])*sizescale;
+
+
+			quaternion = new THREE.Quaternion(-tempRender.rotation[0],tempRender.rotation[1],tempRender.rotation[2],-tempRender.rotation[3]);			
+			//quaternion = new THREE.Quaternion(0,0,0,1);			
+			var scale = new THREE.Vector3();
+			scale.x = sizescale;
+			scale.y = sizescale;
+			scale.z = sizescale;
+			
+			matrix.compose( position, quaternion, scale );
+			
+			var points = [
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.negy-0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.negy-0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.posy+0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.posy+0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.negy-0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.negy-0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( tempRender.negx-0.5, tempRender.posy+0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( tempRender.posx+0.5, tempRender.posy+0.5, tempRender.posz+0.5 ),
+			];
+			var geom =  new THREE.ConvexGeometry( points );		
+
+		
+			//var geom = new THREE.BoxGeometry( 1, 1, 1 );
+			//applyVertexColors( geom, color.setHex( Math.random() * 0xffffff ) );
+			applyVertexColors(geom, color.set(tempRender.color));
+			geometry.merge( geom, matrix );	
+			
+		}
+		
+		
+		var minx=minc[0];
+		var maxx=maxc[0];
+		var miny=minc[1];
+		var maxy=maxc[1];
+		var minz=minc[2];
+		var maxz=maxc[2];
+		
+		var midx=(minx+maxx)/2;
+		var midy=(miny+maxy)/2;
+		var midz=(minz+maxz)/2;
+		
+		var maxdist=Math.sqrt((Math.pow(Math.max(maxx-minx,maxy-miny,maxz-minz)/1.4,2))/3);
+		maxdist=maxdist/2;
+		maxdist=maxdist+10/maxdist;
+		maxdist=Math.sqrt(Math.pow(maxdist,2)/3);
+		
+		
+
+		var drawnObject = new THREE.Mesh( geometry, defaultMaterial );
+		scene.add( drawnObject );
+		
+		var intensity=Math.sqrt(maxz-minz)/6
+		var light = new THREE.PointLight( 0xffffff, intensity );
+		light.position.set( (maxx*(-sizescale))+250, (maxy+Math.sqrt(maxy-miny))*(sizescale+1), maxz*(sizescale+1) );
+		scene.add( light );
+		
+
+		renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+		renderer.setClearColor( 0xffffff,0 );
+		//renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setPixelRatio(1);
+		renderer.sortObjects = false;
+		container.innerHTML = "";
+		container.appendChild( renderer.domElement );
+		camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 5000 );
+		camera.position.x = (minx-maxdist)*(-sizescale);
+		camera.position.y = (maxy*1.2)*(sizescale);
+		camera.position.z = (((midz+(maxz*2.5))/3.5)*sizescale)
+		//camera.lookAt(new THREE.Vector3( midx*-10, (maxy-(miny*1.3))*10, ((maxz*1.1)-minz)*10 ));
+		controls = new THREE.OrbitControls( camera ,renderer.domElement);
+		controls.rotateSpeed = 1.0;
+		controls.zoomSpeed = 1.2;
+		controls.panSpeed = 0.8;
+		controls.enableZoom = true;
+		controls.enablePan = true;
+		controls.target.set(midx*(-sizescale), (((maxy+(miny*1.3))/2)*sizescale), (((minz+(maxz*2.5))/3.5)*sizescale));
+		camera.lookAt(new THREE.Vector3(midx*(-sizescale), (((maxy+(miny*1.5))/2.5)*sizescale), (((minz+(maxz*2.5))/3.5)*sizescale)));
+		
+		// EVENTS
+		window.addEventListener( 'resize', onWindowResize, false );
+		onWindowResize();
+		onWindowResize();
+
+	}
+
+
+
+	var lastani=0;
+	function animate() {
+		animateid=requestAnimationFrame( animate );
+		if($("#renderpanel").hasClass("ui-collapsible-collapsed")){
+			//do nothing
+		}else{
+			
+			var tempnow=Date.now();
+			if(tempnow-lastani>100){
+				lastani=tempnow;
+				render();
+			}
+		}
+	}
+
+	function render() {
+		//controls.update();
+		renderer.render( scene, camera );
+	}
+	
+	
+	
+	
+	function onWindowResize() {
+
+		var canvasWidth = $("#container").innerWidth();
+		var canvasratio= window.innerHeight/window.innerWidth;
+		if(canvasratio>1){
+			canvasratio=1;
+		}else if (canvasratio<0.5){
+			canvasratio=0.5;
+		}
+		var canvasHeight = Math.round(canvasWidth*canvasratio);
+		
+		renderer.setSize( canvasWidth, canvasHeight );
+
+		camera.aspect = canvasWidth / canvasHeight;
+		camera.updateProjectionMatrix();
+
+		render();
+
+	}	
+
+</script>
+	
+<script>
+
+
+var mcConvertTable = {	0:[[-1,0,0]],
+						1:[[368,9,0],[368,19,0],[368,19,0],[368,1,0],[368,1,0],,[368,9,0],,[368,9,0]],
+						2:[[368,6,0]],
+						3:[[368,13,0],[368,13,0],[368,13,0]],
+						4:[[368,9,0]],
+						5:[[368,0,0],[368,17,0],[368,18,0],[368,19,0],[368,2,0],[368,13,0]],
+						6:[[68,0,0]], //tree=dedicated heliblade pole extender
+						7:[[368,8,0]],
+						8:[[-1,0,0]],//water
+						9:[[-1,0,0]],//water
+						10:[[-1,0,0]],//lava
+						11:[[-1,0,0]],//lava
+						12:[[368,21,0],[368,2,0]],
+						13:[[368,9,0]],
+						14:[[368,9,0]],
+						15:[[368,9,0]],
+						16:[[368,9,0]],
+						17:[[367,0,0],[367,17,0],[367,18,0],[367,0,0]],						
+						18:[[367,6,0],[367,14,0],[367,14,0],[367,6,0]],	
+						19:[[367,5,0],[367,5,0]],	
+						20:[[461,0,0]],	 //glass
+						21:[[368,9,0]],	
+						22:[[461,12,0]],	
+						23:[[134,0,0]], //deck port ammo router
+						24:[[368,21,0]],
+						25:[[367,17,0]],
+						26:[[-1,0,0]],
+						27:[[371,0,0]], //rail? -> window block
+						28:[[371,0,0]], //rail?
+						29:[[134,0,0]], //rail?
+						30:[[-1,0,0]], //web
+						31:[[68,2,0],[68,0,0],[68,0,0]],
+						32:[[68,2,0]],
+						33:[[134,0,0]], //deck port ammo router
+						34:[[-1,0,0]], 
+						35:[[368,1,0],[368,2,0],[368,3,0],[368,4,0],[368,5,0],[368,6,0],[368,7,0],[368,8,0],[368,9,0],[368,10,0],[368,11,0],[368,12,0],[368,13,0],[368,14,0],[368,15,0],[368,16,0]],
+						36:[[-1,0,0]], 
+						37:[[-1,0,0]], 
+						38:[[-1,0,0]], 
+						39:[[-1,0,0]], 
+						40:[[-1,0,0]], 
+						41:[[369,5,0]],
+						42:[[369,1,0]],
+						43:[[368,9,0],[368,21,0],[368,17,0],[368,8,0],[368,13,0],[368,8,0],[368,13,0],[368,1,0],[368,9,0],[368,21,0]],
+						44:[[368,9,0],[368,21,0],[368,17,0],[368,8,0],[368,13,0],[368,8,0],[368,13,0],[368,1,0],[368,9,0],[368,21,0]],
+						45:[[368,13,0]],
+						46:[[271,15,0]],
+						47:[[367,0,0]], //WOOD
+						48:[[367,9,0]],
+						49:[[372,0,0]], //LEAD
+						50:[[266,0,10]], //exhaust
+						51:[[-1,0,0]],
+						52:[[369,8,0]],
+						53:[[368,17,0]],
+						54:[[367,17,0]],
+						55:[[-1,0,0]],
+						56:[[369,8,0]],
+						57:[[461,20,0]],
+						58:[[367,0,0]],
+						59:[[-1,0,0]],
+						60:[[367,0,0]],
+						61:[[134,0,0]],
+						62:[[134,0,0]],
+						65:[[371,0,0]], //rail? -> window block
+						66:[[371,0,0]], //rail?
+						67:[[368,8,0]], 
+						68:[[-1,0,0]],
+						69:[[266,0,10]], //exhaust
+						70:[[-1,0,0]],//flat surface?
+						71:[[-1,0,0]],
+						72:[[-1,0,0]],//flat surface?
+						73:[[368,9,0]],
+						74:[[368,0,0]],
+						75:[[266,0,10]],
+						76:[[266,0,10]], //exhaust
+						77:[[-1,0,0]], //small block?
+						78:[[-1,0,0]],//flat surface?
+						79:[[461,4,0]],
+						80:[[369,1,0]],
+						81:[[369,14,0]],
+						81:[[369,9,0]],
+						83:[[-1,0,0]],
+						84:[[367,13,0]],
+						85:[[371,0,0]], //fence?
+						86:[[367,2,0]], 
+						87:[[368,15,0]], 
+						88:[[368,13,0]],
+						89:[[368,17,0]],
+						90:[[461,11,0]],
+						91:[[367,2,0]],
+						92:[[-1,0,0]],
+						93:[[-1,0,0]],
+						94:[[-1,0,0]],
+						95:[[461,1,0],[461,2,0],[461,3,0],[461,4,0],[461,5,0],[461,6,0],[461,7,0],[461,8,0],[461,9,0],[461,10,0],[461,11,0],[461,12,0],[461,13,0],[461,14,0],[461,15,0],[461,16,0]],
+						96:[[-1,0,0]],//flat surface?
+						97:[[368,9,0]],
+						98:[[368,9,0]],
+						99:[[368,19,0]],
+						100:[[369,15,0]],
+						101:[[371,9,0]], //iron grill?
+						102:[[461,0,0]], 
+						103:[[369,14,0]],
+						104:[[-1,0,0]],
+						105:[[-1,0,0]],
+						106:[[-1,0,0]], //vines
+						107:[[371,0,0]],
+						108:[[368,13,0]],
+						109:[[368,9,0]],
+						110:[[368,8,0]],
+						111:[[367,14,0]],
+						112:[[368,13,0]],
+						113:[[371,13,0]], //fence?
+						114:[[368,13,0]],
+						115:[[-1,0,0]],
+						116:[[369,15,0]],
+						117:[[-1,0,0]],
+						118:[[-1,0,0]],
+						119:[[-1,0,0]],
+						120:[[368,21,0]],
+						121:[[368,21,0]],
+						122:[[372,0,0]],
+						123:[[368,13,0]],
+						124:[[368,2,0]],
+						125:[[368,0,0],[368,17,0],[368,18,0],[368,19,0],[368,2,0],[368,13,0]],
+						126:[[368,0,0],[368,17,0],[368,18,0],[368,19,0],[368,2,0],[368,13,0]],
+						127:[[-1,0,0]],
+						128:[[368,18,0]],
+						129:[[368,9,0]],
+						130:[[372,0,0]],
+						131:[[-1,0,0]],
+						132:[[-1,0,0]],
+						133:[[369,6,0]],
+						134:[[368,17,0]],
+						135:[[368,18,0]],
+						136:[[368,19,0]],
+						137:[[368,19,0]],
+						138:[[461,2,0]],
+						139:[[368,8,0]],
+						140:[[-1,0,0]],
+						141:[[-1,0,0]],
+						142:[[-1,0,0]],
+						143:[[-1,0,0]],
+						144:[[-1,0,0]],
+						145:[[372,0,0]],
+						146:[[367,0,0]],
+						147:[[-1,0,0]],
+						148:[[-1,0,0]],
+						149:[[-1,0,0]],
+						150:[[-1,0,0]],
+						151:[[-1,0,0]],
+						152:[[461,15,0]],//glass
+						153:[[367,13,0]],
+						154:[[372,0,0]],
+						155:[[368,1,0]],
+						156:[[368,1,0]],
+						157:[[371,0,0]], //rail?
+						158:[[368,8,0]],
+						159:[[372,1,0],[372,2,0],[372,3,0],[372,4,0],[372,5,0],[372,6,0],[372,7,0],[372,8,0],[372,9,0],[372,10,0],[372,11,0],[372,12,0],[372,13,0],[372,14,0],[372,15,0],[372,16,0]],
+						160:[[461,1,0],[461,2,0],[461,3,0],[461,4,0],[461,5,0],[461,6,0],[461,7,0],[461,8,0],[461,9,0],[461,10,0],[461,11,0],[461,12,0],[461,13,0],[461,14,0],[461,15,0],[461,16,0]],
+						161:[[367,14,0]],
+						162:[[367,2,0],[367,13,0]],
+						163:[[367,2,0]],
+						164:[[367,13,0]],
+						165:[[461,6,0]],
+						166:[[-1,0,0]],
+						167:[[-1,0,0]],
+						168:[[368,22,0],[368,22,0],[368,23,0]],
+						169:[[369,1,0]],
+						170:[[367,5,0]],
+						171:[[-1,0,0]], //flat surfacee
+						172:[[367,19,0]],
+						173:[[367,16,0]],
+						174:[[461,4,0]],
+						175:[[-1,0,0]],
+						176:[[-1,0,0]],
+						177:[[-1,0,0]],
+						178:[[-1,0,0]],
+						179:[[368,2,0]],
+						180:[[368,2,0]],
+						181:[[368,2,0]],
+						182:[[368,2,0]],
+						183:[[371,0,0]],
+						184:[[371,21,0]],
+						185:[[371,18,0]],
+						186:[[371,17,0]],
+						187:[[371,2,0]],
+						188:[[371,0,0]],
+						189:[[371,21,0]],
+						190:[[371,18,0]],
+						191:[[371,17,0]],
+						192:[[371,2,0]],
+						193:[[136,13,0]],
+						194:[[136,21,0]],
+						195:[[136,13,0]],
+						196:[[136,2,0]],
+						197:[[136,16,0]],
+						198:[[266,1,10]],
+						199:[[369,11,0]],
+						200:[[369,11,0]],
+						201:[[369,11,0]],
+						202:[[369,11,0]],
+						203:[[369,11,0]],
+						204:[[369,11,0]],
+						205:[[369,11,0]],
+						206:[[368,18,0]],
+						207:[[-1,0,0]],
+						208:[[368,5,0]],
+						209:[[372,0,0]],
+						210:[[369,11,0]],
+						211:[[369,14,0]],
+						212:[[461,4,0]],
+						213:[[368,2,0]],
+						214:[[369,15,0]],
+						215:[[369,13,0]],
+						216:[[367,1,0]],
+						255:[[372,11,0]],		
+						
+}
+
+
+var QuatTable = {0:"0,0,0,1",1:"0,0.707106781186547,0,0.707106781186547",2:"0,1,0,0",3:"0,0.707106781186547,0,-0.707106781186547",4:"0.707106781186547,0,0,0.707106781186547",5:"0.5,0.5,-0.5,0.5",6:"0,-0.707106781186547,0.707106781186547,0",7:"-0.5,0.5,-0.5,-0.5",8:"0,-0.707106781186547,-0.707106781186547,0",9:"0.5,0.5,0.5,-0.5",10:"-0.707106781186547,0,0,0.707106781186547",11:"-0.5,0.5,0.5,0.5",12:"0,0,-1,0",13:"-0.707106781186547,0,-0.707106781186547,0",14:"1,0,0,0",15:"0.707106781186547,0,-0.707106781186547,0",16:"0,0,-0.707106781186547,0.707106781186547",17:"0.707106781186547,0.707106781186547,0,0",18:"0,0,0.707106781186547,0.707106781186547",19:"-0.707106781186547,0.707106781186547,0,0",20:"0.5,0.5,0.5,0.5",21:"0.5,-0.5,-0.5,0.5",22:"-0.5,0.5,-0.5,0.5",23:"-0.5,-0.5,0.5,0.5",}
+var RotTable = {"0,0,0,1":0,"0,1,0,1":1,"0,1,0,0":2,"0,1,0,-1":3,"1,0,0,1":4,"1,1,-1,1":5,"0,1,-1,0":6,"1,-1,1,1":7,"0,1,1,0":8,"1,1,1,-1":9,"1,0,0,-1":10,"1,-1,-1,-1":11,"0,0,1,0":12,"1,0,1,0":13,"1,0,0,0":14,"1,0,-1,0":15,"0,0,1,-1":16,"1,1,0,0":17,"0,0,1,1":18,"1,-1,0,0":19,"1,1,1,1":20,"1,-1,-1,1":21,"1,-1,1,-1":22,"1,1,-1,-1":23}
+
+var BeamAxisRot = [1,8,0];
+var BeamAxisPriority = [3,2,1];
+
+
+//to replace old blocks
+var oldBlocks = {"23a5c7f7-43bd-4329-8411-f5ab019125e7":{"Guid":"911fe222-f9b2-4892-9cd6-8b154d55b2aa","Rot":12},"35300339-2491-495c-a178-42c1121915bc":{"Guid":"c6176cb5-0a32-4d68-a749-8ee33b2230c1","Rot":12},"d2f5d5f0-9e7d-4c22-839f-0d9c04c34736":{"Guid":"5548037e-8428-43f8-bcb6-d730dbcd0a79","Rot":12},"71902772-b8a8-4663-a309-f9abb46ef0c7":{"Guid":"8477bbec-974c-45bf-a1ce-49a48d5b5307","Rot":12},"00d4381b-501d-4d6a-be06-fc89e0c6c6b8":{"Guid":"bdafa446-f615-49cb-94f3-d7652dde6cec","Rot":12},"70be6ef4-15b0-4dbb-bf7b-1f536c554659":{"Guid":"b88679fb-0325-4c85-942f-ad9c6ed6545b","Rot":12},"c28f4f27-55f0-4dcb-8fa0-125e560f09e0":{"Guid":"911fe222-f9b2-4892-9cd6-8b154d55b2aa","Rot":18},"fb83e6db-7c65-4bef-be39-f4762d7d2d66":{"Guid":"c6176cb5-0a32-4d68-a749-8ee33b2230c1","Rot":18},"7639e07d-9913-4b4a-ba6b-0804ee956d7a":{"Guid":"5548037e-8428-43f8-bcb6-d730dbcd0a79","Rot":18},"764b7977-dbe5-4ee7-929d-c6ad8b944b15":{"Guid":"8477bbec-974c-45bf-a1ce-49a48d5b5307","Rot":18},"ea8f9703-91bf-4406-8563-75215816556c":{"Guid":"bdafa446-f615-49cb-94f3-d7652dde6cec","Rot":18},"2ad766bd-3d33-471b-be53-5d6708553a46":{"Guid":"b88679fb-0325-4c85-942f-ad9c6ed6545b","Rot":18},"a1048d4d-3037-4970-84ba-9b5517ae4b4b":{"Guid":"911fe222-f9b2-4892-9cd6-8b154d55b2aa","Rot":16},"e71e02e9-5680-47bd-a5d9-053918b9a6db":{"Guid":"c6176cb5-0a32-4d68-a749-8ee33b2230c1","Rot":16},"fe51f44a-f400-41f3-8c05-b45aadbcc797":{"Guid":"5548037e-8428-43f8-bcb6-d730dbcd0a79","Rot":16},"82a57761-2027-4f63-b27b-ffd2b1eed419":{"Guid":"8477bbec-974c-45bf-a1ce-49a48d5b5307","Rot":16},"b00e9689-722d-4995-902b-0ef1b1f05780":{"Guid":"bdafa446-f615-49cb-94f3-d7652dde6cec","Rot":16},"c2da1fed-694a-4d3f-b565-953d1e36aa91":{"Guid":"b88679fb-0325-4c85-942f-ad9c6ed6545b","Rot":16}}
+
+//maps block ID of block to beam
+var blockToBeam = {}
+
+//maps block ID of beam to block
+var beamToBlock = {}
+
+var maxc=[0,0,0,0];
+var minc=[0,0,0,0];
+
+var blockRenderData = {}
+var blockRenderIndex = 0;
+
+var slopeBlockToBeam = {}
+var slopeBeamToBlock = {}
+var slopeBeamToBlockM = {}
+
+//maintains a list of blockID:newBlockID to facilitate switching blocks via convertblocks() function
+var conversionIndex = {}
+
+var replaceOldIndex = {}
+
+//maintains a list of blockID to keep via clearhull() function
+var keepIndex = {}
+
+//maintains a list of blockID to determine color changes via colorblocks() function
+var blockColorIndex = {}
+
+//blockID:blockname
+var nameID = {}
+
+//blockID:blockcount
+var countID = {}
+
+var colorID = {}
+
+//blockname:blockcount
+var blockCountData = {}
+
+//store stats
+var totalstats = {}
+
+var selectedFile
+var selectedFileName
+var ItemDic
+var CurrentBlueprint
+
+var selectedcolor
+
+var allowedcolor = -1;
+
+var blocksBeamed = 0;
+
+var blocksDebeamed = 0;
+
+var alreadyrender=false;
+
+var currentData = [];
+
+
+$(document).ready(function(){
+
+	
+	
+	$( ".lb" ).click(function() {
+	  $($(this).attr("btarget")).click();
+	  
+  
+	});
+	
+	
+	
+	$(function() {
+  // simple reflow widget (table with 1 header row)
+  
+  $("#table1").tablesorter({
+    theme: 'blue',
+    widgets: ['reflow'],
+    widgetOptions : {
+      // class name added to make it responsive (class name within media query)
+      reflow_className    : 'ui-table-reflow',
+      // header attribute containing modified header name
+      reflow_headerAttrib : 'data-name',
+      // data attribute added to each tbody cell
+      // it contains the header cell text, visible upon reflow
+      reflow_dataAttrib   : 'data-title',
+    },	
+	selectorHeaders: "thead th"
+  });
+  
+});
+
+	$(function() {
+  // simple reflow widget (table with 1 header row)
+  $("#table2").tablesorter({
+    theme: 'blue',
+    widgets: ['reflow'],
+    widgetOptions : {
+      // class name added to make it responsive (class name within media query)
+      reflow_className    : 'ui-table-reflow',
+      // header attribute containing modified header name
+      reflow_headerAttrib : 'data-name',
+      // data attribute added to each tbody cell
+      // it contains the header cell text, visible upon reflow
+      reflow_dataAttrib   : 'data-title',
+    },	
+	selectorHeaders: "thead th"
+  });
+  
+});
+
+	
+	$(".lb").prop('disabled',false);		
+	$(".lb").parent().removeClass('ui-state-disabled');		
+
+});
+
+
+//rotation*vector*rotation_conjugate
+//alert(JSON.stringify(RotTable));
+//alert(atos(posTransform([1,2,3],[0.5,0.5,-0.5,0.5])));
+//inverse x and inverse w to flip along yz plane
+
+//run once to populate RotTable from QuatTable - not needed with static table
+function initRotTable(){
+	for(rot in QuatTable){
+		var quat=getquatformatted(getQuat(rot));
+		var quatstr=atos(quat);
+		RotTable[quatstr]=rot;
+	}
+}//not needed now with static table
+
+
+
+//pos as [x,y,z] quat as[x,y,z,w]
+// transforms co-ordinate pos by the quaternion quat
+function posTransform(pos,quat){
+	var p = [pos[0],pos[1],pos[2],0];
+	var transpos = quatmul(quat,quatmul(p,quatconj(quat)));
+	return [Math.round(transpos[0]),Math.round(transpos[1]),Math.round(transpos[2])]
+}
+
+function posTransformNR(pos,quat){
+	var p = [pos[0],pos[1],pos[2],0];
+	var transpos = quatmul(quat,quatmul(p,quatconj(quat)));
+	return [(transpos[0]),(transpos[1]),(transpos[2])]
+}
+
+//combining 2 quat transforms e.g. q1 then q2 = applying q2*q1 or quatmul(q2,q1);
+
+
+function atos(a){
+	var s="";
+	if(a){
+		s=""+a[0];
+	}
+	for (var i=1;i<a.length;i++){
+		s=s + "," + a[i];
+	}
+	return s;
+}
+
+function stoa(s){
+	var temp=s.split(",");
+	return [parseFloat(temp[0]),parseFloat(temp[1]),parseFloat(temp[2]),parseFloat(temp[3])];
+}
+
+function stoa3(s){
+	var temp=s.split(",");
+	return [parseFloat(temp[0]),parseFloat(temp[1]),parseFloat(temp[2])];
+}
+
+
+function stoar(s){
+	var temp=s.split(",");
+	return [Math.round(parseFloat(temp[0])),Math.round(parseFloat(temp[1])),Math.round(parseFloat(temp[2]))];
+}
+
+function getQuat(rotation){
+	return JSON.parse("[" + QuatTable[rotation] + "]");
+}
+
+function getRot(quat){
+	var quatstr=atos(getquatformatted(quat));
+	return RotTable[quatstr];
+}
+
+//quat as array
+function getquatformatted(quat){
+	var q=[quat[0],quat[1],quat[2],quat[3]];
+	var r = Math.abs(q[0])+Math.abs(q[1])+Math.abs(q[2])+Math.abs(q[3]);
+	q[0]=Math.round(q[0]*r);
+	q[1]=Math.round(q[1]*r);
+	q[2]=Math.round(q[2]*r);
+	q[3]=Math.round(q[3]*r);
+	for(var i=0;i<4;i++){
+		if(q[i]>0){
+			break;
+		}else if(q[i]<0){
+			q=quatneg(q);
+			break;
+		}
+	}
+	return q;
+}
+
+//quat as array
+function getquatnormalized(quat){
+	var q=[quat[0],quat[1],quat[2],quat[3]];
+	var r = Math.sqrt(Math.abs(q[0])+Math.abs(q[1])+Math.abs(q[2])+Math.abs(q[3]));
+	q[0]=q[0]/r;
+	q[1]=q[1]/r;
+	q[2]=q[2]/r;
+	q[3]=q[3]/r;
+	return q;
+}
+
+//quat in x, y, z, w
+function quatneg(q){
+ return[-q[0],-q[1],-q[2],-q[3]];
+}
+//quat in x, y, z, w
+function quatconj(q){
+ return[-q[0],-q[1],-q[2],q[3]];
+}
+
+//quat in x, y, z, w
+function quatmul(q,r){
+ return [q[3] * r[0] + q[0] * r[3] + q[1] * r[2] - q[2] * r[1],
+     q[3] * r[1] - q[0] * r[2] + q[1] * r[3] + q[2] * r[0],
+     q[3] * r[2] + q[0] * r[1] - q[1] * r[0] + q[2] * r[3],
+     q[3] * r[3] - q[0] * r[0] - q[1] * r[1] - q[2] * r[2]];
+}
+
+function loadLinks(){
+	$('#linklist').empty();
+	for(var i=0;i<LinkList.length;i++){
+		$('#linklist').append(LinkList[i]);
+	}
+	
+}
+
+function loadError(message){
+	if(message){
+		alert(message);
+	}else{
+		alert("failure");
+	}	
+}
+
+function isString(arrayIndex,str){
+	tempresult=true;
+	for(var i=0;i<str.length;i++){
+		if(currentData.length<=arrayIndex+i){
+			tempresult=false;
+			break;
+		}
+		else if(currentData[arrayIndex+i]==str.charCodeAt(i)){
+			continue;
+		}else{
+			tempresult=false;
+			break;
+		}
+	}
+
+	return tempresult;
+}
+
+
+function processMC(){
+
+	var bp=CurrentBlueprint.Blueprint;
+	bp.BlockIds=[];
+	bp.BLR=[];
+	bp.BCI=[];
+	bp.BP1=[];
+	bp.BP2=[];
+	bp.BLP=[];
+	//CurrentBlueprint.Blueprint
+	var arrayindex=3;
+	var blockindex=0;
+	var dataindex=0;
+	var bpblockindex=0;
+	var width=0;
+	var height=0;
+	var length=0;
+	var block=false;
+	var data=false;
+	//Width
+	//Height
+	//Length
+	//Blocks
+	//Data
+	while(arrayindex<currentData.length){
+		if(!width&&isString(arrayindex,"Width")){
+			width=(currentData[arrayindex+5]*256)+currentData[arrayindex+6];
+			arrayindex+=6;
+			//alert("width="+width);
+		}else if(!height&&isString(arrayindex,"Height")){
+			height=(currentData[arrayindex+6]*256)+currentData[arrayindex+7];
+			arrayindex+=7;
+			//alert("height="+height);
+		}else if(!length&&isString(arrayindex,"Length")){
+			length=(currentData[arrayindex+6]*256)+currentData[arrayindex+7];
+			arrayindex+=7;
+			//alert("length="+length);
+		}else if(!block&&isString(arrayindex,"Blocks")){
+			block=[];
+			var blockstart=arrayindex+10;
+			var blocklength=(currentData[arrayindex+6]*256*256*256)+(currentData[arrayindex+7]*256*256)+(currentData[arrayindex+8]*256)+(currentData[arrayindex+9]);
+			var blockend=blockstart+blocklength;
+			block=currentData.slice(blockstart,blockend);
+			//alert("blocklength = " + block.length);
+			arrayindex=blockend;
+		}else if(!data&&isString(arrayindex,"Data")){
+			if(currentData[arrayindex-1]!=4){
+				arrayindex++;
+				continue;
+			}
+			data=[];
+			var datastart=arrayindex+8;
+			var datalength=(currentData[arrayindex+4]*256*256*256)+(currentData[arrayindex+5]*256*256)+(currentData[arrayindex+6]*256)+(currentData[arrayindex+7]);
+			var dataend=datastart+datalength;
+			data=currentData.slice(datastart,dataend);
+			//alert("datalength = "+ data.length);
+			arrayindex=dataend;
+		}
+		if(width&&height&&length&&block&&data){
+			break;
+		}
+	
+		arrayindex++;
+	}
+	if(((width*height*length)!=data.length)||((width*height*length)!=block.length)){
+		alert("possible mismatch!");
+	}
+	
+	for (var y=0;y<height;y++){
+		for(var z=0;z<length;z++){
+			for(var x=0;x<width;x++){
+				var tempindex=(y*length*width)+(z*width)+x;				
+				if(block[tempindex]){
+					var mcblock=block[tempindex];
+					var mcblockdata=0;
+					if(data[tempindex]){
+						mcblockdata=data[tempindex];
+					}
+					//default to metal,0
+					
+					//var ftdblock=369;//metal
+					var ftdblock=-1;//default to nothing
+					var ftdcolor=0;
+					var ftdrotate=0;
+					if(mcConvertTable[mcblock]){
+						if(mcConvertTable[mcblock][mcblockdata]){
+							ftdblock=mcConvertTable[mcblock][mcblockdata][0];
+							ftdcolor=mcConvertTable[mcblock][mcblockdata][1];
+							ftdrotate=mcConvertTable[mcblock][mcblockdata][2];
+						}else if(mcConvertTable[mcblock][0]){
+							ftdblock=mcConvertTable[mcblock][0][0];
+							ftdcolor=mcConvertTable[mcblock][0][1];
+							ftdrotate=mcConvertTable[mcblock][0][2];						
+						}else{
+							//donothing
+						}
+					}
+					
+					if(ftdblock>=0){
+						//might need to process data better to set block type and color and maybe even orientation
+						bp.BlockIds[bpblockindex]=ftdblock; //metal block. might need to make more dynamic in future.
+						bp.BLR[bpblockindex]=ftdrotate;
+						bp.BCI[bpblockindex]=ftdcolor; //color. Might need to change depending on blockID in future;
+						bp.BP1[bpblockindex]="0,0,0,0";
+						bp.BP2[bpblockindex]="0,0,0,0";
+						bp.BLP[bpblockindex]=atos([-x,y,z]);//might need to change in future to centralize it;
+						bpblockindex+=1;					
+					
+					}
+
+
+				}
+			
+			}
+		
+		
+		}
+	
+	}
+	
+	 
+};
+
+function downloadfile(){
+	download(selectedFileName + ".blueprint",JSON.stringify(CurrentBlueprint));
+}
+
+function download(filename, data) {
+    var blob = new Blob([data], {type: 'text/plain'});
+    if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else{
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;        
+        document.body.appendChild(elem)
+        elem.click();        
+        document.body.removeChild(elem);
+    }
+};
+
+
+function openFile() {
+ var selectedFile = document.getElementById('blueprintfile').files[0];
+ if (selectedFile){
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+   try{    
+     if(evt){
+		//var readresult=new Uint8Array(evt.target.result);
+		currentData=[];
+		var readresult=new Uint8Array(evt.target.result);
+		//alert(readresult.length);
+		currentData = pako.inflate(readresult);
+		//alert(currentData.length);
+
+	if(!(currentData[0]==10&&currentData[1]==0&&currentData[2]==9)){
+		throw "wrong file format!";
+	}else{
+		CurrentBlueprint = sampleBlueprint; 
+		processMC();		
+		selectedFileName = selectedFile.name;		
+	}
+
+	 
+     if (!processData()){
+      throw "unable to process blueprint"
+     }
+     
+    }else{
+     throw "unable to load file"
+    }
+   }
+   catch(err){
+    loadError(err);
+    } 
+  };
+  reader.readAsArrayBuffer(selectedFile);
+ }else{
+  //no file selected;
+ }
+ document.getElementById('blueprintfile').value="";
+};
+
+function processData(){
+    nameID = {}
+    countID = {}
+ blockCountData = {}
+ ItemDic =  CurrentBlueprint.ItemDictionary;
+ 
+ 		$("#table1 tbody").empty(); 
+		$("#table2 tbody").empty(); 
+		$("#renderpanel").collapsible("collapse");
+		document.getElementById("container").innerHTML="";
+		alreadyrender=false;
+ 
+ var a1;
+ var a2;
+ var b1;
+ var b2;
+ var c1;
+ var c2;
+ var d1;
+ var d2;
+ var e1;
+ var e2;
+ var f1;
+ var f2;
+ 
+ //for sloped blocks
+ var aa1=-1;
+ var aa2=-1;
+ var aa3=-1;
+ var ab1=-1;
+ var ab2=-1;
+ var ab3=-1;
+ var ac1=-1;
+ var ac2=-1;
+ var ac3=-1;
+ var ad1=-1;
+ var ad2=-1;
+ var ad3=-1;
+ 
+ 
+ blockToBeam={};
+ beamToBlock={};
+ 
+ slopeBlockToBeam={};
+ slopeBeamToBlock={};
+ slopeBeamToBlockM={};
+  
+ 
+ for(var key in ItemDic) {
+  var keyint = parseInt(key);
+  val = ItemDic[keyint];
+  if(ItemTable[val]){
+   nameID[keyint]=(ItemTable[val]).Name;
+   ItemTable[val].BlockId=keyint;
+  }else{
+   nameID[keyint]="unnamed";
+  }
+  countID[keyint]=0;
+  if (val=="9a0ae372-beb4-4009-b14e-36ed0715af73"){
+   a1=keyint;//woodblock
+  }else if(val=="05475442-0e52-4e0b-9fbb-2715f0e54f97"){
+   a2=keyint;//woodbeam
+  }else if(val=="ab699540-efc8-4592-bc97-204f6a874b3a"){
+   b1=keyint;//metalblock
+  }else if(val=="a7f5d8de-4882-4111-9d01-436493e5b2d8"){
+   b2=keyint;//metalbeam
+  }else if(val=="3cc75979-18ac-46c4-9a5b-25b327d99410"){
+   c1=keyint;//alloyblock
+  }else if(val=="9411e401-27da-4546-b805-3334f200f055"){
+   c2=keyint;//alloybeam
+  }else if(val=="2d519ca8-1f12-4a8e-9340-aa6648b5e799"){
+   d1=keyint;//glassblock
+  }else if(val=="395179c1-37a0-4250-851b-5bc19fd601b6"){
+   d2=keyint;//glassbeam
+  }else if(val=="e71e6f97-fbe8-4bf5-9645-d15179ba0c17"){
+   e1=keyint;//leadblock
+  }else if(val=="f5d2db25-114e-473a-8313-96831ccd011e"){
+   e2=keyint;//leadbeam
+  }else if(val=="710ee212-563b-42f8-acd1-57515479524d"){
+   f1=keyint;//stoneblock
+  }else if(val=="c7a19161-b361-4074-8c51-2398a0a70d1b"){
+   f2=keyint;//stonebeam
+  }else if(val=="bdafa446-f615-49cb-94f3-d7652dde6cec"){
+   aa1=keyint;//wood
+  }else if(val=="2ee817c1-f2a3-407a-847d-b97ffb844e45"){
+   aa2=keyint;//wood
+  }else if(val=="d077c2a4-4578-4965-9318-c14bb7ac1bd6"){
+   aa3=keyint;//wood
+  }else if(val== "5548037e-8428-43f8-bcb6-d730dbcd0a79"){
+   ab1=keyint;//metal
+  }else if(val== "0d554a9d-7d06-48b3-8aea-ffaeaa30380a"){
+   ab2=keyint;//metal
+  }else if(val== "e5d065f6-907b-450d-b998-213cdc54eec1"){
+   ab3=keyint;//metal
+  }else if(val=="911fe222-f9b2-4892-9cd6-8b154d55b2aa"){
+   ac1=keyint;//alloy
+  }else if(val=="9af822b3-80d9-46bd-9ce0-e6e5c2e61da4"){
+   ac2=keyint;//alloy
+  }else if(val=="b5d46bb7-d49e-42f6-817b-323fbf6d62b0"){
+   ac3=keyint;//alloy
+  }else if(val=="174b5b41-b70e-485d-b00a-a61cc9826b2c"){
+   ad1=keyint;//glass
+  }else if(val=="35abb89b-33b8-4cb4-b3d0-ee132247de8d"){
+   ad2=keyint;//glass
+  }else if(val=="0c64d302-c6df-42eb-a0ff-7c90f867ba4b"){
+   ad3=keyint;//glass
+  }
+
+  colorID[keyint]=[80,80,80,1];
+ 
+  for(var mat in shapedBlocks){
+   var tempindex = shapedBlocks[mat].blockGuid; 
+   var matID = tempindex[val];
+    if(matID!==undefined){
+	 colorID[keyint]= shapedBlocks[mat].color;
+     shapedBlocks[mat].blockIds[matID] = keyint;
+    }
+  }
+ }
+ 
+ blockToBeam[a1]=a2;
+ blockToBeam[b1]=b2;
+ blockToBeam[c1]=c2;
+ blockToBeam[d1]=d2;
+ beamToBlock[a2]=a1;
+ beamToBlock[b2]=b1;
+ beamToBlock[c2]=c1;
+ beamToBlock[d2]=d1; 
+ if(e1&&e2){
+  blockToBeam[e1]=e2;
+  beamToBlock[e2]=e1; 
+
+ }
+ if(f1&&f2){
+  blockToBeam[f1]=f2;
+  beamToBlock[f2]=f1; 
+ }
+ 
+ slopeBlockToBeam[aa1]=aa2;
+ slopeBlockToBeam[ab1]=ab2;
+ slopeBlockToBeam[ac1]=ac2;
+ slopeBlockToBeam[ad1]=ad2;
+ slopeBeamToBlock[aa2]=aa1;
+ slopeBeamToBlockM[aa3]=aa1;
+ slopeBeamToBlock[ab2]=ab1;
+ slopeBeamToBlockM[ab3]=ab1;
+ slopeBeamToBlock[ac2]=ac1;
+ slopeBeamToBlockM[ac3]=ac1;
+ slopeBeamToBlock[ad2]=ad1;
+ slopeBeamToBlockM[ad3]=ad1;
+
+ totalstats = {
+  "Block Count":0,
+  "Natural Cost":0,
+  "Metal Cost":0,
+  "Oil Cost":0,
+  "Scrap Cost":0,
+  "Crystal Cost":0,
+  "RP Cost":0,
+  "Volume":0,
+  "Max Power*":0,
+  "Max Battery Capacity*":0,
+  "Max Ammo Capacity*":0,
+  "Max Fuel Capacity*":0,
+  "Max Natural Storage*":0,
+  "Max Metal Storage*":0,
+  "Max Oil Storage*":0,
+  "Max Scrap Storage*":0,
+  "Max Crystal Storage*":0,
+  "Blueprint Modified*":false,
+ } 
+ countblocks(CurrentBlueprint.Blueprint);
+ totalstats["Volume"]=roundToTwo(totalstats["Volume"]);
+ getpalette(CurrentBlueprint.Blueprint);
+
+ var outputstring = "";
+ var totalcount = 0;
+ for(var blockID in countID) {
+  if(countID[blockID] >0) {
+   blockCountData[nameID[blockID]] =  countID[blockID];
+   totalcount+=countID[blockID];
+  }
+ }
+ totalstats["Block Count"] = totalcount;
+ 
+ keysSorted = Object.keys(blockCountData).sort(function(b,a){return blockCountData[a]-blockCountData[b]})
+ for (var bName in keysSorted){ 
+  outputstring +=  "<tr><td>" + keysSorted[bName]  + "</td><td><b>" + blockCountData[keysSorted[bName]] + "</b></td></tr>";
+  
+ }
+$("#table1 tbody").append(outputstring); 
+
+$("#table1").trigger("update");
+$("#blockcountpanel").collapsible("expand");
+
+ var statisticsString = "";
+ for (var stats in totalstats){ 
+  statisticsString +=  "<tr><td>" + stats  + "</td><td><b>" + totalstats[stats] + "</b></td></tr>";  
+ }
+
+$("#table2 tbody").append(statisticsString); 
+$("#table2").trigger("update");
+$("#blockstatpanel").collapsible("expand");
+
+$(".b1name").html(selectedFileName);
+
+
+$( "#renderpanel" ).collapsible({
+  expand: function( event, ui ) {
+ 	if(!alreadyrender){
+		//$("#container").width($("#renderpanel").innerWidth());
+		alreadyrender=true;
+		init();
+		animate();
+	} 
+  }
+  
+  
+  
+});
+
+	$(".dl").prop('disabled',false);		
+	$(".dl").parent().removeClass('ui-state-disabled');		
+
+	//$("#renderpanel").collapsible("expand");	
+ 	//		init();
+	//		animate();
+
+ return true;
+}
+
+
+//loads color palette
+function getpalette(blocks){
+ var palettedata = blocks.COL;
+ for(var palID = 0; palID < palettedata.length; palID++){
+  palStr = "" + palID;
+  if (palStr.length<2){
+   palStr = "0" + palStr;
+  }
+  var colorString = palettedata[palID];
+  var colorArray = colorString.split(',');
+  
+  var tempr = (colorArray[0] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var tempg = (colorArray[1] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var tempb = (colorArray[2] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  
+  var rtempr = ((1-colorArray[0]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var rtempg = ((1-colorArray[1]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  var rtempb = ((1-colorArray[2]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
+  
+  
+ /*
+  document.getElementById("pal" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
+  document.getElementById("pal" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb);  
+  document.getElementById("co" + palStr).style.backgroundColor = rgb2hex(tempr,tempg,tempb);  
+  document.getElementById("co" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb); 
+*/  
+ }
+}
+
+function countblocks(blocks){
+	blockRenderData={};
+	blockRenderIndex=0;
+	maxc=[0,0,0,0];
+	minc=[0,0,0,0];	
+	return countblocksR(blocks,false,{},[0,0,0],[0,0,0,1]);	
+}
+
+//counts blocks and accumulate vehicle data
+function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation){
+	var shiftposition =[0,0,0];
+	var shiftRotation =[0,0,0,1];
+
+	if(notmain){
+		shiftposition=stoa3(blocks.LocalPosition);
+		shiftRotation=stoa(blocks.LocalRotation); 
+	}
+	
+	var SClist=blocks.SCs;
+	for(var scID = 0; scID < SClist.length; scID++){
+		countblocksR(SClist[scID],true,blocks.COL,shiftposition,shiftRotation);
+	}
+
+	totalstats["Max Power*"] += Math.max(0,blocks.CSI[7]);
+	totalstats["Max Battery Capacity*"] += Math.max(0,blocks.CSI[49]);
+	totalstats["Max Ammo Capacity*"] += Math.max(0,blocks.CSI[38]);
+	totalstats["Max Fuel Capacity*"] += Math.max(0,blocks.CSI[40]);
+	totalstats["Max Natural Storage*"] += Math.max(0,blocks.CSI[23]);
+	totalstats["Max Metal Storage*"] += Math.max(0,blocks.CSI[24]);
+	totalstats["Max Oil Storage*"] += Math.max(0,blocks.CSI[25]);
+	totalstats["Max Scrap Storage*"] += Math.max(0,blocks.CSI[26]);
+	totalstats["Max Crystal Storage*"] += Math.max(0,blocks.CSI[27]);
+
+	if(blocks.designChanged){
+		totalstats["Blueprint Modified*"] = true;
+	}
+
+
+
+	var blocklist=blocks.BlockIds;
+	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
+		countID[blocklist[blockIndex]] +=1;
+		var currentBlock = getBlock(blocklist[blockIndex]);
+		var tempRender={}
+
+		var tempPosition=stoa3(blocks.BLP[blockIndex]);
+		var tempRotation=getQuat(blocks.BLR[blockIndex]);
+		
+		
+		if(notmain){
+			var ttPosition=posTransformNR(shiftposition,parentrotation);
+			//tempPosition=(tempPosition[0]+shiftRotation[0],tempPosition[1]+shiftRotation[1],tempPosition[2]+shiftRotation[2]);
+			tempPosition=posTransformNR(tempPosition,shiftRotation);
+			tempPosition=posTransformNR(tempPosition,parentrotation);
+			
+			tempPosition=[tempPosition[0]+ttPosition[0]+parentposition[0],tempPosition[1]+ttPosition[1]+parentposition[1],tempPosition[2]+ttPosition[2]+parentposition[2]];
+			var ttrotation=quatmul(parentrotation,shiftRotation);
+			//tempRotation=quatmul(shiftRotation,tempRotation);  
+			//tempRotation=quatmul(parentrotation,tempRotation);  
+			tempRotation=quatmul(ttrotation,tempRotation);  
+		}
+		
+		var tempColor=[80,80,80,1];
+		if(colorID[blocklist[blockIndex]]){
+			tempColor=colorID[blocklist[blockIndex]];
+		}
+		var paintColor=[0,0,0,0];
+		if(blocks.COL){
+			paintColor=stoa(blocks.COL[blocks.BCI[blockIndex]]);
+		}else{
+			paintColor=stoa(parentpalette[blocks.BCI[blockIndex]]);
+		}
+		
+		var tempr = (paintColor[0] * 255 * (paintColor[3])) +(tempColor[0]*(1-paintColor[3]));
+		var tempg = (paintColor[1] * 255 * (paintColor[3])) +(tempColor[1]*(1-paintColor[3]));
+		var tempb = (paintColor[2] * 255 * (paintColor[3])) +(tempColor[2]*(1-paintColor[3]));		
+		var tempa = Math.max(paintColor[3]+tempColor[3],1);
+		
+		//tempColor = [tempr,tempg,tempb,tempa];
+		tempColor=rgb2hex(tempr, tempg, tempb);
+			
+		var posx=0;
+		var negx=0;
+		var posy=0;
+		var negy=0;
+		var posz=0;
+		var negz=0;
+
+		if(currentBlock){
+			posx=currentBlock.posx;
+			negx=currentBlock.negx;
+			posy=currentBlock.posy;
+			negy=currentBlock.negy;
+			posz=currentBlock.posz;
+			negz=currentBlock.negz;   
+			totalstats["Natural Cost"]+=currentBlock.Natural;
+			totalstats["Metal Cost"]+=currentBlock.Metal;
+			totalstats["Oil Cost"]+=currentBlock.Oil;
+			totalstats["Scrap Cost"]+=currentBlock.Scrap;
+			totalstats["Crystal Cost"]+=currentBlock.Crystal;
+			totalstats["RP Cost"]+=currentBlock.SparesCost;
+			totalstats["Volume"]+=currentBlock.Volume;			
+		}
+		tempRender.position=tempPosition;
+		tempRender.rotation=tempRotation;
+		tempRender.posx=posx;
+		tempRender.negx=negx;
+		tempRender.posy=posy;
+		tempRender.negy=negy;
+		tempRender.posz=posz;
+		tempRender.negz=negz;
+		tempRender.color=tempColor;
+		maxc[0]=Math.max(maxc[0],tempPosition[0]);
+		maxc[1]=Math.max(maxc[1],tempPosition[1]);
+		maxc[2]=Math.max(maxc[2],tempPosition[2]);
+		minc[0]=Math.min(minc[0],tempPosition[0]);
+		minc[1]=Math.min(minc[1],tempPosition[1]);
+		minc[2]=Math.min(minc[2],tempPosition[2]);		
+		blockRenderData[blockRenderIndex]=tempRender;
+		blockRenderIndex++
+	}
+}
+
+
+//check for numeric
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+//change colors to hex format
+function rgb2hex(red, green, blue) {
+	var rgb = blue | (green << 8) | (red << 16);
+	return '#' + (0x1000000 + rgb).toString(16).slice(1)
+}
+
+//getblockdata
+function getBlock(bid){
+	return ItemTable[ItemDic[bid]];
+}
+
+function roundToTwo(num) {
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+
+
+</script>	
+		
+	</head>
+	<body>
+	
+	
+
+<div data-role="page">
+	
+	<div data-role="header">
+	<a href="#popupMenu" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">Links</a>
+		<h1>Schematic to Blueprint Converter</h1>
+	</div><!-- /header -->
+	<div data-role="content">	
+	<div data-role="popup" id="popupMenu">
+        <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
+        </ul>
+	</div>
+	<p>To start, click on the Open Schematic button and choose a schematic file.</p>
+	<p>After that scroll to the bottom of the page for the Download Blueprint button.</p>
+	<br>
+	<p>Please do not expand the '3D preview' after loading a large schematic file, as it might crash your browser.</p>
+	<div class="hidden"><input type="file" id="blueprintfile" accept=".schematic" onchange="openFile();"></div>
+	<div class="ui-grid-solo">
+		<div class="ui-block-a"><input class="lb" type="button" btarget="#blueprintfile" value="Open Schematic" disabled>
+		</div>
+	</div>	
+	
+	<div id="renderpanel" data-role="collapsible">
+	<h4>3D Preview</h4>
+		<div id="container"></div>
+	
+	</div>
+	<div id="blockcountpanel" data-role="collapsible" >
+		<h4>Block Count</h4>
+		<table id="table1"  class="table1 tablesorter">
+		  <thead>
+			<tr>
+			  <td colspan="2" align="center" class="b1name">Blueprint</td>
+			</tr>
+		  <tr>
+			  <th>Block</th>
+			  <th>Count</th>
+			</tr>
+		  </thead>
+		  <tbody>
+
+		  </tbody>
+		</table>
+
+	</div>
+	<div id="blockstatpanel" data-role="collapsible">
+		<h4>Blueprint Statistics</h4>
+		<table id="table2"  class="table2 tablesorter">
+		  <thead>
+			<tr>
+			  <td colspan="2" align="center" class="b1name">Blueprint</td>
+			</tr>
+		  <tr>
+			  <th>Statistic</th>
+			  <th>Value</th>
+			</tr>
+		  </thead>
+		  <tbody>
+
+		  </tbody>
+		</table>
+		<p><i>*These numbers are based on saved values in the blueprint, and might not be accurate especially after block modification.</i></p>
+	</div>
+	<div class="ui-grid-solo">
+		<div class="ui-block-a"><input class="dl" type="button" value="Download Blueprint" disabled onclick="downloadfile();">
+		</div>
+	</div>	
+	<div id="commentpanel" data-role="collapsible">
+		<h4>Comments</h4>
+<!-- begin wwww.htmlcommentbox.com -->
+ <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">Comment Box</a> is loading comments...</div>
+ <link rel="stylesheet" type="text/css" href="http://www.htmlcommentbox.com/static/skins/bootstrap/twitter-bootstrap.css?v=0" />
+ <script type="text/javascript" id="hcb"> /*<!--*/ if(!window.hcb_user){hcb_user={};} hcb_user.PAGE="http://zyonixgaming.github.io/ftd-blueprint-tools/";(function(){var s=document.createElement("script"), l=hcb_user.PAGE || (""+window.location).replace(/'/g,"%27"), h="http://www.htmlcommentbox.com";s.setAttribute("type","text/javascript");s.setAttribute("src", h+"/jread?page="+encodeURIComponent(l).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24TL9IWcbJsERm2sQFposUO%2F"+"&opts=16862&num=10&ts=1463318440233");if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})(); /*-->*/ </script>
+<!-- end www.htmlcommentbox.com -->
+	</div>
+	<p></p>
+	<p>Copyright &copy; 2016 Zyonix Gaming</p>	
+	</div>
+</div>
+
+
+<script>
+loadLinks();
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-77242087-2', 'auto');
+  ga('send', 'pageview');
+</script>
+		
+	</body>
+</html>
