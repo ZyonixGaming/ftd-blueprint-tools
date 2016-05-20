@@ -730,8 +730,9 @@ function isString(arrayIndex,str){
 
 
 function processMC(){
-
+	
 	var bp=CurrentBlueprint.Blueprint;
+	bp.Name=(selectedFileName.split("."))[0];
 	bp.BlockIds=[];
 	bp.BLR=[];
 	bp.BCI=[];
@@ -890,8 +891,9 @@ function openFile() {
 		throw "wrong file format!";
 	}else{
 		CurrentBlueprint = sampleBlueprint; 
+		selectedFileName = selectedFile.name;	
 		processMC();		
-		selectedFileName = selectedFile.name;		
+			
 	}
 
 	 
