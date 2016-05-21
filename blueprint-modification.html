@@ -343,6 +343,7 @@ var blocksBeamed = 0;
 var blocksDebeamed = 0;
 
 var alreadyrender=false;
+var autorender=false;
 
 var colorTable=[];
 var colorTableInverse=[];
@@ -561,11 +562,12 @@ function openFile() {
   reader.onload = function(evt) {
    try{    
      if(evt){
-     CurrentBlueprint = JSON.parse(evt.target.result);    
-     selectedFileName = selectedFile.name;
-     if (!processData()){
-      throw "unable to process blueprint"
-     }
+		 CurrentBlueprint = JSON.parse(evt.target.result);    
+		 selectedFileName = selectedFile.name;
+		 autorender=false;
+		 if (!processData()){
+		  throw "unable to process blueprint"
+		 }
      
     }else{
      throw "unable to load blueprint"
@@ -797,15 +799,19 @@ $( "#renderpanel" ).collapsible({
  	if(!alreadyrender){
 		//$("#container").width($("#renderpanel").innerWidth());
 		alreadyrender=true;
+		autorender=true;
 		init();
 		animate();
-	} 
+	}
   }
   
      
 });
 
- $("#renderpanel").collapsible("expand");
+ if(autorender){
+	$("#renderpanel").collapsible("expand");
+ }
+ 
  $(".dl").prop('disabled',false);		
  $(".dl").parent().removeClass('ui-state-disabled');	
  return true;
