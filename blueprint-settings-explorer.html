@@ -63,6 +63,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="three.min.js"></script>
 	<script src="OrbitControls.js"></script>	
 	<script src="ConvexGeometry.js"></script>	
+	<script src="settingsmap.js"></script>	
 		
 
 <script>
@@ -852,10 +853,22 @@ function showsettings(sid){
 	vsetting.z=shiftposition[2];
 	vsetting.r=getRot(shiftRotation);
 */	
-	
+	var settingMap=settingsTable[ItemDic[curSettings.blockid]];
 	var tempStr="<b>Name:</b> "+ curSettings.blockname + "<br><b>Position: </b>" + atos([curSettings.x,curSettings.y,curSettings.z]) + "<br><b>Orientation: </b>" + curSettings.r +"<br><br>";
 	for (var si=0;si<curSettings.settings.length;si++){
-		tempStr=tempStr+"<b>Settings "+si+": </b>" + curSettings.settings[si] +"<br>";
+		
+		var settingname = "Settings "+si;
+		var settingvalue = curSettings.settings[si];
+		if (settingMap&&settingMap[si]){
+			settingname=settingMap[si].name;	
+			
+			if (settingMap[si].values&&(settingMap[si].values[settingvalue]!==undefined)){
+				settingvalue=settingMap[si].values[settingvalue];
+			}
+		}
+		if(settingname){
+			tempStr=tempStr+"<b> "+settingname+": </b>" + settingvalue +"<br>";
+		}		
 	}
 	
 	$("#settingsdisplay").html(tempStr);
@@ -1062,6 +1075,10 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 			beiIndex=beiIndex+2+beiIncrement;
 		}
 		//need to add string data eventually :)
+		if((settingsTable[ItemDic[blocklist[blockIndex]]]!==undefined)&&(settingsTable[ItemDic[blocklist[blockIndex]]]==false)){
+			hassettings=false;
+		}
+		
 		vsetting.settings=tempsetting;
 		if (hassettings){
 			settingsData[settingsIndex]=vsetting;
@@ -1072,7 +1089,7 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 	var SClist=blocks.SCs;
 	for(var scID = 0; scID < SClist.length; scID++){
 		countblocksR(SClist[scID],true,blocks.COL,shiftposition,shiftRotation);
-	}	
+	}
 	
 }
 
