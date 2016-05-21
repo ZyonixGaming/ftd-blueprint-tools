@@ -1,6 +1,7 @@
 var LinkList=[
 "<li data-role='list-divider'>My Pages</li>",
 "<li><a data-ajax='false' href='blueprint-modification.html'>Blueprint Modification Tool</a></li>",
+"<li><a data-ajax='false' href='blueprint-settings-explorer.html'>Blueprint Settings Explorer</a></li>",
 "<li><a data-ajax='false' href='blueprint-compare.html'>Blueprint Compare Tool</a></li>",
 "<li><a data-ajax='false' href='blueprint-viewer.html'>Blueprint Viewer with 3D Preview</a></li>",
 "<li><a data-ajax='false' href='schematic-blueprint-converter.html'>Schematic to Blueprint Converter</a></li>",
