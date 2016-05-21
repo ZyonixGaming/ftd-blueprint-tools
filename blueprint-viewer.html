@@ -105,14 +105,14 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 			matrix.compose( position, quaternion, scale );
 			
 			var points = [
-				new THREE.Vector3( tempRender.negx-0.5, tempRender.negy-0.5, tempRender.negz-0.5 ),
-				new THREE.Vector3( tempRender.posx+0.5, tempRender.negy-0.5, tempRender.negz-0.5 ),
-				new THREE.Vector3( tempRender.negx-0.5, tempRender.posy+0.5, tempRender.negz-0.5 ),
-				new THREE.Vector3( tempRender.posx+0.5, tempRender.posy+0.5, tempRender.negz-0.5 ),
-				new THREE.Vector3( tempRender.negx-0.5, tempRender.negy-0.5, tempRender.posz+0.5 ),
-				new THREE.Vector3( tempRender.posx+0.5, tempRender.negy-0.5, tempRender.posz+0.5 ),
-				new THREE.Vector3( tempRender.negx-0.5, tempRender.posy+0.5, tempRender.posz+0.5 ),
-				new THREE.Vector3( tempRender.posx+0.5, tempRender.posy+0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( -(tempRender.negx-0.5), tempRender.negy-0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( -(tempRender.posx+0.5), tempRender.negy-0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( -(tempRender.negx-0.5), tempRender.posy+0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( -(tempRender.posx+0.5), tempRender.posy+0.5, tempRender.negz-0.5 ),
+				new THREE.Vector3( -(tempRender.negx-0.5), tempRender.negy-0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( -(tempRender.posx+0.5), tempRender.negy-0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( -(tempRender.negx-0.5), tempRender.posy+0.5, tempRender.posz+0.5 ),
+				new THREE.Vector3( -(tempRender.posx+0.5), tempRender.posy+0.5, tempRender.posz+0.5 )
 			];
 			var geom =  new THREE.ConvexGeometry( points );		
 
