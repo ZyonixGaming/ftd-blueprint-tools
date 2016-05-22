@@ -105,7 +105,16 @@ settingsTable = {
 		}
 	},
 	"31277649-04ec-45db-adfc-4a7d0a73686a":false, //ammo barrel
-	"82b2446e-c12e-436a-8340-76d38372ead1":false //ammo parts box
+	"82b2446e-c12e-436a-8340-76d38372ead1":false, //ammo parts box
+	"38e9a85a-ac7d-4cb0-bd43-a5ae2099640c":false, //battery beam
+	"4f87eff7-616b-4663-8f11-cd7a7ddd3649":false, //fuel storage box 2m
+	"56450137-c20f-4793-972c-fb3fe56ae8d5":false, //battery medium mirror
+	"56c27d46-39b3-4ac1-b4f7-71c118d8dde9":false, //battery large
+	"5d8870cd-d401-4b52-a3dc-641c02b3b31f":false, //fuel storage box
+	"79015536-c137-4c87-a337-99dcf3deff81":false, //fuel storage tank
+	"9413049d-a4f7-4c1c-8b8a-d2f1f4c18e53":false, //fuel storage box 4m
+	"d661f0e7-7f81-4227-80dd-f93aed873630":false, //fuel storage box 3mx3m
+	"ee47622e-4eb6-4fd0-81f7-97b33adde8d2":false, //battery storage medium
 	
 
 }
