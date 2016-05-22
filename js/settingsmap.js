@@ -104,6 +104,7 @@ settingsTable = {
 			"name":"Set value per altitude"
 		}
 	},
+	"8600329a-4b2b-44c7-8e66-634b0d81ce3d":false, //battery
 	"31277649-04ec-45db-adfc-4a7d0a73686a":false, //ammo barrel
 	"82b2446e-c12e-436a-8340-76d38372ead1":false, //ammo parts box
 	"38e9a85a-ac7d-4cb0-bd43-a5ae2099640c":false, //battery beam
