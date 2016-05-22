@@ -115,7 +115,114 @@ settingsTable = {
 	"9413049d-a4f7-4c1c-8b8a-d2f1f4c18e53":false, //fuel storage box 4m
 	"d661f0e7-7f81-4227-80dd-f93aed873630":false, //fuel storage box 3mx3m
 	"ee47622e-4eb6-4fd0-81f7-97b33adde8d2":false, //battery storage medium
-	
+	"2ed46940-a47c-4283-bf5d-6b52132da9b4":false, //vehicle controller
+	"a0a6c5da-d68a-48dd-864f-e7632f8f6fde":false, //spares crate
+	"b665e908-9db0-4c06-a209-1a7e9f41f283":false, //ammo processor
+	"ddee4f0c-e9de-4a73-b87f-c34d674450cb":{ 	  //failsafe
+		0:{
+			"name":"Range"
+		},
+		1:{
+			"name":"Radius"
+		},
+		2:{
+			"name":false
+		},	
+		3:{
+			"name":false
+		},	
+		4:{
+			"name":false
+		},	
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":false
+		},	
+		7:{
+			"name":false
+		}		
+	},
+	"e6bb2b09-daee-432d-9aff-45fc63d24fca":{ //wireless receiver
+		0:{
+			"name":false
+		},
+		1:{
+			"name":false
+		},
+		2:{
+			"name":false
+		},	
+		3:{
+			"name":"Receive Channel"
+		},	
+		4:{
+			"name":false
+		},	
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":false
+		},	
+		7:{
+			"name":false
+		}		
+	},
+	  "a56e0dcf-94e4-48a0-b8b9-5e33e0ab69cf":{ //wireless transmitter
+		0:{
+			"name":false
+		},
+		1:{
+			"name":false
+		},
+		2:{
+			"name":false
+		},	
+		3:{
+			"name":"Transmit Channel"
+		},	
+		4:{
+			"name":false
+		},	
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":false
+		},	
+		7:{
+			"name":false
+		}		
+	},
+	"564a75cd-8d7c-469b-a4b3-053d772b7d9d":{ //dedicated heliblade spinner
+		0:{
+			"name":"Always up fraction"
+		},
+		1:{
+			"name":false
+		},
+		2:{
+			"name":false
+		},	
+		3:{
+			"name":false
+		},	
+		4:{
+			"name":"Motor drive"
+		},	
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":"Drive fraction"
+		},	
+		7:{
+			"name":"Mode",
+			"values":[0,"Continuous","Continuous(Reverse)",3,4,"Instant Spin","Instant Spin (Reverse)"]
+		}
+	}
 
 }
 
