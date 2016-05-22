@@ -417,6 +417,7 @@ function processData(){
 		$("#table2 tbody").empty(); 
 		$("#renderpanel").collapsible("collapse");
 		document.getElementById("container").innerHTML="";
+		document.getElementById("filecontent").style.display="none";
 		alreadyrender=false;
  
  var a1;
@@ -2315,8 +2316,9 @@ function downloadBlueprint(){
   processData();
   document.getElementById("filecontent").style.display="block";
   document.getElementById("filetext").style.display="none";
-  document.getElementById("filetextbox").value=JSON.stringify(CurrentBlueprint);
-  download(selectedFileName,JSON.stringify(CurrentBlueprint)); 
+  var outputcontent=JSON.stringify(CurrentBlueprint);
+  document.getElementById("filetextbox").value=outputcontent;
+  download(selectedFileName,outputcontent); 
   //download(selectedFileName,JSON.stringify(RotTable)); 
 
   

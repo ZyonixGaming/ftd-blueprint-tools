@@ -182,6 +182,16 @@ $(document).ready(function(){
 
 });
 
+function togglefiletext(){
+ if(document.getElementById("filetext").style.display=="none"){
+  document.getElementById("filetext").style.display="block";
+  document.getElementById("filetextbox").select();
+ }else{
+  document.getElementById("filetext").style.display="none";
+ }
+}
+
+
 
 //rotation*vector*rotation_conjugate
 //alert(JSON.stringify(RotTable));
@@ -459,7 +469,11 @@ function processMC(){
 };
 
 function downloadfile(){
-	download(selectedFileName + ".blueprint",JSON.stringify(CurrentBlueprint));
+	document.getElementById("filecontent").style.display="block";
+	document.getElementById("filetext").style.display="none";
+	var outputcontent=JSON.stringify(CurrentBlueprint);
+	document.getElementById("filetextbox").value=outputcontent;
+	download(selectedFileName + ".blueprint",outputcontent); 
 }
 
 function download(filename, data) {
@@ -531,6 +545,7 @@ function processData(){
 		$("#table2 tbody").empty(); 
 		$("#renderpanel").collapsible("collapse");
 		document.getElementById("container").innerHTML="";
+		document.getElementById("filecontent").style.display="none";
 		alreadyrender=false;
  
  var a1;
@@ -998,6 +1013,14 @@ function roundToTwo(num) {
 	</div>
 	<div class="ui-grid-solo">
 		<div class="ui-block-a"><input class="dl" type="button" value="Download Blueprint" disabled onclick="downloadfile();">
+		<div id="filecontent" class="hidden">
+		<a href="#filetext" onClick="togglefiletext();"><i>Blueprint not downloading?</i></a>
+		<div id="filetext" name="filetext">
+		<br>
+		Copy and paste the following into a new .blueprint file!<br>
+		<textarea id="filetextbox" wrap="hard" cols="45" rows="30" readonly></textarea>
+		</div>
+		</div>
 		</div>
 	</div>	
 	<div id="commentpanel" data-role="collapsible">
