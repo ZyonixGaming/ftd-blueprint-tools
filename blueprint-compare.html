@@ -45,6 +45,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/widgets/widget-filter.min.js"></script>	
 	<script src="js/itemtable.js"></script>
 	
 <script>
@@ -104,7 +105,7 @@ $(document).ready(function(){
   
   $("#table1").tablesorter({
     theme: 'blue',
-    widgets: ['reflow'],
+    widgets: ['reflow','filter'],
     widgetOptions : {
       // class name added to make it responsive (class name within media query)
       reflow_className    : 'ui-table-reflow',
@@ -113,6 +114,11 @@ $(document).ready(function(){
       // data attribute added to each tbody cell
       // it contains the header cell text, visible upon reflow
       reflow_dataAttrib   : 'data-title',
+	  filter_defaultFilter: { 2 : '~{query}' },
+	  // include column filters
+	  filter_columnFilters: true,
+	  filter_placeholder: { search : 'Search...' },		  
+	  
     },	
 	selectorHeaders: "thead th"
   });
