@@ -4,7 +4,7 @@
 		<title>FTD Blueprint Modification Tool</title>
 		<meta charset="utf-8">
 		
-	<link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/ >
+	<link rel='shortcut icon' href='ico/favicon.ico' type='image/x-icon'/ >
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
 <style>
@@ -43,7 +43,8 @@ background: #D0D0FF !important;
 	margin:0 0;
 	text-align: center;
 }
-#HCB_comment_box{
+#disqus_thread{
+	height: 100px;
 	margin: 0 0;
 	padding: 0.8em;
 }
@@ -85,16 +86,14 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 
 
 </style>
+	<script src="js/links.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
-	<script src="itemtable.js"></script>
-	<script src="links.js"></script>
-	<script src="three.min.js"></script>
-	<script src="OrbitControls.js"></script>	
-	<script src="ConvexGeometry.js"></script>	
-		
-
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r76/three.min.js"></script>
+	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/OrbitControls.js"></script>	
+	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/ConvexGeometry.js"></script>	
+	<script src="js/itemtable.js"></script>
 <script>
 
 	var container;
@@ -3612,11 +3611,20 @@ Copy and paste the following into a new .blueprint file!<br>
 
 	<div id="commentpanel" data-role="collapsible">
 		<h4>Comments</h4>
-<!-- begin wwww.htmlcommentbox.com -->
- <div id="HCB_comment_box"><a href="http://www.htmlcommentbox.com">Comment Box</a> is loading comments...</div>
- <link rel="stylesheet" type="text/css" href="http://www.htmlcommentbox.com/static/skins/bootstrap/twitter-bootstrap.css?v=0" />
- <script type="text/javascript" id="hcb"> /*<!--*/ if(!window.hcb_user){hcb_user={};} hcb_user.PAGE="http://zyonixgaming.github.io/ftd-blueprint-tools/";(function(){var s=document.createElement("script"), l=hcb_user.PAGE || (""+window.location).replace(/'/g,"%27"), h="http://www.htmlcommentbox.com";s.setAttribute("type","text/javascript");s.setAttribute("src", h+"/jread?page="+encodeURIComponent(l).replace("+","%2B")+"&mod=%241%24wq1rdBcg%24TL9IWcbJsERm2sQFposUO%2F"+"&opts=16862&num=10&ts=1463318440233");if (typeof s!="undefined") document.getElementsByTagName("head")[0].appendChild(s);})(); /*-->*/ </script>
-<!-- end www.htmlcommentbox.com -->
+<div id="disqus_thread"></div>
+<script>
+var disqus_config = function () {
+this.page.url = "http://zyonixgaming.github.io/ftd-blueprint-tools/";
+this.page.identifier = "zyonixgaming-ftd-blueprint-tools";
+};
+(function() {
+var d = document, s = d.createElement('script');
+s.src = '//ftdblueprinttools.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 	</div>
 	<p></p>
 	<p>Copyright &copy; 2016 Zyonix Gaming</p>	
