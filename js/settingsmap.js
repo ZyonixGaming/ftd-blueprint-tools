@@ -119,6 +119,45 @@ settingsTable = {
 	"2ed46940-a47c-4283-bf5d-6b52132da9b4":false, //vehicle controller
 	"a0a6c5da-d68a-48dd-864f-e7632f8f6fde":false, //spares crate
 	"b665e908-9db0-4c06-a209-1a7e9f41f283":false, //ammo processor
+	"120b90ce-8434-4e44-a32f-7e5da874eaf7":false, //4m solid clip
+	"2a8501f7-2463-441c-901a-57d1a6573fe6":false, //8m clip
+	"375f4305-47bc-4abd-8c68-b67cb50e7036":false, //1m solid clip
+	"66e3efae-4d73-4f4e-adbd-85e2573580e4":false, //2m clip
+	"7836f02d-9d50-476c-8701-d0e4eda43de3":false, //1m clip
+	"973c1ee1-2dc4-4cd7-be7c-32a37cb405de":false, //8m solid clip
+	"c3f26ef6-22f2-4a04-bb49-aa66cc949188":false, //4m clip
+	"f45bd228-43c8-482c-824c-71e48e8ef27a":false, //2m solid clip
+	"c4e23d98-fbde-449e-823f-872004cadc7a":false, //aileron
+	"4934fff3-aca3-4fb3-b242-60afbe8d4439":false, //tail plane
+	"0a1aa046-e841-4813-907e-6567e596a079":false, //ammo input feeder
+	"953f1c50-c18f-43f4-815a-c19e5aff7af7":false, //hydrofoil
+	"7475c363-fa60-4348-a2e9-f3e2329fc20a":false, //hot air balloon deployer
+	"956b9974-b044-494e-b5e4-d1cdbc5d5327":{ 	  //smoke dispenser
+		0:{
+			"name":"Stop when ammo below"
+		},
+		1:{
+			"name":"Stop when fuel below"
+		},
+		2:{
+			"name":false
+		},	
+		3:{
+			"name":false
+		},	
+		4:{
+			"name":false
+		},	
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":false
+		},	
+		7:{
+			"name":false
+		}		
+	},
 	"ddee4f0c-e9de-4a73-b87f-c34d674450cb":{ 	  //failsafe
 		0:{
 			"name":"Range"
@@ -171,6 +210,32 @@ settingsTable = {
 			"name":false
 		}		
 	},
+	  "8331c71c-5725-472d-ad2e-65e4110982b7":{ //air pump
+		0:{
+			"name":false
+		},
+		1:{
+			"name":false
+		},
+		2:{
+			"name":"Buoyancy constant"
+		},	
+		3:{
+			"name":false
+		},	
+		4:{
+			"name":false
+		},	
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":false
+		},	
+		7:{
+			"name":false
+		}		
+	},	
 	  "a56e0dcf-94e4-48a0-b8b9-5e33e0ab69cf":{ //wireless transmitter
 		0:{
 			"name":false
@@ -223,8 +288,134 @@ settingsTable = {
 			"name":"Mode",
 			"values":[0,"Continuous","Continuous(Reverse)",3,4,"Instant Spin","Instant Spin (Reverse)"]
 		}
-	}
-
+	},
+	"cdabf95e-e712-4a93-8214-79d2d9a809a6":{	//laser warner
+		0:{
+			"name":"Warn if laser hit within this range(old)"
+		},
+		1:{
+			"name":"Deploy smoke within this range (old, 100m=unlimited)"
+		},
+		2:{
+			"name":"Deploy (up to) this many smoke per warning (old)"
+		},
+		3:{
+			"name":"Period between warnings (old)"
+		},
+		4:{
+			"name":"Warn on missile laser (old)",
+			"values":["false","true"]
+		},
+		5:{
+			"name":false
+		},
+		6:{
+			"name":false
+		},
+		7:{
+			"name":false
+		},
+		8:{
+			"name":false
+		},
+		9:{
+			"name":"Warn if laser hit within this range"
+		},
+		10:{
+			"name":"Deploy smoke within this range (100m=unlimited)"
+		},
+		11:{
+			"name":"Deploy (up to) this many smoke per warning"
+		},
+		12:{
+			"name":"Period between warnings"
+		},
+		13:{
+			"name":"Warn on missile laser",
+			"values":["false","true"]
+		},
+		14:{
+			"name":false
+		}		
+	},
+	"c0afc8a9-5c49-4f15-8834-6e39ff144da3":{ //light fitting
+		0:{
+			"name":"Red"
+		},
+		1:{
+			"name":"Green"		
+		},
+		2:{
+			"name":"Blue"		
+		},
+		3:{
+			"name":"Intensity"	
+		},
+		4:{
+			"name":false
+		},		
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":false
+		},	
+		7:{
+			"name":false
+		}		
+	},
+	"7d005e15-c63a-44f0-b12e-b8599a9f0424":{ //shield color changer
+		0:{
+			"name":"Red"
+		},
+		1:{
+			"name":"Green"		
+		},
+		2:{
+			"name":"Blue"		
+		},
+		3:{
+			"name":"Alpha"	
+		},
+		4:{
+			"name":false
+		},		
+		5:{
+			"name":false
+		},	
+		6:{
+			"name":false
+		},	
+		7:{
+			"name":false
+		}		
+	},
+	"ef545d00-c22d-4eed-bd76-74d6432e2974": { //local weapon controller
+		0:{
+			"name":"Minimum range to engage (0=unlimited)"
+		},
+		1:{
+			"name":"Maximum range to engage (5000=unlimited)"		
+		},
+		2:{
+			"name":"Minimum altitude to engage (-50=unlimited)"		
+		},
+		3:{
+			"name":"Maximum altitude to engage (2000=unlimited)"	
+		},
+		4:{
+			"name":"Maximum speed to engage (50=unlimited)"
+		},		
+		5:{
+			"name":"Minimum number of blocks to engage (1=unlimited)"
+		},	
+		6:{
+			"name":"Maximum rate of fire (per seccond) (40=unlimited)"
+		},	
+		7:{
+			"name":false
+		}		
+	}	
 }
 
 
