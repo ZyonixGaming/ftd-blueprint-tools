@@ -4,6 +4,7 @@ var LinkList=[
 "<li><a data-ajax='false' href='blueprint-settings-explorer.html'>Blueprint Settings Explorer</a></li>",
 "<li><a data-ajax='false' href='blueprint-block-finder.html'>Blueprint Block Finder</a></li>",
 "<li><a data-ajax='false' href='blueprint-compare.html'>Blueprint Compare Tool</a></li>",
+"<li><a data-ajax='false' href='blueprint-combiner.html'>Blueprint Combine Tool</a></li>",
 "<li><a data-ajax='false' href='blueprint-viewer.html'>Blueprint Viewer</a></li>",
 "<li><a data-ajax='false' href='schematic-blueprint-converter.html'>Schematic to Blueprint Converter</a></li>",
 "<li><a data-ajax='false' href='http://zyonixgaming.blogspot.com/p/ftd.html'>Modification Tool with basic interface</a></li>",
