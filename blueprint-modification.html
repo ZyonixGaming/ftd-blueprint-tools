@@ -394,7 +394,9 @@ function openFile() {
     }
    }
    catch(err){
+	throw err;
     loadError(err);
+	
     } 
   };
   reader.readAsText(selectedFile);
@@ -432,6 +434,8 @@ function processData(){
  var e2;
  var f1;
  var f2;
+ var g1;
+ var g2;
  
  //for sloped blocks
  var aa1=-1;
@@ -446,6 +450,9 @@ function processData(){
  var ad1=-1;
  var ad2=-1;
  var ad3=-1;
+ var ae1=-1;
+ var ae2=-1;
+ var ae3=-1;
  
  
  blockToBeam={};
@@ -514,7 +521,19 @@ function processData(){
    ad2=keyint;//glass
   }else if(val=="0c64d302-c6df-42eb-a0ff-7c90f867ba4b"){
    ad3=keyint;//glass
+  }else if(val=="0c03433e-8947-4e7d-9dec-793526fe06d1"){
+   g1=keyint;//heavyarmour block
+  }else if(val=="867cea4e-6ea4-4fe2-a4a1-b6230308f8f1"){
+   g2=keyint;//heavyarmour beam
+  }else if(val=="78b81c0a-44df-4c24-b2a5-5d273737da60"){
+   ae1=keyint;//heavyarmour
+  }else if(val=="6e5c9f1d-160b-49b1-9b74-606d2f695c7e"){
+   ae2=keyint;//heavyarmour
+  }else if(val=="c61c1c19-cc53-49a2-b207-9de6b9ce328a"){
+   ae3=keyint;//heavyarmour
   }
+
+
 
   colorID[keyint]=[80,80,80,1];
  
@@ -545,11 +564,16 @@ function processData(){
   blockToBeam[f1]=f2;
   beamToBlock[f2]=f1; 
  }
+ if(g1&&g2){
+  blockToBeam[g1]=g2;
+  beamToBlock[g2]=g1; 
+ }
  
  slopeBlockToBeam[aa1]=aa2;
  slopeBlockToBeam[ab1]=ab2;
  slopeBlockToBeam[ac1]=ac2;
  slopeBlockToBeam[ad1]=ad2;
+ slopeBlockToBeam[ae1]=ae2;
  slopeBeamToBlock[aa2]=aa1;
  slopeBeamToBlockM[aa3]=aa1;
  slopeBeamToBlock[ab2]=ab1;
@@ -558,7 +582,9 @@ function processData(){
  slopeBeamToBlockM[ac3]=ac1;
  slopeBeamToBlock[ad2]=ad1;
  slopeBeamToBlockM[ad3]=ad1;
-
+ slopeBeamToBlock[ae2]=ae1;
+ slopeBeamToBlockM[ae3]=ae1;
+ 
  totalstats = {
   "Block Count":0,
   "Natural Cost":0,
@@ -2323,6 +2349,7 @@ function downloadBlueprint(){
 
   
  }catch(err){
+   throw err;
   loadError(err);
  }
 }
@@ -2483,6 +2510,14 @@ paintothers
     blockColorIndex[shapedBlocks["glass"].blockIds[i]] = selectedcolor;
    }
   }
+  
+  if((document.getElementById("painttarget").value=="heavyarmour")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+   var blockcount =  shapedBlocks["heavyarmour"].blockIds.length;
+   for(var i=0;i<blockcount;i++){
+    blockColorIndex[shapedBlocks["heavyarmour"].blockIds[i]] = selectedcolor;
+   }
+  }
+  
   if((document.getElementById("painttarget").value=="stone")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
    var blockcount =  shapedBlocks["stone"].blockIds.length;
    for(var i=0;i<blockcount;i++){
@@ -3057,8 +3092,11 @@ function getType(blockid){
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD v1.956</p>
+	<p>Last updated for FTD v1.9565</p>
 	<p>To start, click on the button below and choose a blueprint file.</p>
+	
+	<p>*Heavy Armour related features will only work with blueprints saved in that version, and might be bugs as well.</p>
+	<p>Please report any issues in the forum thread <a href="http://www.fromthedepthsgame.com/forum/showthread.php?tid=19547">here</a></p>
 	<div class="hidden"><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></div>
 	<div class="ui-grid-solo">
 		<div class="ui-block-a"><input class="lb" type="button" btarget="#blueprintfile" value="Open Blueprint" disabled>
@@ -3116,7 +3154,7 @@ function getType(blockid){
 	<div class="ui-block-a">
 		<label class="checkbox" >
 		<input class="bigbox" id="wood" type="checkbox" data-role="none">Convert Wood: 
-		<select id="woodto" data-role="none"><option value="wood" selected="selected"> to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		<select id="woodto" data-role="none"><option value="wood" selected="selected"> to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="heavyarmour">to Heavy Armour</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
 		</label>
 	</div>
 </div>		
@@ -3126,7 +3164,7 @@ function getType(blockid){
 	<div class="ui-block-a">
 		<label class="checkbox" >
 		<input class="bigbox" id="metal" type="checkbox" data-role="none">Convert Metal: 
-		<select id="metalto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal" selected="selected">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		<select id="metalto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal" selected="selected">to Metal</option> <option value="glass">to Glass</option> <option value="heavyarmour">to Heavy Armour</option>  <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
 		</label>
 	</div>
 </div>
@@ -3135,7 +3173,7 @@ function getType(blockid){
 	<div class="ui-block-a">
 		<label class="checkbox" >
 		<input class="bigbox" id="alloy" type="checkbox" data-role="none">Convert Alloy: 
-		<select id="alloyto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" selected="selected">to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		<select id="alloyto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" selected="selected">to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="heavyarmour">to Heavy Armour</option>  <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
 		</label>
 	</div>
 </div>
@@ -3144,7 +3182,16 @@ function getType(blockid){
 	<div class="ui-block-a">
 		<label class="checkbox" >
 		<input class="bigbox" id="glass" type="checkbox" data-role="none">Convert Glass: 
-		<select id="glassto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass" selected="selected">to Glass</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		<select id="glassto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass" selected="selected">to Glass</option> <option value="heavyarmour">to Heavy Armour</option>  <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
+		</label>
+	</div>
+</div>
+
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<label class="checkbox" >
+		<input class="bigbox" id="heavyarmour" type="checkbox" data-role="none">Convert Heavy Armour: 
+		<select id="heavyarmourto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="heavyarmour" selected="selected">to Heavy Armour</option> <option value="stone">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>
 		</label>
 	</div>
 </div>
@@ -3153,7 +3200,7 @@ function getType(blockid){
 	<div class="ui-block-a">
 		<label class="checkbox" >
 		<input class="bigbox" id="stone" type="checkbox" data-role="none">Convert Stone: 
-		<select id="stoneto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option>  <option value="stone" selected="selected">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>	
+		<select id="stoneto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="heavyarmour">to Heavy Armour</option>  <option value="stone" selected="selected">to Stone</option> <option value="lead">to Lead</option><option value="0" >delete!</option></select>	
 		</label>
 	</div>
 </div>
@@ -3163,7 +3210,7 @@ function getType(blockid){
 	<div class="ui-block-a">
 		<label class="checkbox" >
 		<input class="bigbox" id="lead" type="checkbox" data-role="none">Convert Lead: 
-		<select id="leadto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="stone">to Stone</option> <option value="lead" selected="selected">to Lead</option><option value="0" >delete!</option></select>
+		<select id="leadto" data-role="none"><option value="wood" > to Wood</option><option value="alloy" >to Alloy</option><option value="metal">to Metal</option> <option value="glass">to Glass</option> <option value="heavyarmour">to Heavy Armour</option>  <option value="stone">to Stone</option> <option value="lead" selected="selected">to Lead</option><option value="0" >delete!</option></select>
 		</label>
 	</div>
 </div>
@@ -3172,7 +3219,7 @@ function getType(blockid){
 	<div class="ui-block-a">
 		<label class="checkbox" >
 		<input class="bigbox" id="paint" type="checkbox" data-role="none">Paint:
-		<select id="painttarget" data-role="none"><option value="all" selected="selected"> all blocks</option> <option value="wood"> Wood </option> <option value="metal"> Metal </option><option value="alloy"> Alloy </option><option value="glass"> Glass </option><option value="stone"> Stone </option><option value="lead"> Lead </option><option value="paintstruct"> All of the above </option><option value="paintothers"> None of the above</option></select>
+		<select id="painttarget" data-role="none"><option value="all" selected="selected"> all blocks</option> <option value="wood"> Wood </option> <option value="metal"> Metal </option><option value="alloy"> Alloy </option><option value="glass"> Glass </option><option value="heavyarmour"> Heavy Armour </option><option value="stone"> Stone </option><option value="lead"> Lead </option><option value="paintstruct"> All of the above </option><option value="paintothers"> None of the above</option></select>
 		</label>
 	</div>
 	<div class="ui-block-b">
@@ -3254,7 +3301,7 @@ function getType(blockid){
 <label><input id="replaceold" type="checkbox" data-mini="true">Replace old armor blocks (1m and 2m left,right,and up slopes)</label>
 </div>
 <div class="ui-block-b">
-<label><input id="clearhull" type="checkbox" data-mini="true">Delete all blocks except Wood/Alloy/Metal/Glass/Stone/Lead.</label>
+<label><input id="clearhull" type="checkbox" data-mini="true">Delete all blocks except Wood/Alloy/Metal/Glass/HA/Stone/Lead.</label>
 </div>
 </div>
 
@@ -3292,12 +3339,12 @@ function getType(blockid){
 
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="debeamify" type="checkbox" data-mini="true">DeBeamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 4m beams and diagonal slopes into 1m blocks and slopes.</label>
+<label><input id="debeamify" type="checkbox" data-mini="true">DeBeamify. Turns Wood/Alloy/Metal/Glass/HA/Stone/Lead 4m beams and diagonal slopes into 1m blocks and slopes.</label>
 </div>
 </div>
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="beamify2" type="checkbox" data-mini="true">Beamify. Turns Wood/Alloy/Metal/Glass/Stone/Lead 1m blocks and slopes into 4m beams and diagonal slopes.</label>
+<label><input id="beamify2" type="checkbox" data-mini="true">Beamify. Turns Wood/Alloy/Metal/Glass/HA/Stone/Lead 1m blocks and slopes into 4m beams and diagonal slopes.</label>
 </div>
 </div>
 
