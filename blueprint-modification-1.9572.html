@@ -93,7 +93,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r76/three.min.js"></script>
 	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/OrbitControls.js"></script>	
 	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/ConvexGeometry.js"></script>	
-	<script src="js/itemtable.js"></script>
+	<script src="js/itemtable-1.9572.js"></script>
 	<script src="js/preview3d.js"></script>
 	
 <script>
@@ -108,13 +108,9 @@ var BeamAxisPriority = [3,2,1];
 
 //maps block ID of block to beam
 var blockToBeam = {}
-var blockToBeam2m = {}
-var blockToBeam3m = {}
 
 //maps block ID of beam to block
 var beamToBlock = {}
-var beamToBlock2m = {}
-var beamToBlock3m = {}
 
 var maxc=[0,0,0,0];
 var minc=[0,0,0,0];
@@ -129,6 +125,7 @@ var slopeBeamToBlockM = {}
 //maintains a list of blockID:newBlockID to facilitate switching blocks via convertblocks() function
 var conversionIndex = {}
 
+var replaceOldIndex = {}
 
 //maintains a list of blockID to keep via clearhull() function
 var keepIndex = {}
@@ -385,7 +382,7 @@ function openFile() {
   reader.onload = function(evt) {
    try{    
      if(evt){
-		 CurrentBlueprint = JSON.parse(evt.target.result);  
+		 CurrentBlueprint = JSON.parse(evt.target.result);    
 		 selectedFileName = selectedFile.name;
 		 autorender=false;
 		 if (!processData()){
@@ -460,12 +457,6 @@ function processData(){
  
  blockToBeam={};
  beamToBlock={};
- blockToBeam2m={};
- blockToBeam3m={};
- beamToBlock2m={};
- beamToBlock3m={};
-
-
  
  slopeBlockToBeam={};
  slopeBeamToBlock={};
@@ -506,10 +497,6 @@ function processData(){
    f1=keyint;//stoneblock
   }else if(val=="c7a19161-b361-4074-8c51-2398a0a70d1b"){
    f2=keyint;//stonebeam
-  }else if(val=="0c03433e-8947-4e7d-9dec-793526fe06d1"){
-   g1=keyint;//heavyarmour block
-  }else if(val=="867cea4e-6ea4-4fe2-a4a1-b6230308f8f1"){
-   g2=keyint;//heavyarmour beam
   }else if(val=="bdafa446-f615-49cb-94f3-d7652dde6cec"){
    aa1=keyint;//wood
   }else if(val=="2ee817c1-f2a3-407a-847d-b97ffb844e45"){
@@ -534,34 +521,17 @@ function processData(){
    ad2=keyint;//glass
   }else if(val=="0c64d302-c6df-42eb-a0ff-7c90f867ba4b"){
    ad3=keyint;//glass
+  }else if(val=="0c03433e-8947-4e7d-9dec-793526fe06d1"){
+   g1=keyint;//heavyarmour block
+  }else if(val=="867cea4e-6ea4-4fe2-a4a1-b6230308f8f1"){
+   g2=keyint;//heavyarmour beam
   }else if(val=="78b81c0a-44df-4c24-b2a5-5d273737da60"){
    ae1=keyint;//heavyarmour
   }else if(val=="6e5c9f1d-160b-49b1-9b74-606d2f695c7e"){
    ae2=keyint;//heavyarmour
   }else if(val=="c61c1c19-cc53-49a2-b207-9de6b9ce328a"){
    ae3=keyint;//heavyarmour
-  }else if(val=="de36c624-8c78-4b52-8d86-431cec16a306"){
-   a2m=keyint;//woodbeam
-  }else if(val=="39553630-8281-40e4-96fb-b01c1f3537e6"){
-   a3m=keyint;//woodbeam
-  }else if(val=="2a22f176-01c2-42f2-a7d2-2c7054504aa9"){
-   b2m=keyint;//metalbeam
-  }else if(val=="46f54639-5f91-4731-93eb-e5c0a7460538"){
-   b3m=keyint;//metalbeam
-  }else if(val=="8f9dbf41-6c2d-4e7b-855d-b2432c6942a2"){
-   c2m=keyint;//alloybeam
-  }else if(val=="649f2aec-6f59-4157-ac01-0122ce2e6dad"){
-   c3m=keyint;//alloybeam
-  }else if(val=="aa355fd9-295c-43f3-9f11-7a781a9808b0"){
-   d2m=keyint;//glassbeam
-  }else if(val=="049b9d0c-1cb3-4511-be7f-9fad6e0a607e"){
-   d3m=keyint;//glassbeam
-  }else if(val=="242e07fa-399f-4caa-bfc2-1b77bd2bd538"){
-   g2m=keyint;//heavyarmour beam
-  }else if(val=="49714981-369a-4158-aff6-e562ee5f98d5"){
-   g3m=keyint;//heavyarmour beam
   }
-  
 
 
 
@@ -578,41 +548,17 @@ function processData(){
  }
  
  blockToBeam[a1]=a2;
- beamToBlock[a2]=a1;
- if(a2m&&a3m){
-	blockToBeam2m[a1]=a2m;
-	blockToBeam3m[a1]=a3m;
-	beamToBlock2m[a2m]=a1;	
-	beamToBlock3m[a3m]=a1;	
- }
  blockToBeam[b1]=b2;
- beamToBlock[b2]=b1;
- if(b2m&&b3m){
-	blockToBeam2m[b1]=b2m;
-	blockToBeam3m[b1]=b3m;
-	beamToBlock2m[b2m]=b1;	
-	beamToBlock3m[b3m]=b1;	
- } 
  blockToBeam[c1]=c2;
- beamToBlock[c2]=c1;
- if(c2m&&c3m){
-	blockToBeam2m[c1]=c2m;
-	blockToBeam3m[c1]=c3m;
-	beamToBlock2m[c2m]=c1;	
-	beamToBlock3m[c3m]=c1;	
- }  
  blockToBeam[d1]=d2;
+ beamToBlock[a2]=a1;
+ beamToBlock[b2]=b1;
+ beamToBlock[c2]=c1;
  beamToBlock[d2]=d1; 
- if(d2m&&d3m){
-	blockToBeam2m[d1]=d2m;
-	blockToBeam3m[d1]=d3m;
-	beamToBlock2m[d2m]=d1;	
-	beamToBlock3m[d3m]=d1;	
- }   
-
  if(e1&&e2){
   blockToBeam[e1]=e2;
   beamToBlock[e2]=e1; 
+
  }
  if(f1&&f2){
   blockToBeam[f1]=f2;
@@ -620,13 +566,7 @@ function processData(){
  }
  if(g1&&g2){
   blockToBeam[g1]=g2;
-  beamToBlock[g2]=g1;
-	 if(g2m&&g3m){
-		blockToBeam2m[g1]=g2m;
-		blockToBeam3m[g1]=g3m;
-		beamToBlock2m[g2m]=g1;	
-		beamToBlock3m[g3m]=g1;	
-	 }
+  beamToBlock[g2]=g1; 
  }
  
  slopeBlockToBeam[aa1]=aa2;
@@ -647,16 +587,24 @@ function processData(){
  
  totalstats = {
   "Block Count":0,
-  "Material Cost":0,
+  "Natural Cost":0,
+  "Metal Cost":0,
+  "Oil Cost":0,
+  "Scrap Cost":0,
+  "Crystal Cost":0,
+  "RP Cost":0,
   "Volume":0,
   "Max Power*":0,
   "Max Battery Capacity*":0,
   "Max Ammo Capacity*":0,
-  "Max Fuel Capacity*":0, 
-  "Game Version*":"unknown",
+  "Max Fuel Capacity*":0,
+  "Max Natural Storage*":0,
+  "Max Metal Storage*":0,
+  "Max Oil Storage*":0,
+  "Max Scrap Storage*":0,
+  "Max Crystal Storage*":0,
   "Blueprint Modified*":false,
  } 
-  
  countblocks(CurrentBlueprint.Blueprint);
  totalstats["Volume"]=roundToTwo(totalstats["Volume"]);
  getpalette(CurrentBlueprint.Blueprint);
@@ -872,6 +820,68 @@ function randomcolorblocks(blocks){
  }
 }
 
+//paint vehicles black and certain blocks in brighter colors
+function highlightBlocks(blocks){
+/*
+  
+  "AI Mainframe"
+  "(CARD) Aerial AI"
+  "(CARD) Naval AI"
+  "(CARD) sailing"
+  "PID"
+  "Wireless Reciever"
+  "Wireless Transmitter"
+  "Local Weapon Controller"
+  
+  "PID (General Purpose)"
+  "Automated Control Block"
+  
+  "(CARD) Propulsion Balancing"
+  
+  "LUA Box"  
+  
+*/
+ var SClist=blocks.SCs;
+ //blocks.designChanged = true;
+ if(blocks.COL){
+   blocks.COL[0]="0,0,0,0";
+   blocks.COL[1]="0,0,0,0.66"; //black
+   blocks.COL[2]="1,0,0,0.99"; //red
+   blocks.COL[3]="1,0.5,0,0.99"; //orange
+   blocks.COL[4]="1,1,0,0.99"; //yellow
+   blocks.COL[5]="0,1,0,0.99"; //green
+   blocks.COL[6]="0,0,1,0.99"; //blue
+   blocks.COL[7]="0.7,0,0.7,0.99"; //purple
+   blocks.COL[8]="1,0.5,1,0.99"; //pink	
+ }
+ for(var scID = 0; scID < SClist.length; scID++){
+
+   highlightBlocks(SClist[scID]);
+  
+ }
+ var blocklist=blocks.BlockIds;
+ var colorlist=blocks.BCI;
+ for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
+  var blockname = nameID[blocklist[blockIndex]];
+  
+  if ((blockname=="AI Mainframe")||(blockname=="(CARD) Aerial AI")||(blockname=="(CARD) Naval AI")||(blockname=="(CARD) sailing")||(blockname=="PID")||(blockname=="Wireless Reciever")||(blockname=="Wireless Transmitter")||(blockname=="Local Weapon Controller")){
+   colorlist[blockIndex] = 2;
+  }
+  else if ((blockname=="PID (General Purpose)")||(blockname=="Automated Control Block")){
+   colorlist[blockIndex] = 3;
+  }
+  else if ((blockname=="(CARD) Propulsion Balancing")){
+   colorlist[blockIndex] = 6;
+  }  
+  else if ((blockname=="LUA Box")){
+   colorlist[blockIndex] = 8;
+  }  
+  else{
+   colorlist[blockIndex] = 1;
+  }  
+ }
+}
+
 //paint blocks
 function colorblocks(blocks){
  var SClist=blocks.SCs;
@@ -886,16 +896,13 @@ function colorblocks(blocks){
  for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
 	if((allowedcolor<0)||(allowedcolor==colorlist[blockIndex])){
 	  var newcolor = getNewColor(blocklist[blockIndex]);
-	  if (newcolor==32){
-		colorlist[blockIndex] = 1+Math.floor((Math.random() * 4));
-	  }else if (newcolor==33){
-		colorlist[blockIndex] = 28+Math.floor((Math.random() * 4));
-	  }else if (newcolor>=0){
+	  if (newcolor>=0){
 	   colorlist[blockIndex] = newcolor;
 	  }
 	}
  }
 }
+
 
 //turns beam into blocks
 function debeamifyblocks(blocks){
@@ -934,52 +941,10 @@ function debeamifyblocks(blocks){
       newBlockIndex+=1;
      }
     }
-  }else if(ItemDic[currentBlock]&&beamToBlock3m[currentBlock]){
-    var currentPosition = "["+positionList[blockIndex]+"]";
-    var tpa = JSON.parse(currentPosition);
-    var curx = Math.round(tpa[0]);
-    var cury = Math.round(tpa[1]);
-    var curz = Math.round(tpa[2]);
-    currentPosition = ""+curx+","+cury+","+curz;
-    var targetBlock =beamToBlock3m[currentBlock];
-    var directionArray = getDirectionArray(rotationList[blockIndex]);
-    if(directionArray){
-     blocksDebeamed+=1;
-     blocklist[blockIndex]=targetBlock;
-     for(var i=1;i<3;i++){
-      blocklist[newBlockIndex]=targetBlock;
-      rotationList[newBlockIndex]=0;
-      colorlist[newBlockIndex]=colorlist[blockIndex];
-      blocks.BP1[newBlockIndex]="0,0,0,0";
-      blocks.BP2[newBlockIndex]="0,0,0,0";
-      positionList[newBlockIndex]= "" + (curx+(i*directionArray[0])) + "," + (cury+(i*directionArray[1])) +"," + (curz+(i*directionArray[2]));
-      newBlockIndex+=1;
-     }
-    }
-  }else if(ItemDic[currentBlock]&&beamToBlock2m[currentBlock]){
-    var currentPosition = "["+positionList[blockIndex]+"]";
-    var tpa = JSON.parse(currentPosition);
-    var curx = Math.round(tpa[0]);
-    var cury = Math.round(tpa[1]);
-    var curz = Math.round(tpa[2]);
-    currentPosition = ""+curx+","+cury+","+curz;
-    var targetBlock =beamToBlock2m[currentBlock];
-    var directionArray = getDirectionArray(rotationList[blockIndex]);
-    if(directionArray){
-     blocksDebeamed+=1;
-     blocklist[blockIndex]=targetBlock;
-     for(var i=1;i<2;i++){
-      blocklist[newBlockIndex]=targetBlock;
-      rotationList[newBlockIndex]=0;
-      colorlist[newBlockIndex]=colorlist[blockIndex];
-      blocks.BP1[newBlockIndex]="0,0,0,0";
-      blocks.BP2[newBlockIndex]="0,0,0,0";
-      positionList[newBlockIndex]= "" + (curx+(i*directionArray[0])) + "," + (cury+(i*directionArray[1])) +"," + (curz+(i*directionArray[2]));
-      newBlockIndex+=1;
-     }
-    }
+
   }
  }
+ 
 }
 
 
@@ -988,7 +953,7 @@ function debeamifyslopeblocks(blocks){
  blocks.designChanged = true;
  for(var scID = 0; scID < SClist.length; scID++){
   debeamifyslopeblocks(SClist[scID]);
- }
+ } 
  var blocklist=blocks.BlockIds;
  var colorlist=blocks.BCI;
  var positionList=blocks.BLP;
@@ -1104,7 +1069,7 @@ function beamifyaxis(x,y,z,blockIndex,blocklist,colorlist,positionList,rotationL
  var currentBlock = blocklist[tempBlockIndex];
  if(ItemDic[currentBlock]){
   if(blockToBeam[currentBlock]){
- 
+   
    var currentColor = colorlist[tempBlockIndex];
    var currentPosition = positionList[tempBlockIndex];
    
@@ -1131,87 +1096,6 @@ function beamifyaxis(x,y,z,blockIndex,blocklist,colorlist,positionList,rotationL
      blocklist[blockPositionData[tempPosition]]=-1;
     }
     blocklist[tempBlockIndex]=blockToBeam[currentBlock];
-
-    rotationList[tempBlockIndex]=rotation;     
-   }
-   
-   
-  }
- }
-
-}
-
-function beamifyaxis3m(x,y,z,blockIndex,blocklist,colorlist,positionList,rotationList,blockPositionData,rotation){
- var tempBlockIndex = blockIndex;
- var currentBlock = blocklist[tempBlockIndex];
- if(ItemDic[currentBlock]){
-  if(blockToBeam3m[currentBlock]){
-   var currentColor = colorlist[tempBlockIndex];
-   var currentPosition = positionList[tempBlockIndex];
-   
-   var posArray = JSON.parse("["+currentPosition+"]");
-   posArray[0] = Math.round(posArray[0]);
-   posArray[1] = Math.round(posArray[1]);
-   posArray[2] = Math.round(posArray[2]);
-   var result = true;
-   
-   
-   result = true;
-   for(i=1;i<3;i++){
-    var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
-    if((blockPositionData[tempPosition]!==undefined)&&(blocklist[blockPositionData[tempPosition]]==currentBlock)&&(colorlist[blockPositionData[tempPosition]]==currentColor)){
-     
-    }else{
-     result = false;
-    }
-   }
-   if(result){
-    blocksBeamed+=1;
-    for(i=1;i<3;i++){
-     var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
-     blocklist[blockPositionData[tempPosition]]=-1;
-    }
-    blocklist[tempBlockIndex]=blockToBeam3m[currentBlock];
-    rotationList[tempBlockIndex]=rotation;     
-   }
-   
-   
-  }
- }
-
-}
-
-function beamifyaxis2m(x,y,z,blockIndex,blocklist,colorlist,positionList,rotationList,blockPositionData,rotation){
- var tempBlockIndex = blockIndex;
- var currentBlock = blocklist[tempBlockIndex];
- if(ItemDic[currentBlock]){
-  if(blockToBeam2m[currentBlock]){
-   var currentColor = colorlist[tempBlockIndex];
-   var currentPosition = positionList[tempBlockIndex];
-   
-   var posArray = JSON.parse("["+currentPosition+"]");
-   posArray[0] = Math.round(posArray[0]);
-   posArray[1] = Math.round(posArray[1]);
-   posArray[2] = Math.round(posArray[2]);
-   var result = true;
-   
-   
-   result = true;
-   for(i=1;i<2;i++){
-    var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
-    if((blockPositionData[tempPosition]!==undefined)&&(blocklist[blockPositionData[tempPosition]]==currentBlock)&&(colorlist[blockPositionData[tempPosition]]==currentColor)){
-     
-    }else{
-     result = false;
-    }
-   }
-   if(result){
-    blocksBeamed+=1;
-    for(i=1;i<2;i++){
-     var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
-     blocklist[blockPositionData[tempPosition]]=-1;
-    }
-    blocklist[tempBlockIndex]=blockToBeam2m[currentBlock];
     rotationList[tempBlockIndex]=rotation;     
    }
    
@@ -1863,11 +1747,11 @@ function jointMirror(blocks,even){
 
 
 //turn blocks into beams
-function beamifyblocks(blocks){
+function beamifyblocks2(blocks){
  var SClist=blocks.SCs;
  blocks.designChanged = true;
  for(var scID = 0; scID < SClist.length; scID++){
-  beamifyblocks(SClist[scID]);
+  beamifyblocks2(SClist[scID]);
  }
  var blockPositionData = {};
  var blocklist=blocks.BlockIds;
@@ -1895,6 +1779,7 @@ function beamifyblocks(blocks){
  for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
   var currentBlock=blocklist[blockIndex];
   if(ItemDic[currentBlock]&&blockToBeam[currentBlock]){
+  
    var lookbackArray=getLookbackArray(0,0,-1,blockIndex,blocklist,colorlist,positionList,blockPositionData);
    
    for(var k=(lookbackArray.length-1);k>=0;k--){
@@ -1910,6 +1795,7 @@ function beamifyblocks(blocks){
  for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
   var currentBlock=blocklist[blockIndex];
   if(ItemDic[currentBlock]&&blockToBeam[currentBlock]){
+  
    var lookbackArray=getLookbackArray(0,-1,0,blockIndex,blocklist,colorlist,positionList,blockPositionData);
    
    for(var k=(lookbackArray.length-1);k>=0;k--){
@@ -1924,161 +1810,11 @@ function beamifyblocks(blocks){
  for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
   var currentBlock=blocklist[blockIndex];
   if(ItemDic[currentBlock]&&blockToBeam[currentBlock]){
+  
    var lookbackArray=getLookbackArray(-1,0,0,blockIndex,blocklist,colorlist,positionList,blockPositionData);
    
    for(var k=(lookbackArray.length-1);k>=0;k--){
     beamifyaxis(1,0,0,lookbackArray[k],blocklist,colorlist,positionList,rotationList,blockPositionData,1);
-   }
-
-  }
- }//x=axis  
-
-	cleanBlueprint(blocks);
-}
-
-function beamifyblocks3m(blocks){
- var SClist=blocks.SCs;
- blocks.designChanged = true;
- for(var scID = 0; scID < SClist.length; scID++){
-  beamifyblocks3m(SClist[scID]);
- }
- var blockPositionData = {};
- var blocklist=blocks.BlockIds;
- var colorlist=blocks.BCI;
- var positionList=blocks.BLP;
- var rotationList = blocks.BLR;
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock = blocklist[blockIndex];
-  if(ItemDic[currentBlock]){
-   if(blockToBeam3m[currentBlock]){
-    var currentPosition = "["+positionList[blockIndex]+"]";
-    var tpa = JSON.parse(currentPosition);
-    var curx = Math.round(tpa[0]);
-    var cury = Math.round(tpa[1]);
-    var curz = Math.round(tpa[2]);
-    currentPosition = ""+curx+","+cury+","+curz;    
- 
-    blockPositionData[currentPosition]=blockIndex;    
-   }
-  }
- }
- 
- //z=axis
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock=blocklist[blockIndex];
-  if(ItemDic[currentBlock]&&blockToBeam3m[currentBlock]){
-
-   var lookbackArray=getLookbackArray(0,0,-1,blockIndex,blocklist,colorlist,positionList,blockPositionData);
-   
-   for(var k=(lookbackArray.length-1);k>=0;k--){
-    beamifyaxis3m(0,0,1,lookbackArray[k],blocklist,colorlist,positionList,rotationList,blockPositionData,0);
-   }
-
-  }
-
- }//z=axis 
- 
-
- //y=axis
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock=blocklist[blockIndex];
-  if(ItemDic[currentBlock]&&blockToBeam3m[currentBlock]){
-
-   var lookbackArray=getLookbackArray(0,-1,0,blockIndex,blocklist,colorlist,positionList,blockPositionData);
-   
-   for(var k=(lookbackArray.length-1);k>=0;k--){
-    beamifyaxis3m(0,1,0,lookbackArray[k],blocklist,colorlist,positionList,rotationList,blockPositionData,8);
-   }
-
-  }
- }//y=axis 
- 
- 
- //x=axis
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock=blocklist[blockIndex];
-  if(ItemDic[currentBlock]&&blockToBeam3m[currentBlock]){
-
-   var lookbackArray=getLookbackArray(-1,0,0,blockIndex,blocklist,colorlist,positionList,blockPositionData);
-   
-   for(var k=(lookbackArray.length-1);k>=0;k--){
-    beamifyaxis3m(1,0,0,lookbackArray[k],blocklist,colorlist,positionList,rotationList,blockPositionData,1);
-   }
-
-  }
- }//x=axis  
-
-	cleanBlueprint(blocks);
-}
-
-
-function beamifyblocks2m(blocks){
- var SClist=blocks.SCs;
- blocks.designChanged = true;
- for(var scID = 0; scID < SClist.length; scID++){
-  beamifyblocks2m(SClist[scID]);
- }
- var blockPositionData = {};
- var blocklist=blocks.BlockIds;
- var colorlist=blocks.BCI;
- var positionList=blocks.BLP;
- var rotationList = blocks.BLR;
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock = blocklist[blockIndex];
-  if(ItemDic[currentBlock]){
-   if(blockToBeam2m[currentBlock]){
-    var currentPosition = "["+positionList[blockIndex]+"]";
-    var tpa = JSON.parse(currentPosition);
-    var curx = Math.round(tpa[0]);
-    var cury = Math.round(tpa[1]);
-    var curz = Math.round(tpa[2]);
-    currentPosition = ""+curx+","+cury+","+curz;    
- 
-    blockPositionData[currentPosition]=blockIndex;    
-   }
-  }
- }
- 
- //z=axis
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock=blocklist[blockIndex];
-  if(ItemDic[currentBlock]&&blockToBeam2m[currentBlock]){
-
-   var lookbackArray=getLookbackArray(0,0,-1,blockIndex,blocklist,colorlist,positionList,blockPositionData);
-   
-   for(var k=(lookbackArray.length-1);k>=0;k--){
-    beamifyaxis2m(0,0,1,lookbackArray[k],blocklist,colorlist,positionList,rotationList,blockPositionData,0);
-   }
-
-  }
-
- }//z=axis 
- 
-
- //y=axis
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock=blocklist[blockIndex];
-  if(ItemDic[currentBlock]&&blockToBeam2m[currentBlock]){
-
-   var lookbackArray=getLookbackArray(0,-1,0,blockIndex,blocklist,colorlist,positionList,blockPositionData);
-   
-   for(var k=(lookbackArray.length-1);k>=0;k--){
-    beamifyaxis2m(0,1,0,lookbackArray[k],blocklist,colorlist,positionList,rotationList,blockPositionData,8);
-   }
-
-  }
- }//y=axis 
- 
- 
- //x=axis
- for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-  var currentBlock=blocklist[blockIndex];
-  if(ItemDic[currentBlock]&&blockToBeam2m[currentBlock]){
-
-   var lookbackArray=getLookbackArray(-1,0,0,blockIndex,blocklist,colorlist,positionList,blockPositionData);
-   
-   for(var k=(lookbackArray.length-1);k>=0;k--){
-    beamifyaxis2m(1,0,0,lookbackArray[k],blocklist,colorlist,positionList,rotationList,blockPositionData,1);
    }
 
   }
@@ -2126,7 +1862,6 @@ function beamifyblocksOptimized(blocks){
 	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
 		var currentBlock=blocklist[blockIndex];
 		if(ItemDic[currentBlock]&&blockToBeam[currentBlock]){
-
 			var localPositionData = {};
 			getLocalArray(blockIndex,blocklist,colorlist,positionList,blockPositionData,localPositionData);			
 			while(true){
@@ -2294,394 +2029,6 @@ function beamifyblocksOptimized(blocks){
 }
 
 
-//optimize3m
-function beamifyblocksOptimized3m(blocks){	
-	var SClist=blocks.SCs;
-	blocks.designChanged = true;
-	for(var scID = 0; scID < SClist.length; scID++){
-		beamifyblocksOptimized3m(SClist[scID]);
-	}
-	var blockPositionData = {};
-	var blocklist=blocks.BlockIds;
-	var colorlist=blocks.BCI;
-	var positionList=blocks.BLP;
-	var rotationList = blocks.BLR;
-	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-		var currentBlock = blocklist[blockIndex];
-		if(ItemDic[currentBlock]){
-			if(blockToBeam3m[currentBlock]){		
-					
-				var tpa = stoar(positionList[blockIndex]);
-				var currentPosition = atos(tpa);
-				blockPositionData[currentPosition]=blockIndex;    
-			}
-		}
-	}
-
-	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-		var currentBlock=blocklist[blockIndex];
-		if(ItemDic[currentBlock]&&blockToBeam3m[currentBlock]){
-			var localPositionData = {};
-			getLocalArray(blockIndex,blocklist,colorlist,positionList,blockPositionData,localPositionData);			
-			while(true){
-				for(position in localPositionData){
-					if((blocklist[localPositionData[position].blockIndex]!==currentBlock)||(localPositionData[position].score>199)){
-						delete localPositionData[position];
-					}else{
-						localPositionData[position].score=0;
-					}
-				}
-				//scoring start
-				var localScore=0;
-				var beamAxis=0;
-				for(position in localPositionData){
-					var blockscore=false;
-					var currentData=localPositionData[position];
-					var lpa = stoar(position);
-					var templength;
-					var tempdir;
-					//scoring for each axis x,y,z
-					for (var axis=0;axis<3;axis++){
-						templength=1;
-						for(var neg=0;neg<2;neg++){
-							tempdir=getAxis(axis,neg);
-							for(var tempindex=1;tempindex<3;tempindex++){
-								var tempLocalPosition = "" + (lpa[0]+tempdir[0]*tempindex)+","+(lpa[1]+tempdir[1]*tempindex)+","+(lpa[2]+tempdir[2]*tempindex);
-								if(localPositionData[tempLocalPosition]!==undefined){
-									templength+=1;      
-								}else{
-									break;
-								}
-							}
-						}
-						if (templength>=3){
-							
-							blockscore=true;
-							beamAxis+=1;
-							localPositionData[position].score+=(templength-1);
-						}
-					}
-					//score local block
-					if(blockscore){
-						
-						currentData.score+=1;
-						localScore+=1;
-					}
-				}
-				
-				//proceed if there are beamable blocks
-				if (localScore>0){					
-
-					//beamAxis is number of axis that is beamable 
-
-					var scoreTable=[];
-					var scoreIndex=0;
-					var dedup={};
-
-					//permutate possible beams and scores, then sort
-					var minscore=150;
-					var scorecap=7;
-					for(position in localPositionData){
-						var currentData=localPositionData[position];
-						var lpa = stoar(position);
-						var tempdir1;
-						var tempdir2;
-						
-						for (var axis=0;axis<3;axis++){
-						
-							dedup={};
-							tempdir1=getAxis(axis,true);
-							tempdir2=getAxis(axis,false);
-							for(tempindex=0;tempindex<3;tempindex++){
-								var tempLocalPosition = "" + (lpa[0]+tempdir1[0]*tempindex)+","+(lpa[1]+tempdir1[1]*tempindex)+","+(lpa[2]+tempdir1[2]*tempindex);
-								if((localPositionData[tempLocalPosition]!==undefined)&&(localPositionData[tempLocalPosition].score>=3)){
-									if((localPositionData[tempLocalPosition].score>scorecap)||(localPositionData[tempLocalPosition].score>(minscore-9))){										
-										dedup[tempLocalPosition]=true;
-										continue;
-									}
-									var llpa = stoar(tempLocalPosition);
-									if(!dedup[tempLocalPosition]){
-										var templength=1;
-										for(var temptempindex=1;temptempindex<3;temptempindex++){											
-											temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
-											if((localPositionData[temptempLocalPosition]!==undefined)&&(localPositionData[temptempLocalPosition].score>=3)){
-												templength+=1;
-											}else{
-												break;
-											}
-										}
-										if(templength==3){
-											
-											dedup[tempLocalPosition]=true;
-											var scoreBlock=[];
-											for(var temptempindex=0;temptempindex<3;temptempindex++){
-												temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
-												scoreBlock[temptempindex]=localPositionData[temptempLocalPosition];
-											}
-											scoreBlock[4]=BeamAxisRot[axis]; //rotation
-											scoreBlock[5]=BeamAxisPriority[axis]; //priority
-											scoreBlock[6]=llpa[axis]; //priority2
-
-											var tempscore=scoreBlock[0].score+scoreBlock[1].score+scoreBlock[2].score;
-											if((tempscore>=9)&&(tempscore<=minscore)){
-												minscore=tempscore;
-												scoreTable[scoreIndex] = scoreBlock;
-												scoreIndex++;
-											}
-										}
-									}
-								}else{
-									break;
-								}
-							}							
-
-						}
-				  
-					}
-
-					//sort
-					var bestscore=149;
-					while(scoreTable.length>0){
-						scoreTable.sort(function(a, b){
-							res=(a[0].score+a[1].score+a[2].score)-(b[0].score+b[1].score+b[2].score);
-							if(res==0){
-								var resa=(a[5]-b[5]);
-								if(resa==0){
-									return a[6]-b[6];
-								}else{
-									return resa;
-								}
-							}else{
-								return res;
-							}
-						});
-
-						currentScoreBlock=scoreTable[0];
-						if((currentScoreBlock[0].score+currentScoreBlock[1].score+currentScoreBlock[2].score)>bestscore){
-							break;
-						}else{
-							bestscore=currentScoreBlock[0].score+currentScoreBlock[1].score+currentScoreBlock[2].score;
-							currentScoreBlock[0].score=150;
-							currentScoreBlock[1].score=150;
-							currentScoreBlock[2].score=150;
-							
-							blocksBeamed+=1;
-
-							blocklist[currentScoreBlock[1].blockIndex]=-1;
-							blocklist[currentScoreBlock[2].blockIndex]=-1;
-							
-
-							blocklist[currentScoreBlock[0].blockIndex]=blockToBeam3m[currentBlock];
-							rotationList[currentScoreBlock[0].blockIndex]=currentScoreBlock[4];  
-						}
-					}
-				}
-				else{
-					//exit loop if no beamable blocks
-					break;
-				}
-			}//end while
-		   //scoring end
-		}
-	}
-	cleanBlueprint(blocks);
-}
-
-
-
-//optimize2m
-function beamifyblocksOptimized2m(blocks){	
-	var SClist=blocks.SCs;
-	blocks.designChanged = true;
-	for(var scID = 0; scID < SClist.length; scID++){
-		beamifyblocksOptimized2m(SClist[scID]);
-	}
-	var blockPositionData = {};
-	var blocklist=blocks.BlockIds;
-	var colorlist=blocks.BCI;
-	var positionList=blocks.BLP;
-	var rotationList = blocks.BLR;
-	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-		var currentBlock = blocklist[blockIndex];
-		if(ItemDic[currentBlock]){
-			if(blockToBeam2m[currentBlock]){		
-					
-				var tpa = stoar(positionList[blockIndex]);
-				var currentPosition = atos(tpa);
-				blockPositionData[currentPosition]=blockIndex;    
-			}
-		}
-	}
-
-	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
-		var currentBlock=blocklist[blockIndex];
-		if(ItemDic[currentBlock]&&blockToBeam2m[currentBlock]){
-			var localPositionData = {};
-			getLocalArray(blockIndex,blocklist,colorlist,positionList,blockPositionData,localPositionData);			
-			while(true){
-				for(position in localPositionData){
-					if((blocklist[localPositionData[position].blockIndex]!==currentBlock)||(localPositionData[position].score>199)){
-						delete localPositionData[position];
-					}else{
-						localPositionData[position].score=0;
-					}
-				}
-				//scoring start
-				var localScore=0;
-				var beamAxis=0;
-				for(position in localPositionData){
-					var blockscore=false;
-					var currentData=localPositionData[position];
-					var lpa = stoar(position);
-					var templength;
-					var tempdir;
-					//scoring for each axis x,y,z
-					for (var axis=0;axis<3;axis++){
-						templength=1;
-						for(var neg=0;neg<2;neg++){
-							tempdir=getAxis(axis,neg);
-							for(var tempindex=1;tempindex<2;tempindex++){
-								var tempLocalPosition = "" + (lpa[0]+tempdir[0]*tempindex)+","+(lpa[1]+tempdir[1]*tempindex)+","+(lpa[2]+tempdir[2]*tempindex);
-								if(localPositionData[tempLocalPosition]!==undefined){
-									templength+=1;      
-								}else{
-									break;
-								}
-							}
-						}
-						if (templength>=2){
-							
-							blockscore=true;
-							beamAxis+=1;
-							localPositionData[position].score+=(templength-1);
-						}
-					}
-					//score local block
-					if(blockscore){
-						
-						currentData.score+=1;
-						localScore+=1;
-					}
-				}
-				
-				//proceed if there are beamable blocks
-				if (localScore>0){					
-
-					//beamAxis is number of axis that is beamable 
-
-					var scoreTable=[];
-					var scoreIndex=0;
-					var dedup={};
-
-					//permutate possible beams and scores, then sort
-					var minscore=100;
-					var scorecap=2;
-					for(position in localPositionData){
-						var currentData=localPositionData[position];
-						var lpa = stoar(position);
-						var tempdir1;
-						var tempdir2;
-						
-						for (var axis=0;axis<3;axis++){
-						
-							dedup={};
-							tempdir1=getAxis(axis,true);
-							tempdir2=getAxis(axis,false);
-							for(tempindex=0;tempindex<2;tempindex++){
-								var tempLocalPosition = "" + (lpa[0]+tempdir1[0]*tempindex)+","+(lpa[1]+tempdir1[1]*tempindex)+","+(lpa[2]+tempdir1[2]*tempindex);
-								if((localPositionData[tempLocalPosition]!==undefined)&&(localPositionData[tempLocalPosition].score>=2)){
-									if((localPositionData[tempLocalPosition].score>scorecap)||(localPositionData[tempLocalPosition].score>(minscore-3))){										
-										dedup[tempLocalPosition]=true;
-										continue;
-									}
-									var llpa = stoar(tempLocalPosition);
-									if(!dedup[tempLocalPosition]){
-										var templength=1;
-										for(var temptempindex=1;temptempindex<2;temptempindex++){											
-											temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
-											if((localPositionData[temptempLocalPosition]!==undefined)&&(localPositionData[temptempLocalPosition].score>=2)){
-												templength+=1;
-											}else{
-												break;
-											}
-										}
-										if(templength==2){
-											
-											dedup[tempLocalPosition]=true;
-											var scoreBlock=[];
-											for(var temptempindex=0;temptempindex<2;temptempindex++){
-												temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
-												scoreBlock[temptempindex]=localPositionData[temptempLocalPosition];
-											}
-											scoreBlock[4]=BeamAxisRot[axis]; //rotation
-											scoreBlock[5]=BeamAxisPriority[axis]; //priority
-											scoreBlock[6]=llpa[axis]; //priority2
-
-											var tempscore=scoreBlock[0].score+scoreBlock[1].score;
-											if((tempscore>=2)&&(tempscore<=minscore)){
-												minscore=tempscore;
-												scoreTable[scoreIndex] = scoreBlock;
-												scoreIndex++;
-											}
-										}
-									}
-								}else{
-									break;
-								}
-							}							
-
-						}
-				  
-					}
-
-					//sort
-					var bestscore=99;
-					while(scoreTable.length>0){
-						scoreTable.sort(function(a, b){
-							res=(a[0].score+a[1].score)-(b[0].score+b[1].score);
-							if(res==0){
-								var resa=(a[5]-b[5]);
-								if(resa==0){
-									return a[6]-b[6];
-								}else{
-									return resa;
-								}
-							}else{
-								return res;
-							}
-						});
-
-						currentScoreBlock=scoreTable[0];
-						if((currentScoreBlock[0].score+currentScoreBlock[1].score)>bestscore){
-							break;
-						}else{
-							bestscore=currentScoreBlock[0].score+currentScoreBlock[1].score;
-							currentScoreBlock[0].score=100;
-							currentScoreBlock[1].score=100;
-						
-							
-							blocksBeamed+=1;
-
-							blocklist[currentScoreBlock[1].blockIndex]=-1;
-							
-							
-
-							blocklist[currentScoreBlock[0].blockIndex]=blockToBeam2m[currentBlock];
-							rotationList[currentScoreBlock[0].blockIndex]=currentScoreBlock[4];  
-						}
-					}
-				}
-				else{
-					//exit loop if no beamable blocks
-					break;
-				}
-			}//end while
-		   //scoring end
-		}
-	}
-	cleanBlueprint(blocks);
-}
-
 function removeOverlap(blocks){
 	var blockPosData = {};
 	var blocklist=blocks.BlockIds;
@@ -2729,16 +2076,8 @@ function removeOverlap(blocks){
 	for(position in blockPosData){
 		var tempBlock=blockPosData[position];
 		if(tempBlock.overlap){
-				var tempbtb=0;
-				if(beamToBlock[tempBlock.blockId]){
-					tempbtb=beamToBlock[tempBlock.blockId];
-				}else if(beamToBlock3m[tempBlock.blockId]){
-					tempbtb=beamToBlock3m[tempBlock.blockId];
-				}else if(beamToBlock2m[tempBlock.blockId]){
-					tempbtb=beamToBlock2m[tempBlock.blockId];
-				}
-			if(tempbtb){
-				var newBlockId=tempbtb;
+			if(beamToBlock[tempBlock.blockId]){
+				var newBlockId=beamToBlock[tempBlock.blockId];
 				blocklist[tempBlockIndex]=newBlockId;
 				rotationList[tempBlockIndex]=0;
 				colorlist[tempBlockIndex]=tempBlock.bci;
@@ -2770,7 +2109,7 @@ function removeOverlap(blocks){
 
 		}
 		
-	}
+	}	
 	cleanBlueprint(blocks);
 }
 
@@ -2879,6 +2218,10 @@ function getconverted(bID){
  else return(bID);
 }
 
+//accepts natural,metal,oil,scrap,crystal, returns RP value
+function calculateRP(r1,r2,r3,r4,r5){
+ return r1+r2*2+r3*3+r4*4+r5*10;
+}
 
 
 
@@ -2890,7 +2233,10 @@ function downloadBlueprint(){
   }else{
 	allowedcolor=-1;
   }
-
+  if(document.getElementById("replaceold").checked){
+   buildReplaceOldIndex();
+   replaceOld(CurrentBlueprint.Blueprint);
+  }
   if(document.getElementById("clearhull").checked){
    buildkeepIndex();
    clearhull(CurrentBlueprint.Blueprint);
@@ -2943,7 +2289,10 @@ function downloadBlueprint(){
   buildconversionIndex();
   buildblockColorIndex();
   convertblocks(CurrentBlueprint.Blueprint);  
-  if(document.getElementById("randomcolor").checked){
+  if(document.getElementById("highlightAI").checked){
+
+   highlightBlocks(CurrentBlueprint.Blueprint);
+  }else if(document.getElementById("randomcolor").checked){
 
    randomcolorblocks(CurrentBlueprint.Blueprint);
   }
@@ -2980,17 +2329,13 @@ function downloadBlueprint(){
    beamifyslopeblocks(CurrentBlueprint.Blueprint);
    //var starttime=(new Date()).getTime();   
    beamifyblocksOptimized(CurrentBlueprint.Blueprint);
-   beamifyblocksOptimized3m(CurrentBlueprint.Blueprint);
-   beamifyblocksOptimized2m(CurrentBlueprint.Blueprint);
    //var endtime=(new Date()).getTime(); 
    //alert(endtime-starttime);
 
   }else if(document.getElementById("beamify2").checked){
-   blocksBeamed = 0;   
+   blocksBeamed = 0;
+   beamifyblocks2(CurrentBlueprint.Blueprint);
    beamifyslopeblocks(CurrentBlueprint.Blueprint);
-   beamifyblocks(CurrentBlueprint.Blueprint);
-   beamifyblocks3m(CurrentBlueprint.Blueprint);
-   beamifyblocks2m(CurrentBlueprint.Blueprint);
   }
 
   selectedFileName = "Modified_" + selectedFileName;
@@ -3019,6 +2364,38 @@ function togglefiletext(){
  }
 }
 
+function buildReplaceOldIndex(){
+	replaceOldIndex = {};
+	for(var key in ItemDic){
+		var keyint = parseInt(key);
+		var val = ItemDic[keyint];
+		if(oldBlocks[val]){
+			var tempblock={};
+			tempblock.BlockId=ItemTable[oldBlocks[val].Guid].BlockId;
+			tempblock.Rot=oldBlocks[val].Rot;
+			replaceOldIndex[keyint]=tempblock;
+		}
+	}
+}
+
+function replaceOld(blocks){
+	var SClist=blocks.SCs;
+	blocks.designChanged = true;
+	for(var scID = 0; scID < SClist.length; scID++){
+		replaceOld(SClist[scID]);
+	}
+	var blocklist=blocks.BlockIds;
+	var rotationList = blocks.BLR;
+	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
+		if(replaceOldIndex[blocklist[blockIndex]]){
+			var replaceData = replaceOldIndex[blocklist[blockIndex]];
+			var newRotation = blockRotate(replaceData.Rot,rotationList[blockIndex]);
+			var newBlock = replaceData.BlockId;				
+			blocklist[blockIndex] = newBlock;
+			rotationList[blockIndex] = newRotation;
+		}
+	}
+}
 
 /*
 
@@ -3476,7 +2853,6 @@ function countblocks(blocks){
 	blockRenderIndex=0;
 	maxc=[0,0,0,0];
 	minc=[0,0,0,0];	
-	totalstats["Game Version*"]=blocks.GameVersion;
 	return countblocksR(blocks,false,{},[0,0,0],[0,0,0,1]);	
 }
 
@@ -3499,7 +2875,11 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 	totalstats["Max Battery Capacity*"] += Math.max(0,blocks.CSI[49]);
 	totalstats["Max Ammo Capacity*"] += Math.max(0,blocks.CSI[38]);
 	totalstats["Max Fuel Capacity*"] += Math.max(0,blocks.CSI[40]);
-	
+	totalstats["Max Natural Storage*"] += Math.max(0,blocks.CSI[23]);
+	totalstats["Max Metal Storage*"] += Math.max(0,blocks.CSI[24]);
+	totalstats["Max Oil Storage*"] += Math.max(0,blocks.CSI[25]);
+	totalstats["Max Scrap Storage*"] += Math.max(0,blocks.CSI[26]);
+	totalstats["Max Crystal Storage*"] += Math.max(0,blocks.CSI[27]);
 
 	if(blocks.designChanged){
 		totalstats["Blueprint Modified*"] = true;
@@ -3563,7 +2943,12 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 			negy=currentBlock.negy;
 			posz=currentBlock.posz;
 			negz=currentBlock.negz;   
-			totalstats["Material Cost"]+=currentBlock.Material;
+			totalstats["Natural Cost"]+=currentBlock.Natural;
+			totalstats["Metal Cost"]+=currentBlock.Metal;
+			totalstats["Oil Cost"]+=currentBlock.Oil;
+			totalstats["Scrap Cost"]+=currentBlock.Scrap;
+			totalstats["Crystal Cost"]+=currentBlock.Crystal;
+			totalstats["RP Cost"]+=currentBlock.SparesCost;
 			totalstats["Volume"]+=currentBlock.Volume;			
 		}
 		tempRender.position=tempPosition;
@@ -3707,11 +3092,10 @@ function getType(blockid){
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD v1.95861</p>
-	<br>
+	<p>Last updated for FTD v1.9572</p>
 	<p>To start, click on the button below and choose a blueprint file.</p>
-	<br>
-	<p>This tool has been recently updated and might contain bugs</p>		
+	
+	<p>*Heavy Armour related features will only work with blueprints saved in v1.9565 and above.</p>
 	<p>Please report any issues in the forum thread <a href="http://www.fromthedepthsgame.com/forum/showthread.php?tid=19547">here</a></p>
 	<div class="hidden"><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></div>
 	<div class="ui-grid-solo">
@@ -3872,8 +3256,6 @@ function getType(blockid){
 	<option id="pal29" value="29">Trim</option>
 	<option id="pal30" value="30">Secondary</option>
 	<option id="pal31" value="31">Main</option>
-	<option id="pal32" value="32">Camo?(1-4)</option>
-	<option id="pal33" value="33">Camo?(fleet colors)</option>
  </select>	
 	</div>
 </div>
@@ -3905,10 +3287,18 @@ function getType(blockid){
 <h4>Vehicle Modification Tools</h4>
 
 <br>
+<div class="ui-grid-a">
+<div class="ui-block-a">
+<label><input id="highlightAI" type="checkbox" data-mini="true">Highlight AI, ACB, PID blocks (will overwrite paint settings)</label>
+</div>
+<div class="ui-block-b">
+<label><input id="randomcolor"  type="checkbox" data-mini="true">Randomly paint main vehicle (will overwrite paint settings)</label>
+</div>
+</div>
 
 <div class="ui-grid-a">
 <div class="ui-block-a">
-<label><input id="randomcolor"  type="checkbox" data-mini="true">Randomly paint main vehicle (will overwrite paint settings)</label>
+<label><input id="replaceold" type="checkbox" data-mini="true">Replace old armor blocks (1m and 2m left,right,and up slopes)</label>
 </div>
 <div class="ui-block-b">
 <label><input id="clearhull" type="checkbox" data-mini="true">Delete all blocks except Wood/Alloy/Metal/Glass/HA/Stone/Lead.</label>
@@ -3949,12 +3339,12 @@ function getType(blockid){
 
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="debeamify" type="checkbox" data-mini="true">DeBeamify. Turns Wood/Alloy/Metal/Glass/HA/Stone/Lead beams and diagonal slopes into 1m blocks and slopes.</label>
+<label><input id="debeamify" type="checkbox" data-mini="true">DeBeamify. Turns Wood/Alloy/Metal/Glass/HA/Stone/Lead 4m beams and diagonal slopes into 1m blocks and slopes.</label>
 </div>
 </div>
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="beamify2" type="checkbox" data-mini="true">Beamify. Turns Wood/Alloy/Metal/Glass/HA/Stone/Lead 1m blocks and slopes into beams and diagonal slopes.</label>
+<label><input id="beamify2" type="checkbox" data-mini="true">Beamify. Turns Wood/Alloy/Metal/Glass/HA/Stone/Lead 1m blocks and slopes into 4m beams and diagonal slopes.</label>
 </div>
 </div>
 

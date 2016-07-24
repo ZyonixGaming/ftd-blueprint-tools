@@ -528,39 +528,19 @@ function processData(){
   beamToBlock[f2]=f1; 
  }
  
- slopeBlockToBeam[aa1]=aa2;
- slopeBlockToBeam[ab1]=ab2;
- slopeBlockToBeam[ac1]=ac2;
- slopeBlockToBeam[ad1]=ad2;
- slopeBeamToBlock[aa2]=aa1;
- slopeBeamToBlockM[aa3]=aa1;
- slopeBeamToBlock[ab2]=ab1;
- slopeBeamToBlockM[ab3]=ab1;
- slopeBeamToBlock[ac2]=ac1;
- slopeBeamToBlockM[ac3]=ac1;
- slopeBeamToBlock[ad2]=ad1;
- slopeBeamToBlockM[ad3]=ad1;
+
 
  totalstats = {
   "Block Count":0,
-  "Natural Cost":0,
-  "Metal Cost":0,
-  "Oil Cost":0,
-  "Scrap Cost":0,
-  "Crystal Cost":0,
-  "RP Cost":0,
+  "Material Cost":0,
   "Volume":0,
   "Max Power*":0,
   "Max Battery Capacity*":0,
   "Max Ammo Capacity*":0,
-  "Max Fuel Capacity*":0,
-  "Max Natural Storage*":0,
-  "Max Metal Storage*":0,
-  "Max Oil Storage*":0,
-  "Max Scrap Storage*":0,
-  "Max Crystal Storage*":0,
+  "Max Fuel Capacity*":0, 
+  "Game Version*":"unknown",
   "Blueprint Modified*":false,
- } 
+ }
  countblocks(CurrentBlueprint.Blueprint);
  totalstats["Volume"]=roundToTwo(totalstats["Volume"]);
  getpalette(CurrentBlueprint.Blueprint);
@@ -675,6 +655,7 @@ function countblocks(blocks){
 	blockRenderIndex=0;
 	maxc=[0,0,0,0];
 	minc=[0,0,0,0];	
+	totalstats["Game Version*"]=blocks.GameVersion;
 	return countblocksR(blocks,false,{},[0,0,0],[0,0,0,1]);	
 }
 
@@ -704,12 +685,7 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 	totalstats["Max Battery Capacity*"] += Math.max(0,blocks.CSI[49]);
 	totalstats["Max Ammo Capacity*"] += Math.max(0,blocks.CSI[38]);
 	totalstats["Max Fuel Capacity*"] += Math.max(0,blocks.CSI[40]);
-	totalstats["Max Natural Storage*"] += Math.max(0,blocks.CSI[23]);
-	totalstats["Max Metal Storage*"] += Math.max(0,blocks.CSI[24]);
-	totalstats["Max Oil Storage*"] += Math.max(0,blocks.CSI[25]);
-	totalstats["Max Scrap Storage*"] += Math.max(0,blocks.CSI[26]);
-	totalstats["Max Crystal Storage*"] += Math.max(0,blocks.CSI[27]);
-
+	
 	if(blocks.designChanged){
 		totalstats["Blueprint Modified*"] = true;
 	}
@@ -771,12 +747,7 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 			negy=currentBlock.negy;
 			posz=currentBlock.posz;
 			negz=currentBlock.negz;   
-			totalstats["Natural Cost"]+=currentBlock.Natural;
-			totalstats["Metal Cost"]+=currentBlock.Metal;
-			totalstats["Oil Cost"]+=currentBlock.Oil;
-			totalstats["Scrap Cost"]+=currentBlock.Scrap;
-			totalstats["Crystal Cost"]+=currentBlock.Crystal;
-			totalstats["RP Cost"]+=currentBlock.SparesCost;
+			totalstats["Material Cost"]+=currentBlock.Material;
 			totalstats["Volume"]+=currentBlock.Volume;			
 		}
 		tempRender.position=tempPosition;
@@ -864,7 +835,7 @@ function roundToTwo(num) {
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD v1.9572</p>
+	<p>Last updated for FTD v1.95861</p>
 	<p>To start, click on the button below and choose a blueprint file.</p>
 	<p>All blocks will be listed, so loading might take a while for large blueprints.</p>
 	<div class="hidden"><input type="file" id="blueprintfile" accept=".blueprint" onchange="openFile();"></div>

@@ -64,22 +64,13 @@ var blockCountData = {}
 //store stats
 var totalstats = {
 		"Block Count":[0,0],
-		"Natural Cost":[0,0],
-		"Metal Cost":[0,0],
-		"Oil Cost":[0,0],
-		"Scrap Cost":[0,0],
-		"Crystal Cost":[0,0],
-		"RP Cost":[0,0],
+		"Material Cost":[0,0],
 		"Volume":[0,0],
 		"Max Power*":[0,0],
 		"Max Battery Capacity*":[0,0],
 		"Max Ammo Capacity*":[0,0],
 		"Max Fuel Capacity*":[0,0],
-		"Max Natural Storage*":[0,0],
-		"Max Metal Storage*":[0,0],
-		"Max Oil Storage*":[0,0],
-		"Max Scrap Storage*":[0,0],
-		"Max Crystal Storage*":[0,0],
+		"Game Version*":["unknown","unknown"],
 		"Blueprint Modified*":[false,false]
 	}
 
@@ -199,22 +190,13 @@ function openFile(fileinput) {
 function processData(i){
 	var tempresult=0;
 	totalstats["Block Count"][i]=0;
-	totalstats["Natural Cost"][i]=0;
-	totalstats["Metal Cost"][i]=0;
-	totalstats["Oil Cost"][i]=0;
-	totalstats["Scrap Cost"][i]=0;
-	totalstats["Crystal Cost"][i]=0;
-	totalstats["RP Cost"][i]=0;
+	totalstats["Material Cost"][i]=0;
 	totalstats["Volume"][i]=0;
 	totalstats["Max Power*"][i]=0;
 	totalstats["Max Battery Capacity*"][i]=0;
 	totalstats["Max Ammo Capacity*"][i]=0;
 	totalstats["Max Fuel Capacity*"][i]=0;
-	totalstats["Max Natural Storage*"][i]=0;
-	totalstats["Max Metal Storage*"][i]=0;
-	totalstats["Max Oil Storage*"][i]=0;
-	totalstats["Max Scrap Storage*"][i]=0;
-	totalstats["Max Crystal Storage*"][i]=0;
+	totalstats["Game Version*"][i]="unknown";
 	totalstats["Blueprint Modified*"][i]=false;
 	
 
@@ -234,7 +216,7 @@ function processData(i){
 		for(var j in countID){
 			countID[j][i]=0;
 		}
-		
+		totalstats["Game Version*"][i] = (CurrentBlueprint[i]).Blueprint.GameVersion;
 		countblocks((CurrentBlueprint[i]).Blueprint,i);
 		totalstats["Volume"][i]=roundToTwo(totalstats["Volume"][i]);
 		tempresult+=1;
@@ -322,11 +304,6 @@ function countblocks(blocks,index){
 	totalstats["Max Battery Capacity*"][index] += Math.max(0,blocks.CSI[49]);
 	totalstats["Max Ammo Capacity*"][index] += Math.max(0,blocks.CSI[38]);
 	totalstats["Max Fuel Capacity*"][index] += Math.max(0,blocks.CSI[40]);
-	totalstats["Max Natural Storage*"][index] += Math.max(0,blocks.CSI[23]);
-	totalstats["Max Metal Storage*"][index] += Math.max(0,blocks.CSI[24]);
-	totalstats["Max Oil Storage*"][index] += Math.max(0,blocks.CSI[25]);
-	totalstats["Max Scrap Storage*"][index] += Math.max(0,blocks.CSI[26]);
-	totalstats["Max Crystal Storage*"][index] += Math.max(0,blocks.CSI[27]);
 	
 	if(blocks.designChanged){
 		totalstats["Blueprint Modified*"][index] = true;
@@ -335,21 +312,12 @@ function countblocks(blocks,index){
 	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){		
 		countID[ItemDic[index][blocklist[blockIndex]]][index] += 1;		
 		var currentBlock = getBlock(blocklist[blockIndex],index);
-		totalstats["Natural Cost"][index]+=currentBlock.Natural;
-		totalstats["Metal Cost"][index]+=currentBlock.Metal;
-		totalstats["Oil Cost"][index]+=currentBlock.Oil;
-		totalstats["Scrap Cost"][index]+=currentBlock.Scrap;
-		totalstats["Crystal Cost"][index]+=currentBlock.Crystal;
-		totalstats["RP Cost"][index]+=currentBlock.SparesCost;
+		totalstats["Material Cost"][index]+=currentBlock.Material;
 		totalstats["Volume"][index]+=currentBlock.Volume;
 	}
 }
 
 
-//accepts natural,metal,oil,scrap,crystal, returns RP value
-function calculateRP(r1,r2,r3,r4,r5){
-	return r1+r2*2+r3*3+r4*4+r5*10;
-}
 
 //check for numeric
 function isNumeric(n) {
@@ -388,7 +356,7 @@ function roundToTwo(num) {
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD v1.9572</p>
+	<p>Last updated for FTD v1.95861</p>
 	<p>Click on the buttons to load blueprints for comparison</p>
 	<div class="hidden">
 	<input type="file" class="hidden" id="blueprint1" accept=".blueprint" onchange="openFile(this);"> <label></label><br>
