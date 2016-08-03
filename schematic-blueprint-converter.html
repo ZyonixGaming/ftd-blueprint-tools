@@ -943,7 +943,7 @@ function roundToTwo(num) {
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD v1.95864</p>
+	<p>Last updated for FTD <span id="version">v1.95864</span></p>
 	<br>
 	<p>To start, click on the Open Schematic button and choose a schematic file.</p>
 	<p>After that scroll to the bottom of the page for the Download Blueprint button.</p>
@@ -1033,6 +1033,7 @@ s.setAttribute('data-timestamp', +new Date());
 
 <script>
 loadLinks();
+$("#version").text(ftdversion);
 $(".lb").prop('disabled',false);		
 $(".lb").parent().removeClass('ui-state-disabled');		
 

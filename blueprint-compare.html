@@ -356,7 +356,7 @@ function roundToTwo(num) {
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD v1.95864</p>
+	<p>Last updated for FTD <span id="version">v1.95864</span></p>
 	<p>Click on the buttons to load blueprints for comparison</p>
 	<div class="hidden">
 	<input type="file" class="hidden" id="blueprint1" accept=".blueprint" onchange="openFile(this);"> <label></label><br>
@@ -437,6 +437,7 @@ s.setAttribute('data-timestamp', +new Date());
 </div><!-- /page -->
 <script>
 loadLinks();
+$("#version").text(ftdversion);
 $(".lb").prop('disabled',false);		
 $(".lb").parent().removeClass('ui-state-disabled');		
 

@@ -796,7 +796,7 @@ function download(filename, data) {
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD v1.95864</p>
+	<p>Last updated for FTD <span id="version">v1.95864</span></p>
 	<p>Click on the buttons to load 2 blueprints to combine.</p>
 	<p>The blueprints will combined in a way that the last origin block placed on the each vehicle will merge into 1 origin block. Orientation of the origin blocks matter.</p>
 	<p>Scroll to the bottom to find the 'Combine and Download' button.</p>
@@ -888,6 +888,7 @@ s.setAttribute('data-timestamp', +new Date());
 </div><!-- /page -->
 <script>
 loadLinks();
+$("#version").text(ftdversion);
 $(".lb").prop('disabled',false);		
 $(".lb").parent().removeClass('ui-state-disabled');		
 
