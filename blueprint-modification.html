@@ -2112,6 +2112,8 @@ function getAxis(axis,neg){
 
 
 //optimize
+
+
 function beamifyblocksOptimized(blocks){	
 	var SClist=blocks.SCs;
 	blocks.designChanged = true;
@@ -2382,7 +2384,7 @@ function beamifyblocksOptimized3m(blocks){
 				
 				//proceed if there are beamable blocks
 				if (localScore>0){					
-
+					
 					//beamAxis is number of axis that is beamable 
 
 					var scoreTable=[];
@@ -2577,7 +2579,7 @@ function beamifyblocksOptimized2m(blocks){
 				
 				//proceed if there are beamable blocks
 				if (localScore>0){					
-
+					
 					//beamAxis is number of axis that is beamable 
 
 					var scoreTable=[];
@@ -2601,7 +2603,7 @@ function beamifyblocksOptimized2m(blocks){
 							for(tempindex=0;tempindex<2;tempindex++){
 								var tempLocalPosition = "" + (lpa[0]+tempdir1[0]*tempindex)+","+(lpa[1]+tempdir1[1]*tempindex)+","+(lpa[2]+tempdir1[2]*tempindex);
 								if((localPositionData[tempLocalPosition]!==undefined)&&(localPositionData[tempLocalPosition].score>=2)){
-									if((localPositionData[tempLocalPosition].score>scorecap)||(localPositionData[tempLocalPosition].score>(minscore-3))){										
+									if((localPositionData[tempLocalPosition].score>scorecap)||(localPositionData[tempLocalPosition].score>(minscore-1))){										
 										dedup[tempLocalPosition]=true;
 										continue;
 									}
@@ -2894,6 +2896,7 @@ function getconverted(bID){
 
 
 function downloadBlueprint(){
+
  try{
  
   if(document.getElementById("paintrestrict").checked){
@@ -2988,11 +2991,20 @@ function downloadBlueprint(){
   if(document.getElementById("beamifyOptimized").checked){
    blocksBeamed = 0;
 
+   
    beamifyslopeblocks(CurrentBlueprint.Blueprint);
-   //var starttime=(new Date()).getTime();   
+   //var starttime=(new Date()).getTime();  
+  
+
    beamifyblocksOptimized(CurrentBlueprint.Blueprint);
+  
    beamifyblocksOptimized3m(CurrentBlueprint.Blueprint);
+
+   beamifyblocks2m(CurrentBlueprint.Blueprint);
+   /*
    beamifyblocksOptimized2m(CurrentBlueprint.Blueprint);
+   
+   */
    //var endtime=(new Date()).getTime(); 
    //alert(endtime-starttime);
 
@@ -3972,7 +3984,7 @@ function getType(blockid){
 
 <div class="ui-grid-solo">
 <div class="ui-block-a">
-<label><input id="beamifyOptimized" type="checkbox" data-mini="true">Beamify using an optimization algorithm. Slower but will fit in more beams. It can take up to a few minutes for large unbeamed vehicles.</label>
+<label><input id="beamifyOptimized" type="checkbox" data-mini="true">Beamify using an optimization algorithm. Slower but will fit in more 4m beams. It can take up to a few minutes for large unbeamed vehicles.</label>
 </div>
 </div>
 
