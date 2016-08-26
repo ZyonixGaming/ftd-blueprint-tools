@@ -2883,6 +2883,26 @@ function beamifyslopeblocks(blocks){
 	cleanBlueprint(blocks);
 }
 
+function updateBlockCount(blocks){
+	var SClist=blocks.SCs;	
+	for(var scID = 0; scID < SClist.length; scID++){
+		updateBlockCount(SClist[scID]);
+	}
+	if(blocks.TotalBlockCount!==undefined){
+		blocks.TotalBlockCount=blocks.BlockIds.length;
+	}
+	if(blocks.BlockCount!==undefined){
+		blocks.BlockCount=blocks.BlockIds.length;
+	}
+	if(blocks.LastAliveBlock!==undefined){
+		blocks.LastAliveBlock=blocks.BlockIds.length;
+	}	
+	if(blocks.IndexOfFirstBlockNeedingFullRepairCost!==undefined){
+		blocks.IndexOfFirstBlockNeedingFullRepairCost=1000000;
+	}	
+}
+
+
 
 //returns different block ID if blocks needs to be converted
 function getconverted(bID){
@@ -3015,6 +3035,8 @@ function downloadBlueprint(){
    beamifyblocks3m(CurrentBlueprint.Blueprint);
    beamifyblocks2m(CurrentBlueprint.Blueprint);
   }
+  
+  updateBlockCount(CurrentBlueprint.Blueprint);
 
   selectedFileName = "Modified_" + selectedFileName;
   processData();
