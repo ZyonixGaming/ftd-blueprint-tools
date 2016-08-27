@@ -149,7 +149,8 @@ function loadLinks(){
 
 function loadError(message){
 	if(message){
-		alert(message);
+		throw message;
+		//alert(message);
 	}else{
 		alert("failure");
 	}	
@@ -249,7 +250,11 @@ function displayData(){
 	for(var blockGuid in countID) {
 		
 		if(countID[blockGuid][0]+countID[blockGuid][1] >0) {			
-			blockCountData[ItemTable[blockGuid].Name]=[countID[blockGuid][0],countID[blockGuid][1]];			
+			if (ItemTable[blockGuid]){
+				blockCountData[ItemTable[blockGuid].Name]=[countID[blockGuid][0],countID[blockGuid][1]];			
+			}else{
+				blockCountData[blockGuid]=[countID[blockGuid][0],countID[blockGuid][1]];			
+			}
 			totalcount1+=countID[blockGuid][0]
 			totalcount2+=countID[blockGuid][1];
 		}
@@ -312,8 +317,10 @@ function countblocks(blocks,index){
 	for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){		
 		countID[ItemDic[index][blocklist[blockIndex]]][index] += 1;		
 		var currentBlock = getBlock(blocklist[blockIndex],index);
-		totalstats["Material Cost"][index]+=currentBlock.Material;
-		totalstats["Volume"][index]+=currentBlock.Volume;
+		if(currentBlock){
+			totalstats["Material Cost"][index]+=currentBlock.Material;
+			totalstats["Volume"][index]+=currentBlock.Volume;
+		}
 	}
 }
 

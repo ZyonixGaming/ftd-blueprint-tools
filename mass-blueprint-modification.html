@@ -113,6 +113,8 @@ var fileIndex = 0;
 
 
 
+
+
 $(document).ready(function(){
 
 	
@@ -384,6 +386,7 @@ function downloadBlueprint(){
 
 					//maintains a list of blockID to determine color changes via colorblocks() function
 					var blockColorIndex = {}
+					var replaceOldIndex = {}
 
 					//blockID:blockname
 					var nameID = {}
@@ -2589,6 +2592,41 @@ function downloadBlueprint(){
 						}
 
 
+						function buildReplaceOldIndex(){
+							replaceOldIndex = {};
+							for(var key in ItemDic){
+								var keyint = parseInt(key);
+								var val = ItemDic[keyint];
+								if(oldBlocks[val]){
+									var tempblock={};
+									tempblock.BlockId=GuidToID[oldBlocks[val].Guid];
+									tempblock.Rot=oldBlocks[val].Rot;
+									replaceOldIndex[keyint]=tempblock;
+								}
+							}
+						}
+						
+						
+
+						function replaceOld(blocks){
+							var SClist=blocks.SCs;
+							blocks.designChanged = true;
+							for(var scID = 0; scID < SClist.length; scID++){
+								replaceOld(SClist[scID]);
+							}
+							var blocklist=blocks.BlockIds;
+							var rotationList = blocks.BLR;
+							for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
+								if(replaceOldIndex[blocklist[blockIndex]]){
+									var replaceData = replaceOldIndex[blocklist[blockIndex]];
+									var newRotation = blockRotate(replaceData.Rot,rotationList[blockIndex]);
+									var newBlock = replaceData.BlockId;				
+									blocklist[blockIndex] = newBlock;
+									rotationList[blockIndex] = newRotation;
+								}
+							}
+						}						
+						
 
 					//builds a lookup table of blockIDs to convert from:to
 					function buildconversionIndex(){
@@ -2911,7 +2949,7 @@ function downloadBlueprint(){
 					   //ItemTable[val].BlockId=keyint;
 					   GuidToID[val]=keyint;					   
 					  }else{
-					   nameID[keyint]="unnamed";
+					   nameID[keyint]=val;
 					  }
 					  
 					  if (val=="9a0ae372-beb4-4009-b14e-36ed0715af73"){
@@ -3095,7 +3133,10 @@ function downloadBlueprint(){
 						  }else{
 							allowedcolor=-1;
 						  }
-
+						  if(document.getElementById("replaceold").checked){
+						   buildReplaceOldIndex();
+						   replaceOld(CurrentBlueprint.Blueprint);
+						  }
 						  if(document.getElementById("clearhull").checked){
 						   buildkeepIndex();
 						   clearhull(CurrentBlueprint.Blueprint);
@@ -3212,7 +3253,7 @@ function downloadBlueprint(){
 						   beamifyblocks3m(CurrentBlueprint.Blueprint);
 						   beamifyblocks2m(CurrentBlueprint.Blueprint);
 						  }					 
-					 
+						  updateBlockCount(CurrentBlueprint.Blueprint);
 
 					 return true;
 					}
@@ -3257,7 +3298,7 @@ function downloadBlueprint(){
 
   
   /*
-  updateBlockCount(CurrentBlueprint.Blueprint);
+  
 
   selectedFileName = "Modified_" + selectedFileName;
   processData();
@@ -3770,6 +3811,12 @@ function roundToTwo(num) {
 </div>
 <div class="ui-block-b">
 <label><input id="becomeStructure" type="checkbox" data-mini="true">Turn blueprint into a Structure (Invalid blocks will be deleted!)</label>
+</div>
+</div>
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="replaceold" type="checkbox" data-mini="true">Replace old armor blocks (1m and 2m left,right,and up slopes)</label>
 </div>
 </div>
 

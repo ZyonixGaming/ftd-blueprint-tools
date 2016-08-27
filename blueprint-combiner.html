@@ -185,6 +185,7 @@ function openFile(fileinput) {
 					CurrentFilename[fileInputIndex[fileinput.id]] = "";	
 					CurrentBlueprint[fileInputIndex[fileinput.id]] = JSON.parse(evt.target.result);						
 					CurrentFilename[fileInputIndex[fileinput.id]] = selectedFile.name;
+
 					if (!processData(fileInputIndex[fileinput.id])){
 						throw "unable to process blueprint"
 					}else if(isValid[0]&&isValid[1]){
@@ -279,8 +280,13 @@ function displayData(){
 	blockCountData = {}
 	for(var blockGuid in countID) {
 		
-		if(countID[blockGuid][0]+countID[blockGuid][1] >0) {			
-			blockCountData[ItemTable[blockGuid].Name]=[countID[blockGuid][0],countID[blockGuid][1]];			
+		if(countID[blockGuid][0]+countID[blockGuid][1] >0) {
+			if(ItemTable[blockGuid]){
+				blockCountData[ItemTable[blockGuid].Name]=[countID[blockGuid][0],countID[blockGuid][1]];			
+			}else{
+				blockCountData[blockGuid]=[countID[blockGuid][0],countID[blockGuid][1]];			
+			}
+			
 			totalcount1+=countID[blockGuid][0]
 			totalcount2+=countID[blockGuid][1];
 		}
@@ -331,6 +337,7 @@ function downloadBlueprint(){
    combineBlueprint();
    removeOverlap(CombinedBlueprint.Blueprint);
    cleanBlueprint(CombinedBlueprint.Blueprint);
+   updateBlockCount(CombinedBlueprint.Blueprint);
 	
   //perform combine code
   var selectedFileName = "Combined_" + CurrentFilename[0];
@@ -370,10 +377,13 @@ function countblocks(blocks,index,isMain){
 			originPos[index]=stoar(blocks.BLP[blockIndex]);
 			originQuat[index]=getQuat(blocks.BLR[blockIndex]);
 			isValid[index]=true;
+			
 		}		
 		var currentBlock = getBlock(blocklist[blockIndex],index);		
-		totalstats["Material Cost"][index]+=currentBlock.Material;
-		totalstats["Volume"][index]+=currentBlock.Volume;
+		if(currentBlock){
+			totalstats["Material Cost"][index]+=currentBlock.Material;
+			totalstats["Volume"][index]+=currentBlock.Volume;
+		}
 	}
 }
 
@@ -426,6 +436,25 @@ function removeOverlap(blocks){ //wip
 	//cleanBlueprint(blocks);
 }
 
+
+function updateBlockCount(blocks){
+	var SClist=blocks.SCs;	
+	for(var scID = 0; scID < SClist.length; scID++){
+		updateBlockCount(SClist[scID]);
+	}
+	if(blocks.TotalBlockCount!==undefined){
+		blocks.TotalBlockCount=blocks.BlockIds.length;
+	}
+	if(blocks.BlockCount!==undefined){
+		blocks.BlockCount=blocks.BlockIds.length;
+	}
+	if(blocks.LastAliveBlock!==undefined){
+		blocks.LastAliveBlock=blocks.BlockIds.length;
+	}	
+	if(blocks.IndexOfFirstBlockNeedingFullRepairCost!==undefined){
+		blocks.IndexOfFirstBlockNeedingFullRepairCost=1000000;
+	}	
+}
 
 //need to modify when we can check for parts sticking out
 function combineBlueprint(){//wip

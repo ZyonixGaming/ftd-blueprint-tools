@@ -76,6 +76,7 @@ var minc=[0,0,0,0];
 var blockRenderData = {}
 var blockRenderIndex = 0;
 
+
 var slopeBlockToBeam = {}
 var slopeBeamToBlock = {}
 var slopeBeamToBlockM = {}
@@ -511,7 +512,8 @@ function openFile() {
 	}else{
 		CurrentBlueprint = sampleBlueprint; 
 		selectedFileName = selectedFile.name;	
-		processMC();		
+		processMC();
+		updateBlockCount(CurrentBlueprint.Blueprint);
 			
 	}
 
@@ -583,7 +585,6 @@ function processData(){
  slopeBeamToBlock={};
  slopeBeamToBlockM={};
   
- 
  for(var key in ItemDic) {
   var keyint = parseInt(key);
   val = ItemDic[keyint];
@@ -591,7 +592,7 @@ function processData(){
    nameID[keyint]=(ItemTable[val]).Name;
    ItemTable[val].BlockId=keyint;
   }else{
-   nameID[keyint]="unnamed";
+   nameID[keyint]=val;
   }
   countID[keyint]=0;
   if (val=="9a0ae372-beb4-4009-b14e-36ed0715af73"){
@@ -787,6 +788,25 @@ function getpalette(blocks){
   document.getElementById("co" + palStr).style.color = rgb2hex(rtempr,rtempg,rtempb); 
 */  
  }
+}
+
+function updateBlockCount(blocks){
+	var SClist=blocks.SCs;	
+	for(var scID = 0; scID < SClist.length; scID++){
+		updateBlockCount(SClist[scID]);
+	}
+	if(blocks.TotalBlockCount!==undefined){
+		blocks.TotalBlockCount=blocks.BlockIds.length;
+	}
+	if(blocks.BlockCount!==undefined){
+		blocks.BlockCount=blocks.BlockIds.length;
+	}
+	if(blocks.LastAliveBlock!==undefined){
+		blocks.LastAliveBlock=blocks.BlockIds.length;
+	}	
+	if(blocks.IndexOfFirstBlockNeedingFullRepairCost!==undefined){
+		blocks.IndexOfFirstBlockNeedingFullRepairCost=1000000;
+	}	
 }
 
 function countblocks(blocks){
