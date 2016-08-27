@@ -104,6 +104,13 @@ var BeamAxisPriority = [3,2,1];
 var runningCount=0;
 var runningTimeOut=1200;
 
+var currentBlueprints;
+var currentFilenames;
+var fileIndex = 0;
+
+
+
+
 
 
 $(document).ready(function(){
@@ -271,27 +278,67 @@ function openFile() {
 
 	var selectedFiles = document.getElementById('blueprintfile').files;
 	var outputstring = "";
+	currentBlueprints=[];
+	currentFilenames=[];
+	fileIndex = 0;
+	runningCount = selectedFiles.length;
+	runningTimeOut = 1200;
+	$("#table1 tbody").empty();  
 	for(var fi=0;fi<selectedFiles.length;fi++){
 		var selectedFile=selectedFiles[fi];
 		outputstring +=  "<tr><td>" + selectedFile.name  + "</td></tr>";
+		if (selectedFile){
+			var reader = new FileReader();
+			reader.fileName = selectedFile.name;
+			reader.onload = function(evt) {
+									
+				if(evt){
+					currentBlueprints[fileIndex]=JSON.parse(evt.target.result);
+					currentFilenames[fileIndex]=this.fileName;
+					fileIndex++;
+				}
+				runningCount -=1;
+			}
+			reader.readAsText(selectedFile);
+		}
+				
 		//console.log(selectedFile.name + " : " + selectedFile.size);
-	} 
-	$("#table1 tbody").empty();  
-
-	$("#table1 tbody").append(outputstring); 
-
-	$("#table1").trigger("update");
-	$("#blueprintpanel").collapsible("expand");
-
+				
+	}
 	
-	$(".dl").prop('disabled',false);
-	$(".dl").parent().removeClass('ui-state-disabled');	
+	function waitRunning() {
+		
+		if((runningCount>0)&&(runningTimeOut>0)) {
+			console.log("wait");
+			runningTimeOut-=1;
+			setTimeout(waitRunning, 100);
+			return;
+		}else{
+			console.log("done");
+			if(runningCount>runningTimeOut){
+				console.log("Time Out during processing.");
+			}
+			if(fileIndex>0){
+			
+				$("#table1 tbody").append(outputstring); 
+
+				$("#table1").trigger("update");
+				$("#blueprintpanel").collapsible("expand");
+
+				
+				$(".dl").prop('disabled',false);
+				$(".dl").parent().removeClass('ui-state-disabled');				
+			}
+			
+			
+		}
+	}
+	waitRunning();
+		
 	
 	return true;
 
 }
-
-
 
 
 //returns different block ID if blocks needs to be converted
@@ -299,30 +346,16 @@ function openFile() {
 
 
 function downloadBlueprint(){
- runningCount=0;
- runningTimeOut=1200;
-
+ 
 
   var zipfile = new JSZip();
 
+ for(var fi=0;fi<currentBlueprints.length;fi++){
+	var CurrentBlueprint=currentBlueprints[fi];
+	var CurrentFilename=currentFilenames[fi];
 
-
- var selectedFiles = document.getElementById('blueprintfile').files;
- var outputstring = "";
- runningCount = selectedFiles.length;
- 
- for(var fi=0;fi<selectedFiles.length;fi++){
-	var selectedFile=selectedFiles[fi];	
-	if (selectedFile){
-		var reader = new FileReader();
-		
-		reader.fileName = selectedFile.name;
-		reader.onload = function(evt) {
-			
-			try{    
-				if(evt){
-					var CurrentBlueprint = JSON.parse(evt.target.result);
 					
+			try{    										
 					
 
 					var GuidToID= {}
@@ -1143,7 +1176,6 @@ function downloadBlueprint(){
 							var rightconnected=false;
 							var leftconnected=false;	
 							var fillerblock=GuidToID["9a0ae372-beb4-4009-b14e-36ed0715af73"];		
-								console.log("filler = " + fillerblock);
 							var blocklist=blocks.BlockIds;
 							var positionList=blocks.BLP;
 							var rotationList=blocks.BLR;
@@ -3191,15 +3223,13 @@ function downloadBlueprint(){
 					
 
 					if (!processData()){
-						console.log("unable to process blueprint: "+this.fileName);
-					}else{
-						zipfile.file(this.fileName, JSON.stringify(CurrentBlueprint));
+						console.log("unable to process blueprint: "+CurrentFilename);
+					}else{						
+						zipfile.file(CurrentFilename, JSON.stringify(CurrentBlueprint));
 					}
-					runningCount-=1;
 
-				}else{
-					console.log("unable to load blueprint");
-				}
+
+
 			}
 			catch(err){
 				throw err;
@@ -3207,13 +3237,8 @@ function downloadBlueprint(){
 				loadError(err);
 
 			}			
-		};
-		reader.readAsText(selectedFile);
-	}else{
-		//no file selected;
-	}	
-	outputstring +=  "<tr><td>" + selectedFile.name  + "</td></tr>";
-	//console.log(selectedFile.name + " : " + selectedFile.size);
+			
+		//console.log(selectedFile.name + " : " + selectedFile.size);
  } 
 
 
@@ -3221,24 +3246,11 @@ function downloadBlueprint(){
  
   
   
-	function waitRunning() {
-		
-		if((runningCount>0)&&(runningTimeOut>0)) {
-			runningTimeOut-=1;
-			setTimeout(waitRunning, 500);
-			return;
-		}else{
-			if(runningCount>runningTimeOut){
-				console.log("Time Out during processing.");
-			}
+
 			zipfile.generateAsync({type:"blob"})
 			.then(function (blobdata) {
 				download("Modified_Blueprints.zip",blobdata);
 			});
-		}
-	}
-	waitRunning();
-
   
   
 
@@ -3549,8 +3561,7 @@ function roundToTwo(num) {
 	</div>
 	<p>Last updated for FTD <span id="version">v1.95864</span></p>
 	<br>
-	<p>To start, click on the button below and choose a blueprint file, or multiple files</p>
-	<p>Please take note that unlike the single blueprint modification tool, changes are not accumulative.</p>
+	<p>To start, click on the button below and choose a blueprint file, or multiple files</p>	
 	<br>	
 	<p>This tool has been recently added and might contain a number of bugs</p>
 	<p>Please report any issues in the forum thread <a href="http://www.fromthedepthsgame.com/forum/showthread.php?tid=19547">here</a></p>
