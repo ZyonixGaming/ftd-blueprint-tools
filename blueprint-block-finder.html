@@ -590,9 +590,12 @@ $( "#renderpanel" ).collapsible({
   expand: function( event, ui ) {
  	if(!alreadyrender){
 		//$("#container").width($("#renderpanel").innerWidth());
-		alreadyrender=true;
-		init();
-		animate();
+		
+		setTimeout(function(){
+		   	init();
+			animate();
+			alreadyrender=true;
+		}, 200);
 	} 
   }
 });
