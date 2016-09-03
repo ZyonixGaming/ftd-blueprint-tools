@@ -291,8 +291,13 @@ function atos(a){
 }
 
 function stoa(s){
-	var temp=s.split(",");
-	return [parseFloat(temp[0]),parseFloat(temp[1]),parseFloat(temp[2]),parseFloat(temp[3])];
+	try{
+		var temp=s.split(",");
+		return [parseFloat(temp[0]),parseFloat(temp[1]),parseFloat(temp[2]),parseFloat(temp[3])];
+	}catch(e){
+		//console.log("s="+s);
+		return [0,0,0,0];
+	}
 }
 
 function stoa3(s){
@@ -3492,13 +3497,18 @@ function getpalette(blocks){
 	colorTableInverse=[];
 	colorTable=[];
  var palettedata = blocks.COL;
+ if(palettedata){
  for(var palID = 0; palID < palettedata.length; palID++){
   palStr = "" + palID;
   if (palStr.length<2){
    palStr = "0" + palStr;
   }
   var colorString = palettedata[palID];
+
+
   var colorArray = colorString.split(',');
+  
+  
   
   var tempr = (colorArray[0] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
   var tempg = (colorArray[1] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
@@ -3518,8 +3528,25 @@ function getpalette(blocks){
 
  }
  $( ".palette" ).change();
-}
 
+}else{
+	for(var palID=0;palID<32;palID++){
+	  palStr = "" + palID;
+	  if (palStr.length<2){
+	   palStr = "0" + palStr;
+	  }
+	
+		  colorTable[palID]=rgb2hex(255,255,255);
+		  colorTableInverse[palID]=rgb2hex(0,0,0);
+		  document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
+		  document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
+		  document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
+		  document.getElementById("co" + palStr).style.color = colorTableInverse[palID];	
+	
+	}
+
+}
+}
 function countblocks(blocks){
 	blockRenderData={};
 	blockRenderIndex=0;
