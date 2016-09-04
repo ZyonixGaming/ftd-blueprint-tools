@@ -293,7 +293,7 @@ $('.palettebutton').each(function() {
 				tempb= +(temprgba.b/255).toFixed(2);
 				tempa= +temprgba.a.toFixed(2);
 				colorTable2[index].colorN=[tempr,tempg,tempb,tempa];
-				console.log(colorTable2[index].colorN);
+				//console.log(colorTable2[index].colorN);
 				colorTable2[index].changed=true;
 				
 			};
@@ -3605,8 +3605,8 @@ function getpalette2(blocks){
 			tempcolor.changed=false;
 			colorTable2[palID]=tempcolor;
 			$("#pal-overlay-"+palID).css('background-color', tempcolor.colorS);
-			console.log("#pal-overlay-"+palID);
-			console.log(palID + ": " + tempcolor.colorS);
+			//console.log("#pal-overlay-"+palID);
+			//console.log(palID + ": " + tempcolor.colorS);
 		
 		}
 	}
