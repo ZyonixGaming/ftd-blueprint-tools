@@ -7,6 +7,7 @@
 	<link rel='shortcut icon' href='ico/favicon.ico' type='image/x-icon'/ >
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
+	<link rel="stylesheet" href="css/spectrum.css">
 <style>
 
 
@@ -77,6 +78,15 @@ background: #D0D0FF !important;
 
 }
 
+.palettebutton{
+	width:24pt!important;
+	height:24pt!important;
+}
+
+.sp-preview-inner{
+	text-shadow: 1px 1px 2px white;
+}
+
 
 tbody tr:nth-child(even) td:nth-child(odd){background: #E0E0F0}
 tbody tr:nth-child(odd) td:nth-child(even){background: #FFFFFF}
@@ -95,6 +105,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/ConvexGeometry.js"></script>	
 	<script src="js/itemtable.js"></script>
 	<script src="js/preview3d.js"></script>
+	<script src="js/spectrum.js"></script>
 	
 <script>
 
@@ -242,6 +253,70 @@ $(document).ready(function(){
 
 
 //alert("Warning:\r\nThe interface is currently quite terrible and is being worked on.\r\nFor a simpler and easier to use interface, go to the 'Modification Tool with basic interface' page from the links provided (top left corner)");
+
+//palettetool
+
+
+
+$('.palettebutton').addClass("sp-preview");
+$('.palettebutton').each(function() {
+	var index=$(".palettebutton").index( this );
+	//$(this).text(index);
+	var indextext=index;
+	if(index==28){
+		indextext="Dt"
+	}else if(index==29){
+		indextext="Tr"
+	}else if(index==30){
+		indextext="Sc"
+	}else if(index==31){
+		indextext="Mn"
+	}
+	$(this).attr("value","#00FF00");
+	$(this).append("<div id=\"pal-overlay-"+index+"\" class=\"sp-preview-inner\">"+indextext+"</div>");
+	//$( ".pal-overlay-"+index).css('background-color', 'red');
+	
+	$(this).spectrum({
+		showInput: true,
+		showAlpha: true,
+		preferredFormat: "rgb",
+		showInitial: true,
+		color: $( "#pal-overlay-"+index).css("background-color"),
+		change: function(color) {		
+			$( "#pal-overlay-"+index).css('background-color', color);
+			//console.log(color);
+			if(colorTable2[index]){
+				colorTable2[index].colorS=color.toRgbString();				
+				var temprgba=color.toRgb();
+				tempr= +(temprgba.r/255).toFixed(2);
+				tempg= +(temprgba.g/255).toFixed(2);
+				tempb= +(temprgba.b/255).toFixed(2);
+				tempa= +temprgba.a.toFixed(2);
+				colorTable2[index].colorN=[tempr,tempg,tempb,tempa];
+				console.log(colorTable2[index].colorN);
+				colorTable2[index].changed=true;
+				
+			};
+			
+		},
+		beforeShow: function(color) {
+			$(this).spectrum("set", $( "#pal-overlay-"+index).css("background-color"));
+		}
+	});
+	
+});
+
+//palettetool
+
+/*
+$(".palettebutton").spectrum({
+    showInput: true,
+	showAlpha: true,
+	preferredFormat: "rgb",
+	
+});
+*/
+
 
 });
 
@@ -676,6 +751,7 @@ function processData(){
  countblocks(CurrentBlueprint.Blueprint);
  totalstats["Volume"]=roundToTwo(totalstats["Volume"]);
  getpalette(CurrentBlueprint.Blueprint);
+ getpalette2(CurrentBlueprint.Blueprint);
 
  var outputstring = "";
  var totalcount = 0;
@@ -2990,9 +3066,30 @@ function downloadBlueprint(){
 
    randomcolorblocks(CurrentBlueprint.Blueprint);
   }
-  else if(document.getElementById("paint").checked){
-   colorblocks(CurrentBlueprint.Blueprint);
+  else{
+	  
+	  if(document.getElementById("paint").checked){
+	   colorblocks(CurrentBlueprint.Blueprint);
+	  }
+
+	  if(CurrentBlueprint.Blueprint.COL&&colorTable2){
+		for(var palID=0;palID<32;palID++){
+			if(colorTable2[palID]&&colorTable2[palID].changed){
+				CurrentBlueprint.Blueprint.COL[palID]=atos(colorTable2[palID].colorN);
+			}
+		}
+	  }
+		if(CurrentBlueprint.Blueprint.COL&&document.getElementById("scpalette").checked){
+			var SClist=CurrentBlueprint.Blueprint.SCs;	
+			for(var scID = 0; scID < SClist.length; scID++){
+				if(SClist[scID].COL){
+					SClist[scID].COL=CurrentBlueprint.Blueprint.COL;
+				}
+			}
+		}
+	   
   }
+  
   
   if(document.getElementById("becomeStructure").checked){
    CurrentBlueprint.Blueprint.ItemNumber=ItemTable["cb5bfa64-c3fd-435c-b0da-3891a86b20d2"].BlockId;
@@ -3490,6 +3587,31 @@ function download(filename, data) {
     }
 }
 
+
+
+//load palette for new palettetool
+var colorTable2={};
+function getpalette2(blocks){
+	colorTable2={};
+	var palettedata = blocks.COL;
+	if(palettedata){
+		for(var palID = 0; palID < palettedata.length; palID++){
+			var colorString = palettedata[palID];
+			var colorArray = colorString.split(',');
+			var tempcolor = {};
+			tempcolor.colorA=colorArray;
+			tempcolor.colorN=colorArray;
+			tempcolor.colorS="rgba("+Math.round(colorArray[0]*255)+","+Math.round(colorArray[1]*255)+","+Math.round(colorArray[2]*255)+","+colorArray[3]+")";											
+			tempcolor.changed=false;
+			colorTable2[palID]=tempcolor;
+			$("#pal-overlay-"+palID).css('background-color', tempcolor.colorS);
+			console.log("#pal-overlay-"+palID);
+			console.log(palID + ": " + tempcolor.colorS);
+		
+		}
+	}
+
+};
 
 
 //loads color palette
@@ -4099,16 +4221,73 @@ function getType(blockid){
 
 </div>	
 
-<input type="button" class="dl" value="Apply Modifications & Download" onclick="downloadBlueprint();" disabled>	
-<div id="filecontent" class="hidden">
-<a href="#filetext" onClick="togglefiletext();"><i>Blueprint not downloading?</i></a>
-<div id="filetext" name="filetext">
-<br>
-Copy and paste the following into a new .blueprint file!<br>
-<textarea id="filetextbox" wrap="hard" cols="45" rows="30" readonly></textarea>
+<div id="palettetoolpanel" data-role="collapsible">
+<h4>Palette Tools</h4>
+
+
+
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		<button class="ui-btn ui-btn-inline palettebutton"> </button>
+		
+		
+	</div>
+</div>
+
+<div class="ui-grid-solo">
+<div class="ui-block-a">
+<label><input id="scpalette"  type="checkbox" data-mini="true">Overwrite Palette of sub-vehicles</label>
 </div>
 </div>
+
+</div><!--end of palettetoolpanel-->
+
+
+<div class="ui-grid-solo">
+	<input type="button" class="dl" value="Apply Modifications & Download" onclick="downloadBlueprint();" disabled>	
+	<div id="filecontent" class="hidden">
+	<a href="#filetext" onClick="togglefiletext();"><i>Blueprint not downloading?</i></a>
+	<div id="filetext" name="filetext">
+	<br>
+	Copy and paste the following into a new .blueprint file!<br>
+	<textarea id="filetextbox" wrap="hard" cols="45" rows="30" readonly></textarea>
+	</div>
+	</div>	
+</div>	
+
 </div><!--end of left block-->
+		
 		
 		
 		<div class="ui-block-b">
@@ -4157,6 +4336,8 @@ Copy and paste the following into a new .blueprint file!<br>
 		</div>
 	</div>
 
+
+	
 	<div id="commentpanel" data-role="collapsible">
 		<h4>Comments</h4>
 <div id="disqus_thread"></div>
