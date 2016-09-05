@@ -5,9 +5,10 @@
 		<meta charset="utf-8">
 		
 	<link rel='shortcut icon' href='ico/favicon.ico' type='image/x-icon'/ >
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
-	<link rel="stylesheet" href="css/spectrum.css">
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/css/theme.blue.min.css">
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.css">
 <style>
 
 
@@ -78,13 +79,58 @@ background: #D0D0FF !important;
 
 }
 
-.palettebutton{
+.palettebutton, .cobutton, .ptbutton{
 	width:24pt!important;
 	height:24pt!important;
 }
 
 .sp-preview-inner{
 	text-shadow: 1px 1px 2px white;
+}
+ 
+#popupallowedcolorbutton, #popuppaintcolorbutton, .camobutton{
+	z-index:1;
+	padding-top:8pt!important;
+	width:64pt!important;
+	height:28pt!important;
+	margin-top:8pt!important;
+}
+
+#popupallowedcolor, #popuppaintcolor{
+	max-width:356px;
+}
+
+
+
+#popupallowedcolorbutton-overlay, #popuppaintcolorbutton-overlay, #camo-big-overlay{
+	padding-top:4pt!important;
+}
+
+.camo-small-overlay1{
+	width:16pt!important;
+	left:0!important;
+	
+
+}
+.camo-small-overlay2{
+    width:16pt!important;
+	left:16pt!important;
+	
+}
+
+.camo-small-overlay3{
+    width:16pt!important;
+	left:32pt!important;
+	
+}
+.camo-small-overlay4{
+    width:16pt!important;
+	left:48pt!important;
+	
+}
+
+.small-font{
+	font-size:small;
 }
 
 
@@ -96,19 +142,22 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 
 </style>
 	<script src="js/links.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/widgets/widget-filter.min.js"></script>	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/widgets/widget-filter.min.js"></script>	
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r76/three.min.js"></script>
-	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/OrbitControls.js"></script>	
-	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/ConvexGeometry.js"></script>	
+	<script src="http://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/OrbitControls.js"></script>	
+	<script src="http://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/ConvexGeometry.js"></script>	
 	<script src="js/itemtable.js"></script>
 	<script src="js/preview3d.js"></script>
-	<script src="js/spectrum.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/localforage/1.4.2/localforage.nopromises.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.js"></script>	
 	
 <script>
 
+localforage.config();
 
 var QuatTable = {0:"0,0,0,1",1:"0,0.707106781186547,0,0.707106781186547",2:"0,1,0,0",3:"0,0.707106781186547,0,-0.707106781186547",4:"0.707106781186547,0,0,0.707106781186547",5:"0.5,0.5,-0.5,0.5",6:"0,-0.707106781186547,0.707106781186547,0",7:"-0.5,0.5,-0.5,-0.5",8:"0,-0.707106781186547,-0.707106781186547,0",9:"0.5,0.5,0.5,-0.5",10:"-0.707106781186547,0,0,0.707106781186547",11:"-0.5,0.5,0.5,0.5",12:"0,0,-1,0",13:"-0.707106781186547,0,-0.707106781186547,0",14:"1,0,0,0",15:"0.707106781186547,0,-0.707106781186547,0",16:"0,0,-0.707106781186547,0.707106781186547",17:"0.707106781186547,0.707106781186547,0,0",18:"0,0,0.707106781186547,0.707106781186547",19:"-0.707106781186547,0.707106781186547,0,0",20:"0.5,0.5,0.5,0.5",21:"0.5,-0.5,-0.5,0.5",22:"-0.5,0.5,-0.5,0.5",23:"-0.5,-0.5,0.5,0.5",}
 var RotTable = {"0,0,0,1":0,"0,1,0,1":1,"0,1,0,0":2,"0,1,0,-1":3,"1,0,0,1":4,"1,1,-1,1":5,"0,1,-1,0":6,"1,-1,1,1":7,"0,1,1,0":8,"1,1,1,-1":9,"1,0,0,-1":10,"1,-1,-1,-1":11,"0,0,1,0":12,"1,0,1,0":13,"1,0,0,0":14,"1,0,-1,0":15,"0,0,1,-1":16,"1,1,0,0":17,"0,0,1,1":18,"1,-1,0,0":19,"1,1,1,1":20,"1,-1,-1,1":21,"1,-1,1,-1":22,"1,1,-1,-1":23}
@@ -169,6 +218,9 @@ var CurrentBlueprint
 var selectedcolor
 
 var allowedcolor = -1;
+var tempallowedcolor = 0;
+var temppaintcolor = 0;
+
 
 var blocksBeamed = 0;
 
@@ -181,6 +233,7 @@ var colorTableInverse=[];
 
 $(document).ready(function(){
 
+/*
 	$( ".palette" )
 	  .change(function () {
 		
@@ -193,7 +246,10 @@ $(document).ready(function(){
 		//$(this).hide(1500).show(1500);
 	  });
 	//$( ".palette" ).change();
+*/	
 	
+	
+	toastr.options.positionClass ="toast-bottom-left";
 	
 	$( ".lb" ).click(function() {
 	  $($(this).attr("btarget")).click();
@@ -261,6 +317,10 @@ $(document).ready(function(){
 $('.palettebutton').addClass("sp-preview");
 $('.palettebutton').each(function() {
 	var index=$(".palettebutton").index( this );
+	var palStr = "" + index;
+	if (palStr.length<2){
+		palStr = "0" + palStr;
+	}
 	//$(this).text(index);
 	var indextext=index;
 	if(index==28){
@@ -272,10 +332,14 @@ $('.palettebutton').each(function() {
 	}else if(index==31){
 		indextext="Mn"
 	}
-	$(this).attr("value","#00FF00");
-	$(this).append("<div id=\"pal-overlay-"+index+"\" class=\"sp-preview-inner\">"+indextext+"</div>");
+	$(this).append("<div id=\"pal-overlay-"+index+"\" class=\"sp-preview-inner color-overlay-"+index+"\">"+indextext+"</div>");
 	//$( ".pal-overlay-"+index).css('background-color', 'red');
-	
+	$("#pal"+palStr).addClass("sp-preview");
+	$("#co"+palStr).addClass("sp-preview");
+	//document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
+	//document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
+	//document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
+	//document.getElementById("co" + palStr).style.color = colorTableInverse[palID];
 	$(this).spectrum({
 		showInput: true,
 		showAlpha: true,
@@ -283,20 +347,42 @@ $('.palettebutton').each(function() {
 		showInitial: true,
 		color: $( "#pal-overlay-"+index).css("background-color"),
 		change: function(color) {		
-			$( "#pal-overlay-"+index).css('background-color', color);
+			$( ".color-overlay-"+index).css('background-color', color);
 			//console.log(color);
+			if(tempallowedcolor==index){
+				$( "#popupallowedcolorbutton-overlay" ).css("background-color",$('#co-overlay-'+index).css("background-color"));
+			}
+			if(temppaintcolor==index){
+				$( "#popuppaintcolorbutton-overlay" ).css("background-color",$('#pt-overlay-'+index).css("background-color"));
+			}			
 			if(colorTable2[index]){
 				colorTable2[index].colorS=color.toRgbString();				
 				var temprgba=color.toRgb();
-				tempr= +(temprgba.r/255).toFixed(2);
-				tempg= +(temprgba.g/255).toFixed(2);
-				tempb= +(temprgba.b/255).toFixed(2);
-				tempa= +temprgba.a.toFixed(2);
+				var tempr= +(temprgba.r/255).toFixed(2);
+				var tempg= +(temprgba.g/255).toFixed(2);
+				var tempb= +(temprgba.b/255).toFixed(2);
+				var tempa= +temprgba.a.toFixed(2);
 				colorTable2[index].colorN=[tempr,tempg,tempb,tempa];
 				//console.log(colorTable2[index].colorN);
 				colorTable2[index].changed=true;
 				
-			};
+			}else{	
+				var temprgba=color.toRgb();
+				var tempr= +(temprgba.r/255).toFixed(2);
+				var tempg= +(temprgba.g/255).toFixed(2);
+				var tempb= +(temprgba.b/255).toFixed(2);
+				var tempa= +temprgba.a.toFixed(2);
+				//console.log(colorTable2[index].colorN);
+				var temprgba=color.toRgb();
+				colorTable2[index]={
+					colorA: [0,0,0,0],
+					colorN: [tempr,tempg,tempb,tempa],
+					colorS: color.toRgbString(),
+					changed:true
+					
+				}
+				
+			}
 			
 		},
 		beforeShow: function(color) {
@@ -304,6 +390,94 @@ $('.palettebutton').each(function() {
 		}
 	});
 	
+});
+
+$('.cobutton').addClass("sp-preview");
+$('.cobutton').each(function() {
+	var index=$(".cobutton").index( this );
+	//$(this).text(index);
+	var indextext=index;
+	if(index==28){
+		indextext="Dt"
+	}else if(index==29){
+		indextext="Tr"
+	}else if(index==30){
+		indextext="Sc"
+	}else if(index==31){
+		indextext="Mn"
+	}
+	$(this).append("<div id=\"co-overlay-"+index+"\" class=\"sp-preview-inner color-overlay-"+index+"\">"+indextext+"</div>");
+	//$( ".pal-overlay-"+index).css('background-color', 'red');
+
+	$(this).click(function(a){
+		$( "#popupallowedcolorbutton-overlay" ).html(indextext);
+		$( "#popupallowedcolorbutton-overlay" ).css("background-color",$('#co-overlay-'+index).css("background-color"));
+		tempallowedcolor=index;
+		$( "#popupallowedcolor" ).popup( "close" );
+	});
+	
+});
+
+$( "#popupallowedcolorbutton" ).addClass("sp-preview");
+$( "#popupallowedcolorbutton" ).append("<div id=\"popupallowedcolorbutton-overlay\" class=\"sp-preview-inner\">"+0+"</div>");
+$( "#popupallowedcolorbutton" ).click(function(a){
+	$( "#popupallowedcolor" ).popup( "open",{x:32,positionTo:"#popupallowedcolorbutton"} );
+});
+
+
+$('.ptbutton').addClass("sp-preview");
+$('.ptbutton').each(function() {
+	var index=$(".ptbutton").index( this );
+	//$(this).text(index);
+	var indextext=index;
+	if(index==28){
+		indextext="Dt"
+	}else if(index==29){
+		indextext="Tr"
+	}else if(index==30){
+		indextext="Sc"
+	}else if(index==31){
+		indextext="Mn"
+	}
+	$(this).append("<div id=\"pt-overlay-"+index+"\" class=\"sp-preview-inner color-overlay-"+index+"\">"+indextext+"</div>");
+	//$( ".pal-overlay-"+index).css('background-color', 'red');
+
+	$(this).click(function(a){
+		$( "#popuppaintcolorbutton-overlay" ).html(indextext);
+		$( "#popuppaintcolorbutton-overlay" ).css("background-color",$('#pt-overlay-'+index).css("background-color"));
+		temppaintcolor=index;
+		$( "#popuppaintcolor" ).popup( "close" );
+	});
+	
+});
+
+$( "#popuppaintcolorbutton" ).addClass("sp-preview");
+$( "#popuppaintcolorbutton" ).append("<div id=\"popuppaintcolorbutton-overlay\" class=\"sp-preview-inner\">"+0+"</div>");
+$( "#popuppaintcolorbutton" ).click(function(a){
+	$( "#popuppaintcolor" ).popup( "open",{y:32,positionTo:"#popuppaintcolorbutton"}) ;
+});
+
+
+$('.camobutton').each(function() {
+	var index=$(".camobutton").index( this );
+	//$(this).text(index);
+
+
+	$(this).click(function(a){
+		$( "#popuppaintcolorbutton-overlay" ).css("background-color","rgba(0,0,0,0)");
+		$( "#popuppaintcolorbutton-overlay" ).html($(this).html());
+		temppaintcolor=index+32;
+		$( "#popuppaintcolor" ).popup( "close" );
+	});
+	
+});
+
+
+$('#palettelist').change(function(a){
+
+	if($(this).val()){
+		loadPalette($(this).val());
+	}
 });
 
 //palettetool
@@ -317,6 +491,8 @@ $(".palettebutton").spectrum({
 });
 */
 
+
+loadPalettes();
 
 });
 
@@ -784,6 +960,8 @@ $("#blockstatpanel").collapsible("expand");
 
 $(".b1name").html(selectedFileName);
 
+$("#palettename").val("");
+
 
 $( "#renderpanel" ).collapsible({
   expand: function( event, ui ) {
@@ -802,6 +980,10 @@ $( "#renderpanel" ).collapsible({
   
      
 });
+
+
+
+
 
  if(autorender){
 	$("#renderpanel").collapsible("expand");
@@ -3001,11 +3183,25 @@ function getconverted(bID){
 
 
 function downloadBlueprint(){
+	console.log("processing...");
+	 $(".dl").prop('disabled',true);		
+	 $(".dl").parent().addClass('ui-state-disabled');	
+	$.mobile.loading("show", {
+            text: "Processing...",
+            textVisible: true,
+			textonly: true,
+	});	 
 
+	
+
+
+
+    
+setTimeout(function(){
  try{
  
   if(document.getElementById("paintrestrict").checked){
-	allowedcolor=document.getElementById("paintallow").value;
+	allowedcolor=tempallowedcolor;
   }else{
 	allowedcolor=-1;
   }
@@ -3143,6 +3339,9 @@ function downloadBlueprint(){
   }
   
   updateBlockCount(CurrentBlueprint.Blueprint);
+  
+  console.log("processing complete.");
+
 
   selectedFileName = "Modified_" + selectedFileName;
   processData();
@@ -3150,14 +3349,19 @@ function downloadBlueprint(){
   document.getElementById("filetext").style.display="none";
   var outputcontent=JSON.stringify(CurrentBlueprint);
   document.getElementById("filetextbox").value=outputcontent;
+  console.log("downloading file: "+selectedFileName);
   download(selectedFileName,outputcontent); 
   //download(selectedFileName,JSON.stringify(RotTable)); 
 
   
  }catch(err){
+	 $.mobile.loading( "hide" );
    throw err;
-  loadError(err);
+   loadError(err);
  }
+  $.mobile.loading( "hide" );
+}, 100); 
+
 }
 
 
@@ -3255,8 +3459,8 @@ paintothers
  blockColorIndex = {};
  
  if(document.getElementById("paint").checked){
-  selectedcolor=document.getElementById("tocolor").value;
-  
+  //selectedcolor=document.getElementById("tocolor").value;
+  selectedcolor=temppaintcolor;
   if((document.getElementById("painttarget").value=="wood")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
    var blockcount =  shapedBlocks["wood"].blockIds.length;
    for(var i=0;i<blockcount;i++){
@@ -3592,7 +3796,9 @@ function download(filename, data) {
 //load palette for new palettetool
 var colorTable2={};
 function getpalette2(blocks){
+	//console.log("tempallowedcolor: "+tempallowedcolor);
 	colorTable2={};
+	//tempallowedcolor=0;
 	var palettedata = blocks.COL;
 	if(palettedata){
 		for(var palID = 0; palID < palettedata.length; palID++){
@@ -3604,15 +3810,187 @@ function getpalette2(blocks){
 			tempcolor.colorS="rgba("+Math.round(colorArray[0]*255)+","+Math.round(colorArray[1]*255)+","+Math.round(colorArray[2]*255)+","+colorArray[3]+")";											
 			tempcolor.changed=false;
 			colorTable2[palID]=tempcolor;
-			$("#pal-overlay-"+palID).css('background-color', tempcolor.colorS);
+			//$("#pal-overlay-"+palID).css('background-color', tempcolor.colorS);
+			$(".color-overlay-"+palID).css('background-color', tempcolor.colorS);
+			//$("#co-overlay-"+palID).css('background-color', tempcolor.colorS);
+			if(tempallowedcolor==palID){	
+				$("#popupallowedcolorbutton-overlay").css('background-color', tempcolor.colorS);
+				//console.log("triggered!");
+			}
+			if(temppaintcolor==palID){	
+				$("#popuppaintcolorbutton-overlay").css('background-color', tempcolor.colorS);
+				//console.log("triggered!");
+			}			
 			//console.log("#pal-overlay-"+palID);
 			//console.log(palID + ": " + tempcolor.colorS);
 		
 		}
 	}
+	
 
 };
 
+
+function getCurrentPalette(){
+	var temppalette=[32];
+	for(var palID = 0; palID < 32; palID++){
+		if(colorTable2[palID]){
+			temppalette[palID]=colorTable2[palID].colorN;
+		}else{
+			temppalette[palID]=[0,0,0,0];
+		}
+	}
+	return temppalette;
+}
+
+function resetPalette(){
+
+	for(var palID = 0; palID < 32; palID++){
+		if(colorTable2[palID]){
+			var tempcolor=colorTable2[palID];
+			if(tempcolor.changed){
+				tempcolor.colorN=tempcolor.colorA;
+				var colorArray=tempcolor.colorA;
+				tempcolor.colorS="rgba("+Math.round(colorArray[0]*255)+","+Math.round(colorArray[1]*255)+","+Math.round(colorArray[2]*255)+","+colorArray[3]+")";
+				tempcolor.changed=false;
+				colorTable2[palID]=tempcolor;
+				$(".color-overlay-"+palID).css('background-color', tempcolor.colorS);
+				if(tempallowedcolor==palID){	
+					$("#popupallowedcolorbutton-overlay").css('background-color', tempcolor.colorS);
+					//console.log("triggered!");
+				}
+				if(temppaintcolor==palID){
+					$("#popuppaintcolorbutton-overlay").css('background-color', tempcolor.colorS);
+					//console.log("triggered!");
+				}			
+				
+			}		
+			
+		}
+	}
+	$('#palettelist').val("");				
+	$('#palettelist').selectmenu('refresh');
+	$('#palettename').val("");
+
+}
+
+/*
+
+toastr.info();
+toastr.warning();
+toastr.success();
+toastr.error();
+
+*/
+
+function verifyName(name){
+	var checker = /^[A-Za-z0-9_-]+$/
+	return checker.test(name);
+}
+
+function savePalette(){
+	palettename=$("#palettename").val();
+	//verify palette;
+	if(verifyName(palettename)){	
+		localforage.setItem("ftdpal:"+palettename, getCurrentPalette(), function (err) {
+			if(err){
+				toastr.error("saving error");
+				console.log("error saving palette: "+err);
+			}else{
+				toastr.success(palettename+" saved");
+				loadPalettes();
+			}
+			// if err is non-null, we got an error
+
+		});		
+	}else{
+		toastr.error("Invalid Name:\r\nPlease use alphabets, numbers, underscore and hyphens only.");	
+		$("#palettename").focus();
+		$("#palettename").select();
+	}
+}
+
+function loadPalette(palettename){
+	localforage.getItem(palettename, function (err, value) {
+		if(err){
+			toastr.error("error");
+			console.log("error loading palette: "+palettename + "error: "+err);		
+		}else{
+			tempnameArray=palettename.split(':');
+			if(tempnameArray.length>1){
+				for(var palID = 0; palID < 32; palID++){				
+					var colorArray = value[palID];
+					var colorString = "rgba("+Math.round(colorArray[0]*255)+","+Math.round(colorArray[1]*255)+","+Math.round(colorArray[2]*255)+","+colorArray[3]+")";
+					if(colorTable2&&colorTable2[palID]){
+						colorTable2[palID].colorN=colorArray;
+						colorTable2[palID].colorS=colorString;																	
+						colorTable2[palID].changed=true;
+					}
+					$(".color-overlay-"+palID).css('background-color', colorString);
+					if(tempallowedcolor==palID){	
+						$("#popupallowedcolorbutton-overlay").css('background-color', colorString);
+					}
+					if(temppaintcolor==palID){	
+						$("#popuppaintcolorbutton-overlay").css('background-color', colorString);
+					}		
+
+				}	
+				$('#palettelist').val("");				
+				$('#palettelist').selectmenu('refresh');
+				$('#palettename').val(tempnameArray[1]);
+				toastr.success(tempnameArray[1]+" loaded");
+			}else{
+				toastr.error("error");
+				console.log("error loading palette: "+palettename + "error: "+err);				
+			}
+			
+		}
+	// if err is non-null, we got an error. otherwise, value is the value 
+	});
+}
+
+
+
+
+
+function removePalette(){
+	palettename=$("#palettename").val();
+	if(verifyName(palettename)){
+		localforage.removeItem("ftdpal:"+palettename, function (err) {
+			console.log(err);
+			if(!err){
+				$('#palettename').val("");
+				toastr.info(palettename+ " deleted");
+				loadPalettes();
+			}
+		});
+	}
+}
+
+
+function loadPalettes(){
+	$('#palettelist').val("");
+	$('#palettelist').html('<option value="" selected>Load Palette</option>');
+	if ($('#palettelist').hasClass('ui-select')) {
+		$('#palettelist').selectmenu('refresh');
+	}
+	
+	localforage.keys(function (err, value) {
+		if(err){
+			console.log("error loading palettes: "+err);
+		}else{
+			//console.log(value);
+			for(var i=0;i<value.length;i++){
+				tempnameArray=value[i].split(':');
+				if(tempnameArray.length>1){
+					$('#palettelist').append('<option value="'+value[i]+'">'+tempnameArray[1]+'</option>');
+				}
+	
+			}
+		}
+	// if err is non-null, we got an error. otherwise, value is the value
+	});
+}
 
 //loads color palette
 function getpalette(blocks){
@@ -3643,13 +4021,13 @@ function getpalette(blocks){
   
   colorTable[palID]=rgb2hex(tempr,tempg,tempb);
   colorTableInverse[palID]=rgb2hex(rtempr,rtempg,rtempb);
-  document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
-  document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
-  document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
-  document.getElementById("co" + palStr).style.color = colorTableInverse[palID];
+  //document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
+  //document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
+  //document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
+  //document.getElementById("co" + palStr).style.color = colorTableInverse[palID];
 
  }
- $( ".palette" ).change();
+ //$( ".palette" ).change();
 
 }else{
 	for(var palID=0;palID<32;palID++){
@@ -3660,10 +4038,10 @@ function getpalette(blocks){
 	
 		  colorTable[palID]=rgb2hex(255,255,255);
 		  colorTableInverse[palID]=rgb2hex(0,0,0);
-		  document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
-		  document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
-		  document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
-		  document.getElementById("co" + palStr).style.color = colorTableInverse[palID];	
+		  //document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
+		  //document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
+		  //document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
+		  //document.getElementById("co" + palStr).style.color = colorTableInverse[palID];	
 	
 	}
 
@@ -3926,40 +4304,51 @@ function getType(blockid){
 <div class="ui-grid-a">
 <div class="ui-block-a"><label class="checkbox" ><input class="bigbox" id="paintrestrict" type="checkbox" data-role="none">Restrict block modifications to blocks colored: </label></div>
 <div class="ui-block-b">
-<select id="paintallow" class="palette">
-<option id="co00" value="0" selected="selected">00</option>
-<option id="co01" value="1">01</option>
-<option id="co02" value="2">02</option>
-<option id="co03" value="3">03</option>
-<option id="co04" value="4">04</option>
-<option id="co05" value="5">05</option>
-<option id="co06" value="6">06</option>
-<option id="co07" value="7">07</option>
-<option id="co08" value="8">08</option>
-<option id="co09" value="9">09</option>
-<option id="co10" value="10">10</option>
-<option id="co11" value="11">11</option>
-<option id="co12" value="12">12</option>
-<option id="co13" value="13">13</option>
-<option id="co14" value="14">14</option>
-<option id="co15" value="15">15</option>
-<option id="co16" value="16">16</option>
-<option id="co17" value="17">17</option>
-<option id="co18" value="18">18</option>
-<option id="co19" value="19">19</option>
-<option id="co20" value="20">20</option>
-<option id="co21" value="21">21</option>
-<option id="co22" value="22">22</option>
-<option id="co23" value="23">23</option>
-<option id="co24" value="24">24</option>
-<option id="co25" value="25">25</option>
-<option id="co26" value="26">26</option>
-<option id="co27" value="27">27</option>
-<option id="co28" value="28">Detail</option>
-<option id="co29" value="29">Trim</option>
-<option id="co30" value="30">Secondary</option>
-<option id="co31" value="31">Main</option>
-</select>
+
+<!--<a id="popupallowedcolorbutton" href="#popupallowedcolor" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-a sp-preview" data-transition="pop">0</a>-->
+<button id="popupallowedcolorbutton" class="ui-btn ui-btn-inline"></button>
+<div data-role="popup" id="popupallowedcolor" data-theme="a" class="ui-corner-all">
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		<button class="ui-btn ui-btn-inline cobutton"> </button>
+		
+		
+	</div>
+</div>
+</div>
+
+
 </div>
 </div>
 		<hr>
@@ -4037,6 +4426,68 @@ function getType(blockid){
 		</label>
 	</div>
 	<div class="ui-block-b">
+	
+
+
+<button id="popuppaintcolorbutton" class="ui-btn ui-btn-inline"></button>
+<div data-role="popup" id="popuppaintcolor" data-theme="a" class="ui-corner-all">
+<div class="ui-grid-solo">
+	<div class="ui-block-a">
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button class="ui-btn ui-btn-inline ptbutton"> </button>
+		<button id="camobutton1" class="ui-btn ui-btn-inline camobutton sp-preview">
+			<div class="camo-small-overlay1 sp-preview-inner color-overlay-1"></div>
+			<div class="camo-small-overlay2 sp-preview-inner color-overlay-2"></div>
+			<div class="camo-small-overlay3 sp-preview-inner color-overlay-3"></div>
+			<div class="camo-small-overlay4 sp-preview-inner color-overlay-4"></div>
+			<div class="camo-big-overlay sp-preview-inner">Camo</div>
+		</button>
+		<button id="camobutton2" class="ui-btn ui-btn-inline camobutton sp-preview">
+			<div class="camo-small-overlay1 sp-preview-inner color-overlay-28"></div>
+			<div class="camo-small-overlay2 sp-preview-inner color-overlay-29"></div>
+			<div class="camo-small-overlay3 sp-preview-inner color-overlay-30"></div>
+			<div class="camo-small-overlay4 sp-preview-inner color-overlay-31"></div>
+			<div class="camo-big-overlay sp-preview-inner small-font">Fleet<br>Camo</div>		
+		</button>
+		
+		
+	</div>
+</div>
+</div>
+	
+	
+	
+<!--	
 <select id="tocolor" class="palette">
 	<option id="pal00" value="0" selected="selected">00</option>
 	<option id="pal01" value="1">01</option>
@@ -4072,7 +4523,7 @@ function getType(blockid){
 	<option id="pal31" value="31">Main</option>
 	<option id="pal32" value="32">Camo?(1-4)</option>
 	<option id="pal33" value="33">Camo?(fleet colors)</option>
- </select>	
+ </select>	-->
 	</div>
 </div>
 
@@ -4224,8 +4675,31 @@ function getType(blockid){
 <div id="palettetoolpanel" data-role="collapsible">
 <h4>Palette Tools</h4>
 
+<div class="ui-grid-a">
+	<div class="ui-block-a">
+		<input type="text" name="palettename" id="palettename" placeholder="Palette Name" value="">	
+	</div>
+	<div class="ui-block-b">
+		<input type="button" class="ui-btn ui-mini" value="Save Palette" onclick="savePalette();">
+	</div>
+</div>
+<div class="ui-grid-a">
+	<div class="ui-block-a">
+		<select name="palettelist" id="palettelist" value="">
+			<option value="" selected>Load Palette</option>
+		</select>		
+	</div>
+	<div class="ui-block-b">
+		<input type="button" class="ui-btn ui-mini" data-theme="b" value="Delete Palette" onclick="removePalette();">
+	</div>
+</div>
+
+<div class="ui-grid-solo"><div class="ui-block-a">
 
 
+
+<div class="subtext">Click on a number to edit color.</div>
+</div></div>
 <div class="ui-grid-solo">
 	<div class="ui-block-a">
 		<button class="ui-btn ui-btn-inline palettebutton"> </button>
@@ -4270,11 +4744,19 @@ function getType(blockid){
 <label><input id="scpalette"  type="checkbox" data-mini="true">Overwrite Palette of sub-vehicles</label>
 </div>
 </div>
+<div class="ui-grid-a">
+<div class="ui-block-a">
+</div>
+<div class="ui-block-b">
+	<input type="button" data-theme="b" value="Reset Palette" onclick="resetPalette();">	
+</div>
+</div>
 
 </div><!--end of palettetoolpanel-->
 
 
 <div class="ui-grid-solo">
+<div class="ui-block-a">
 	<input type="button" class="dl" value="Apply Modifications & Download" onclick="downloadBlueprint();" disabled>	
 	<div id="filecontent" class="hidden">
 	<a href="#filetext" onClick="togglefiletext();"><i>Blueprint not downloading?</i></a>
@@ -4284,6 +4766,7 @@ function getType(blockid){
 	<textarea id="filetextbox" wrap="hard" cols="45" rows="30" readonly></textarea>
 	</div>
 	</div>	
+</div>
 </div>	
 
 </div><!--end of left block-->
@@ -4338,23 +4821,7 @@ function getType(blockid){
 
 
 	
-	<div id="commentpanel" data-role="collapsible">
-		<h4>Comments</h4>
-<div id="disqus_thread"></div>
-<script>
-var disqus_config = function () {
-this.page.url = "http://zyonixgaming.github.io/ftd-blueprint-tools/";
-this.page.identifier = "zyonixgaming-ftd-blueprint-tools";
-};
-(function() {
-var d = document, s = d.createElement('script');
-s.src = '//ftdblueprinttools.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-	</div>
+
 	<p></p>
 	<p>Copyright &copy; 2016 Zyonix Gaming</p>	
 	</div>
