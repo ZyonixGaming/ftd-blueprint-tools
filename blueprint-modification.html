@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+	<script type="text/javascript">
+		if (window.location.protocol == "https:") {
+			var restOfUrl = window.location.href.substr(6);
+			window.location = "http:" + restOfUrl;
+		}
+	</script>	
 		<title>FTD Blueprint Modification Tool</title>
 		<meta charset="utf-8">
 		
@@ -971,7 +977,9 @@ $( "#renderpanel" ).collapsible({
 		
 		setTimeout(function(){
 		   	init();
-			animate();
+			if(!alreadyanimate){
+				animate();
+			}
 			alreadyrender=true;
 		}, 200);
 
