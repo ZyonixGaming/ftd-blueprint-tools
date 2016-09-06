@@ -1,6 +1,12 @@
 <!DOCTYPE html> 
 <html>
 <head>
+	<script type="text/javascript">
+		if (window.location.protocol == "https:") {
+			var restOfUrl = window.location.href.substr(6);
+			window.location = "http:" + restOfUrl;
+		}
+	</script>	
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<title>FTD Blueprint Compare Tool</title>
