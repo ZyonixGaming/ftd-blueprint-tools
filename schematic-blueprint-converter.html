@@ -501,6 +501,7 @@ function openFile() {
   reader.onload = function(evt) {
    try{    
      if(evt){
+		$("#renderpanel").collapsible("collapse");
 		//var readresult=new Uint8Array(evt.target.result);
 		currentData=[];
 		var readresult=new Uint8Array(evt.target.result);
@@ -546,8 +547,8 @@ function processData(){
  
  		$("#table1 tbody").empty(); 
 		$("#table2 tbody").empty(); 
-		$("#renderpanel").collapsible("collapse");
-		document.getElementById("container").innerHTML="";
+		//$("#renderpanel").collapsible("collapse");
+		//document.getElementById("container").innerHTML="";
 		document.getElementById("filecontent").style.display="none";
 		alreadyrender=false;
  
@@ -737,20 +738,27 @@ $("#blockstatpanel").collapsible("expand");
 $(".b1name").html(selectedFileName);
 
 
+
 $( "#renderpanel" ).collapsible({
   expand: function( event, ui ) {
  	if(!alreadyrender){
 		//$("#container").width($("#renderpanel").innerWidth());
+		$.mobile.loading("show", {
+	            text: "Processing...",
+	            textVisible: true,
+				textonly: true,
+		});		
 		setTimeout(function(){
-		   	init();
-			animate();
 			alreadyrender=true;
+		   	init();
+			$.mobile.loading("hide");
+
 		}, 200);
-	} 
+
+	}
   }
   
-  
-  
+     
 });
 
 	$(".dl").prop('disabled',false);		

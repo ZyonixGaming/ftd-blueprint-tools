@@ -369,6 +369,7 @@ function openFile() {
   reader.onload = function(evt) {
    try{    
      if(evt){
+	 $("#renderpanel").collapsible("collapse");
      CurrentBlueprint = JSON.parse(evt.target.result);    
      selectedFileName = selectedFile.name;
      if (!processData()){
@@ -399,8 +400,8 @@ function processData(){
  		$("#table1 tbody").empty(); 
 		$("#table2 tbody").empty(); 
 		$("#table3 tbody").empty(); 
-		$("#renderpanel").collapsible("collapse");
-		document.getElementById("container").innerHTML="";
+		
+		//document.getElementById("container").innerHTML="";
 		alreadyrender=false;
  
  var a1;
@@ -591,14 +592,22 @@ $( "#renderpanel" ).collapsible({
   expand: function( event, ui ) {
  	if(!alreadyrender){
 		//$("#container").width($("#renderpanel").innerWidth());
-		
+		$.mobile.loading("show", {
+	            text: "Processing...",
+	            textVisible: true,
+				textonly: true,
+		});		
 		setTimeout(function(){
-		   	init();
-			animate();
 			alreadyrender=true;
+		   	init();
+			$.mobile.loading("hide");
+
 		}, 200);
-	} 
+
+	}
   }
+  
+     
 });
 
 
@@ -612,12 +621,11 @@ $( "#renderpanel" ).collapsible({
 
 function showsettings(sid){
 	
-	if(alreadyrender){
+	if(!($("#renderpanel").collapsible( "option", "collapsed"))){
 		var curSettings=settingsData[sid];
-		$("#renderpanel").collapsible("expand");
 		$("#renderpanel").get(0).scrollIntoView();
 		pinglocation(curSettings.x,curSettings.y,curSettings.z);
-	}
+	}	
 	
 }
 
