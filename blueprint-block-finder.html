@@ -136,9 +136,30 @@ var blocksBeamed = 0;
 
 var blocksDebeamed = 0;
 
+$( document ).on("pageshow", function() {
 
 
-$(document).ready(function(){
+	$("#version").text(ftdversion);
+
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-77242087-2', 'auto');
+  ga('send', 'pageview');
+	
+	$(".lb").prop('disabled',false);		
+	$(".lb").parent().removeClass('ui-state-disabled');		
+	
+	
+	
+});
+
+
+
+$( document ).on( "pageinit", function() {
 
 	
 	
@@ -583,7 +604,7 @@ var settingsString = "";
  }
 $("#table3 tbody").append(settingsString); 
 $("#table3").trigger("update");
-$("#blocklistpanel").collapsible("expand");
+//$("#blocklistpanel").collapsible("expand");
 
 $(".b1name").html(selectedFileName);
 
@@ -859,7 +880,7 @@ function roundToTwo(num) {
 	<div class="ui-grid-a">
 		<div class="ui-block-a">
 			<div id="blocklistpanel" data-role="collapsible" >
-			<h4>Blocks with Settings</h4>	
+			<h4>Block List</h4>	
 				<table id="table3"  class="table1 tablesorter">
 				  <thead>
 					<tr>
@@ -932,22 +953,10 @@ function roundToTwo(num) {
 	<p>Copyright &copy; 2016 Zyonix Gaming</p>	
 	</div>
 </div>
-
-
 <script>
 loadLinks();
-$("#version").text(ftdversion);
-$(".lb").prop('disabled',false);		
-$(".lb").parent().removeClass('ui-state-disabled');		
-
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-77242087-2', 'auto');
-  ga('send', 'pageview');
 </script>
+
 		
 	</body>
 </html>
