@@ -228,8 +228,6 @@ var blocksDebeamed = 0;
 
 
 
-var colorTable=[];
-var colorTableInverse=[];
 
 
 
@@ -263,21 +261,7 @@ $( document ).on("pageshow", function() {
 
 $( document ).on( "pageinit", function() {
 
-/*
-	$( ".palette" )
-	  .change(function () {
-		
-		var value = $( this ).val();
-		value=parseInt(value);
-		if(colorTable[value]){
-			$(this).parent().css("background-color",colorTable[value]);
-		}
 
-		//$(this).hide(1500).show(1500);
-	  });
-	//$( ".palette" ).change();
-*/	
-	
 	
 	toastr.options.positionClass ="toast-bottom-left";
 	
@@ -347,10 +331,7 @@ $( document ).on( "pageinit", function() {
 $('.palettebutton').addClass("sp-preview");
 $('.palettebutton').each(function() {
 	var index=$(".palettebutton").index( this );
-	var palStr = "" + index;
-	if (palStr.length<2){
-		palStr = "0" + palStr;
-	}
+
 	//$(this).text(index);
 	var indextext=index;
 	if(index==28){
@@ -363,13 +344,8 @@ $('.palettebutton').each(function() {
 		indextext="Mn"
 	}
 	$(this).append("<div id=\"pal-overlay-"+index+"\" class=\"sp-preview-inner color-overlay-"+index+"\">"+indextext+"</div>");
-	//$( ".pal-overlay-"+index).css('background-color', 'red');
-	$("#pal"+palStr).addClass("sp-preview");
-	$("#co"+palStr).addClass("sp-preview");
-	//document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
-	//document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
-	//document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
-	//document.getElementById("co" + palStr).style.color = colorTableInverse[palID];
+
+
 	$(this).spectrum({
 		showInput: true,
 		showAlpha: true,
@@ -393,7 +369,6 @@ $('.palettebutton').each(function() {
 				var tempb= +(temprgba.b/255).toFixed(2);
 				var tempa= +temprgba.a.toFixed(2);
 				colorTable2[index].colorN=[tempr,tempg,tempb,tempa];
-				//console.log(colorTable2[index].colorN);
 				colorTable2[index].changed=true;
 				
 			}else{	
@@ -510,16 +485,7 @@ $('#palettelist').change(function(a){
 	}
 });
 
-//palettetool
 
-/*
-$(".palettebutton").spectrum({
-    showInput: true,
-	showAlpha: true,
-	preferredFormat: "rgb",
-	
-});
-*/
 
 
 loadPalettes();
@@ -572,13 +538,13 @@ function atos(a){
 }
 
 function stoa(s){
-	try{
+	//try{
 		var temp=s.split(",");
 		return [parseFloat(temp[0]),parseFloat(temp[1]),parseFloat(temp[2]),parseFloat(temp[3])];
-	}catch(e){
+	//}catch(e){
 		//console.log("s="+s);
 		return [0,0,0,0];
-	}
+	//}
 }
 
 function stoa3(s){
@@ -669,7 +635,7 @@ function openFile() {
  if (selectedFile){
   var reader = new FileReader();
   reader.onload = function(evt) {
-   try{    
+   //try{    
      if(evt){
 		 $("#renderpanel").collapsible("collapse");
 		 CurrentBlueprint = JSON.parse(evt.target.result);  
@@ -681,12 +647,14 @@ function openFile() {
     }else{
      throw "unable to load blueprint"
     }
+	/*
    }
    catch(err){
 	throw err;
     loadError(err);
 	
     } 
+	*/
   };
   reader.readAsText(selectedFile);
  }else{
@@ -954,8 +922,7 @@ function processData(){
  } 
   
  countblocks(CurrentBlueprint.Blueprint);
- totalstats["Volume"]=roundToTwo(totalstats["Volume"]);
- getpalette(CurrentBlueprint.Blueprint);
+ totalstats["Volume"]=roundToTwo(totalstats["Volume"]); 
  getpalette2(CurrentBlueprint.Blueprint);
 
  var outputstring = "";
@@ -3867,8 +3834,7 @@ function getpalette2(blocks){
 				$("#popuppaintcolorbutton-overlay").css('background-color', tempcolor.colorS);
 				//console.log("triggered!");
 			}			
-			//console.log("#pal-overlay-"+palID);
-			//console.log(palID + ": " + tempcolor.colorS);
+
 		
 		}
 	}
@@ -4038,61 +4004,6 @@ function loadPalettes(){
 	});
 }
 
-//loads color palette
-function getpalette(blocks){
-	colorTableInverse=[];
-	colorTable=[];
- var palettedata = blocks.COL;
- if(palettedata){
- for(var palID = 0; palID < palettedata.length; palID++){
-  palStr = "" + palID;
-  if (palStr.length<2){
-   palStr = "0" + palStr;
-  }
-  var colorString = palettedata[palID];
-
-
-  var colorArray = colorString.split(',');
-  
-  
-  
-  var tempr = (colorArray[0] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var tempg = (colorArray[1] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var tempb = (colorArray[2] * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  
-  var rtempr = ((1-colorArray[0]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var rtempg = ((1-colorArray[1]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  var rtempb = ((1-colorArray[2]) * 255 * (colorArray[3])) +(255*(1-colorArray[3]));
-  
-  
-  colorTable[palID]=rgb2hex(tempr,tempg,tempb);
-  colorTableInverse[palID]=rgb2hex(rtempr,rtempg,rtempb);
-  //document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
-  //document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
-  //document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
-  //document.getElementById("co" + palStr).style.color = colorTableInverse[palID];
-
- }
- //$( ".palette" ).change();
-
-}else{
-	for(var palID=0;palID<32;palID++){
-	  palStr = "" + palID;
-	  if (palStr.length<2){
-	   palStr = "0" + palStr;
-	  }
-	
-		  colorTable[palID]=rgb2hex(255,255,255);
-		  colorTableInverse[palID]=rgb2hex(0,0,0);
-		  //document.getElementById("pal" + palStr).style.backgroundColor = colorTable[palID];
-		  //document.getElementById("pal" + palStr).style.color = colorTableInverse[palID];
-		  //document.getElementById("co" + palStr).style.backgroundColor = colorTable[palID];
-		  //document.getElementById("co" + palStr).style.color = colorTableInverse[palID];	
-	
-	}
-
-}
-}
 function countblocks(blocks){
 	blockRenderData={};
 	blockRenderIndex=0;
