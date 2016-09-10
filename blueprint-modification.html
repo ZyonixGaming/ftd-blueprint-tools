@@ -216,6 +216,7 @@ $( document ).on("pageshow", function() {
   ga('send', 'pageview');
   $(".lb").prop('disabled',false);
   $(".lb").parent().removeClass('ui-state-disabled');
+  ga('send', 'event', 'bpmod', 'pageload');
 });//pageshow
 				
 				
@@ -581,7 +582,7 @@ function openFile(source) {
 		textVisible: true,
 		textonly: true,
 	});
-
+  
   var selectedFiles = document.getElementById(source).files;
   var selectedFile;
   var outputstring = "";
@@ -589,7 +590,8 @@ function openFile(source) {
   currentFilenames=[];  
   fileIndex = 0;
   runningCount = selectedFiles.length;
-  runningTimeOut = 120;  
+  ga('send', 'event', 'bpmod', 'openfile', source,runningCount);
+  runningTimeOut = 150*runningCount;  
   $("#table3 tbody").empty();
   for(var fi=0;fi<selectedFiles.length;fi++){
 	selectedFile=selectedFiles[fi];
@@ -812,6 +814,7 @@ function processData(fi){
 		setTimeout(function(){
 		  alreadyrender=true;
 		  init();
+		  ga('send', 'event', 'bpmod', 'render', 'new');
 		  $.mobile.loading("hide");
 		}
 				   , 200);
@@ -823,6 +826,7 @@ function processData(fi){
 	  //$("#container").width($("#renderpanel").innerWidth());
 	  setTimeout(function(){
 		alreadyrender=true;
+		ga('send', 'event', 'bpmod', 'render', 'reload');
 		init();
 	  }
 				 , 200);
@@ -3710,6 +3714,7 @@ function updateBluePrint(fi){
 	  if(document.getElementById("replaceold").checked){
 	   buildReplaceOldIndex();
 	   replaceOld(CurrentBlueprint.Blueprint);
+	   ga('send', 'event', 'bpmod', 'replaceold');
 	  }	  
 	  if(document.getElementById("clearhull").checked){
 		buildkeepIndex();
@@ -3749,6 +3754,10 @@ function updateBluePrint(fi){
 	  if (!isNumeric(document.getElementById("shielda").value)){
 		document.getElementById("shielda").value=1.0;
 	  }
+	  if(document.getElementById("shieldcolor").checked){
+		ga('send', 'event', 'bpmod', 'shieldcolor');
+	  }
+	  
 	  document.getElementById("shieldr").value=Math.min(1.0,document.getElementById("shieldr").value);
 	  document.getElementById("shieldg").value=Math.min(1.0,document.getElementById("shieldg").value);
 	  document.getElementById("shieldb").value=Math.min(1.0,document.getElementById("shieldb").value);
@@ -3813,6 +3822,7 @@ function updateBluePrint(fi){
 		beamifyblocksOptimized(CurrentBlueprint.Blueprint);
 		beamifyblocksOptimized3m(CurrentBlueprint.Blueprint);
 		beamifyblocks2m(CurrentBlueprint.Blueprint);
+		ga('send', 'event', 'bpmod', 'beam', 'optimized');
 		/*
 		beamifyblocksOptimized2m(CurrentBlueprint.Blueprint);
 		*/
@@ -3824,6 +3834,7 @@ function updateBluePrint(fi){
 		beamifyblocks(CurrentBlueprint.Blueprint);
 		beamifyblocks3m(CurrentBlueprint.Blueprint);
 		beamifyblocks2m(CurrentBlueprint.Blueprint);
+		ga('send', 'event', 'bpmod', 'beam', 'normal');
 	  }
 	  updateBlockCount(CurrentBlueprint.Blueprint);
 	  //console.log("processing complete.");
@@ -3856,8 +3867,8 @@ function downloadBlueprint2(){
 		textonly: true,
 	});
 	runningCount = currentBlueprints.length;
-	runningTimeOut = 120;
-
+	runningTimeOut = 3000*runningCount;
+	ga('send', 'event', 'bpmod', 'download', 'download' ,runningCount);
 	if(!singleFile&&document.getElementById("applymultipalette").checked){
 		newPalette=[];
 		for(var palID = 0; palID < 32; palID++){
@@ -3876,7 +3887,7 @@ function downloadBlueprint2(){
 	function waitRunning() {
 		
 		if((runningCount>0)&&(runningTimeOut>0)) {
-			console.log("wait");
+			//console.log("wait");
 			runningTimeOut-=1;
 			setTimeout(waitRunning, 100);
 			return;
