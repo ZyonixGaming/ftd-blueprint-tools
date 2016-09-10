@@ -738,19 +738,20 @@ function processData(fi){
 	if(ItemTable[val]){
 	  nameID[keyint]=(ItemTable[val]).Name;
 	  ItemTable[val].BlockId=keyint;
+	  colorID[keyint]=(ItemTable[val]).lodcol;
 	}
 	else{
 	  nameID[keyint]=val;
+	  colorID[keyint]=[80,80,80,1];
 	}
 	countID[keyint]=0;
 	
 
-	colorID[keyint]=[80,80,80,1];
+
 	for(var mat in shapedBlocks){
 	  var tempindex = shapedBlocks[mat].blockGuid;
 	  var matID = tempindex[val];
 	  if(matID!==undefined){
-		colorID[keyint]= shapedBlocks[mat].color;
 		shapedBlocks[mat].blockIds[matID] = keyint;
 	  }
 	}
