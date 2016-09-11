@@ -2427,6 +2427,34 @@ function updateBluePrint(fi){
 	 cleanBlueprint(blocks);
 	 
 	}
+	
+	function becomeFortress(blocks,subcon){
+	 var SClist=blocks.SCs;
+	 blocks.designChanged = true;
+	 for(var scID = 0; scID < SClist.length; scID++){
+	  if(!(SClist[scID].COL)){
+	   //no palette=turret or spinblock
+	   becomeFortress(SClist[scID],true);
+	  } 
+	  
+	 }
+	 var start=0;
+	 if(subcon){
+	  start=1;
+	 }
+	 var deletecount=0;
+	 var blocklist=blocks.BlockIds;
+	 for(var blockIndex = start; blockIndex < blocklist.length; blockIndex++){
+	  var currentBlockInfo = getBlock(blocklist[blockIndex]);
+	  if((currentBlockInfo)&&(!currentBlockInfo.PlaceableOnFortress)){
+	   deletecount+=1;
+	   blocklist[blockIndex]=-1;
+	  }
+
+	 }
+	 
+	 cleanBlueprint(blocks);
+	}	
 
 
 	function cutInHalfSC(blocks,midx){
@@ -3798,12 +3826,19 @@ function updateBluePrint(fi){
 
 	  }
 	  if(document.getElementById("becomeStructure").checked){
-		CurrentBlueprint.Blueprint.ItemNumber=ItemTable["cb5bfa64-c3fd-435c-b0da-3891a86b20d2"].BlockId;
+		//CurrentBlueprint.Blueprint.ItemNumber=ItemTable["cb5bfa64-c3fd-435c-b0da-3891a86b20d2"].BlockId;
+		CurrentBlueprint.Blueprint.ItemNumber=GuidToID["cb5bfa64-c3fd-435c-b0da-3891a86b20d2"];
 		becomeStructure(CurrentBlueprint.Blueprint,false);
 	  }
 	  else if(document.getElementById("becomeVehicle").checked){
-		CurrentBlueprint.Blueprint.ItemNumber=ItemTable["e63040c9-0027-4fd3-be30-67fe3e950140"].BlockId;
+		//CurrentBlueprint.Blueprint.ItemNumber=ItemTable["e63040c9-0027-4fd3-be30-67fe3e950140"].BlockId;
+		CurrentBlueprint.Blueprint.ItemNumber=GuidToID["e63040c9-0027-4fd3-be30-67fe3e950140"];
 		becomeVehicle(CurrentBlueprint.Blueprint);
+	  }
+	  else if(document.getElementById("becomeFortress").checked){
+		//CurrentBlueprint.Blueprint.ItemNumber=ItemTable["74c982f4-305f-411e-a8b4-d193315ab3bc"].BlockId;
+		CurrentBlueprint.Blueprint.ItemNumber=GuidToID["74c982f4-305f-411e-a8b4-d193315ab3bc"];
+		becomeFortress(CurrentBlueprint.Blueprint);
 	  }
 	  if(document.getElementById("rotateVehicle").checked){
 		rotateBlueprint(CurrentBlueprint.Blueprint,document.getElementById("rotatedir").value);
@@ -5043,10 +5078,15 @@ function roundToTwo(num) {
 								</label>
 							</div>
 						</div>
-						<div class="ui-grid-solo">
-						<div class="ui-block-a">
-						<label><input id="replaceold" type="checkbox" data-mini="true">Replace old armor blocks (1m and 2m left,right,and up slopes)</label>
-						</div>
+						<div class="ui-grid-a">
+							<div class="ui-block-a">
+								<label><input id="replaceold" type="checkbox" data-mini="true">Replace old armor blocks (1m and 2m left,right,and up slopes)</label>
+							</div>
+							<div class="ui-block-b">
+								<label>
+								<input id="becomeFortress" type="checkbox" data-mini="true">Turn blueprint into a Fortress (Use with caution!)
+								</label>
+							</div>						
 						</div>						
 						<hr>
 						<div class="ui-grid-a">
