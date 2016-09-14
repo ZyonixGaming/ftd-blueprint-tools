@@ -74,12 +74,17 @@
 			.sp-preview-inner{
 			text-shadow: 1px 1px 2px white;
 		}
-		#popupallowedcolorbutton, #popuppaintcolorbutton, .camobutton{
+		#popupallowedcolorbutton, #popuppaintcolorbutton, .camobutton, #deletebutton{
 			z-index:1;
 			padding-top:8pt!important;
 			width:64pt!important;
 			height:28pt!important;
 			margin-top:8pt!important;
+		}
+		
+		.deletebutton{
+			background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAcCAIAAABeRy4FAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTCtCgrAAAACZUlEQVRYR9VWK1QCQRTlgMFgMBgIBKLBYDAQCCQOgUMiGAhGg9FgIxAIRAMNAoFAIBCIRIPBYCAQDAYDwWAgEJ6X92YWHcZlmV0Q7pkwO/Pm7dx75xej2GEX8/vgiq6dnqrK2Rnd39N4THuItzd6eKBkUk2Vi67NZtRuUzbrdVAuR53Oov3fgTl0u1QoLOd2dUXNptR1kwdoDwfgg7TDmbs7en1VvTuG/2S4cYWAQEjDBC8gk1lYtBtDAv6du3TEX7Bq8PKieiMH1A3uP8esIyCYz6nXs6zCry8VEBKQFgJDZi8/5IcJ/oZzpB4QEMY5cHJCt7f0/Kx6HQB1obHbGchDNiQgCG+Im+QGeKAe74b3d6pWKZVSSY6P6eaGnp5UrxWwC6bBOhkCM2HpZKJ6NwJnCEdAAEMGAyoW6ehIZbu4oMdH+vxUAQDMgUUwyvsjDISNGOsMzqPTRQKrIa2WRXLspfDghJESEIghpRLF4yo5Cur5PPX7oSQ3wJm3QAB7AMJDfsmcSKgKWq6vaTRSYeHBaaMjgBWPdY/VLwmxH7ArYAUkHw6pXF7ukPNzajRoOlUDncHZoiAAUSuVpeTpNNVqi/1g4OOD6vXF7CUM8WAFbs7gPCEIQEII6U0IAgecEAhjLf0kDGKgtyl4uBOBSGbgzN8DD9yEQORrQBBwBa6C44MR2NIu/AmfM+AvcKQvAZEckkgMRIr2HLTCOIVxLeJytBrCATYCchNtW3J/iCGXl2oCYohxD3LXbwIOj7Ntw/r4k5cIt2gCa19j/wvrW5Ar+lvKPkjuD8MQk8ABFvP7wEos9g0wx0tPcAGSdAAAAABJRU5ErkJggg==');
+			background-size: 100% 100%;
 		}
 		#popupallowedcolor, #popuppaintcolor{
 			max-width:356px;
@@ -160,6 +165,7 @@ var blockRenderData = {
 var blockRenderIndex = 0;
 
 
+
 //blockID:blockname
 var nameID = {
 }
@@ -169,11 +175,15 @@ var countID = {
 var colorID = {
 }
 //blockname:blockcount
+/*
 var blockCountData = {
 }
+*/
 //store stats
 var totalstats = {
 }
+
+var blockFilterTable = {}
 
 var singleFile=true;
 var selectedFile
@@ -248,9 +258,27 @@ $( document ).on( "pageinit", function() {
 		filter_placeholder: {
 		  search : 'Search...' },		  
 	  },	
-	  selectorHeaders: "thead th"
+	  selectorHeaders: "thead th",
+	  sortList: [[1,1],[0,0]]
 	});
+		
   });
+  
+  /*
+    $('#table1').bind('filterEnd', function(event, config){
+		console.log($('#table1.hasFilters tbody tr:visible').length);
+		
+		$('#table1.hasFilters tbody tr:visible').each(function(){
+			console.log($(this).attr("blockid"));
+			console.log(ItemDic[$(this).attr("blockid")]);
+		
+		});
+		
+		
+  });
+  */
+  
+ 
   
   $(function() {
 	// simple reflow widget (table with 1 header row)
@@ -457,12 +485,20 @@ $( document ).on( "pageinit", function() {
 				 );
   }
 					   );
+					   				   
+
+	$('#deletebutton').click(function(a){
+	  $( "#popuppaintcolorbutton-overlay" ).css("background-color","rgba(0,0,0,0)");
+	  $( "#popuppaintcolorbutton-overlay" ).html($(this).html());
+	  temppaintcolor=34;
+	  $( "#popuppaintcolor" ).popup( "close" );
+	});  
+					   
   $('#palettelist').change(function(a){
 	if($(this).val()){
 	  loadPalette($(this).val());
 	}
-  }
-						  );
+  });
 
   loadPalettes();
 }); //pageinit
@@ -725,8 +761,10 @@ function processData(fi){
   }
   countID = {
   }
+  /*
   blockCountData = {
   }
+  */
   ItemDic =  CurrentBlueprint.ItemDictionary;
   $("#table1 tbody").empty();
   $("#table2 tbody").empty();
@@ -778,17 +816,21 @@ function processData(fi){
   var totalcount = 0;
   for(var blockID in countID) {
 	if(countID[blockID] >0) {
-	  blockCountData[nameID[blockID]] =  countID[blockID];
+	  //blockCountData[nameID[blockID]] =  countID[blockID];
 	  totalcount+=countID[blockID];
+	  outputstring +=  "<tr blockid='"+blockID+"'><td>" + nameID[blockID]  + "</td><td><b>" + countID[blockID] + "</b></td></tr>";
 	}
   }
   totalstats["Block Count"] = totalcount;
+  /*
   keysSorted = Object.keys(blockCountData).sort(function(b,a){
-	return blockCountData[a]-blockCountData[b]}
-											   )
+	return blockCountData[a]-blockCountData[b]
+  });
+	
   for (var bName in keysSorted){
 	outputstring +=  "<tr><td>" + keysSorted[bName]  + "</td><td><b>" + blockCountData[keysSorted[bName]] + "</b></td></tr>";
   }
+  */
   $("#table1 tbody").append(outputstring);
   $("#table1").trigger("update");
   $("#blockcountpanel").collapsible("expand");
@@ -1459,54 +1501,63 @@ function updateBluePrint(fi){
 	 if(document.getElementById("paint").checked){
 	  selectedcolor=temppaintcolor;
 	  
-	  if((document.getElementById("painttarget").value=="wood")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
-	   var blockcount =  localShapedBlocks["wood"].length;
-	   for(var i=0;i<blockcount;i++){
-		blockColorIndex[localShapedBlocks["wood"][i]] = selectedcolor;
-		
-	   }
-	  }
+	    if(document.getElementById("painttarget").value=="blockfilter"){
+			for(var tempguid in blockFilterTable){
+				blockColorIndex[GuidToID[tempguid]]=selectedcolor;
+			}
+			
+			
+	    }else{
 	  
-	  if((document.getElementById("painttarget").value=="metal")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
-	   var blockcount =  localShapedBlocks["metal"].length;
-	   for(var i=0;i<blockcount;i++){
-		blockColorIndex[localShapedBlocks["metal"][i]] = selectedcolor;
-	   }
-	  }  
+		  if((document.getElementById("painttarget").value=="wood")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["wood"].length;
+		   for(var i=0;i<blockcount;i++){
+			blockColorIndex[localShapedBlocks["wood"][i]] = selectedcolor;
+			
+		   }
+		  }
+		  
+		  if((document.getElementById("painttarget").value=="metal")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["metal"].length;
+		   for(var i=0;i<blockcount;i++){
+			blockColorIndex[localShapedBlocks["metal"][i]] = selectedcolor;
+		   }
+		  }  
 
-	  if((document.getElementById("painttarget").value=="alloy")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
-	   var blockcount =  localShapedBlocks["alloy"].length;
-	   for(var i=0;i<blockcount;i++){
-		blockColorIndex[localShapedBlocks["alloy"][i]] = selectedcolor;
-	   }
-	  } 
+		  if((document.getElementById("painttarget").value=="alloy")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["alloy"].length;
+		   for(var i=0;i<blockcount;i++){
+			blockColorIndex[localShapedBlocks["alloy"][i]] = selectedcolor;
+		   }
+		  } 
 
-	  if((document.getElementById("painttarget").value=="glass")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
-	   var blockcount =  localShapedBlocks["glass"].length;
-	   for(var i=0;i<blockcount;i++){
-		blockColorIndex[localShapedBlocks["glass"][i]] = selectedcolor;
+		  if((document.getElementById("painttarget").value=="glass")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["glass"].length;
+		   for(var i=0;i<blockcount;i++){
+			blockColorIndex[localShapedBlocks["glass"][i]] = selectedcolor;
+		   }
+		  }
+		  
+		  if((document.getElementById("painttarget").value=="heavyarmour")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["heavyarmour"].length;
+		   for(var i=0;i<blockcount;i++){
+			blockColorIndex[localShapedBlocks["heavyarmour"][i]] = selectedcolor;
+		   }
+		  }
+		  
+		  if((document.getElementById("painttarget").value=="stone")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["stone"].length;
+		   for(var i=0;i<blockcount;i++){
+			blockColorIndex[localShapedBlocks["stone"][i]] = selectedcolor;
+		   }
+		  }
+		  if((document.getElementById("painttarget").value=="lead")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["lead"].length;
+		   for(var i=0;i<blockcount;i++){
+			blockColorIndex[localShapedBlocks["lead"][i]] = selectedcolor;
+		   }
+		  }
 	   }
-	  }
-	  
-	  if((document.getElementById("painttarget").value=="heavyarmour")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
-	   var blockcount =  localShapedBlocks["heavyarmour"].length;
-	   for(var i=0;i<blockcount;i++){
-		blockColorIndex[localShapedBlocks["heavyarmour"][i]] = selectedcolor;
-	   }
-	  }
-	  
-	  if((document.getElementById("painttarget").value=="stone")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
-	   var blockcount =  localShapedBlocks["stone"].length;
-	   for(var i=0;i<blockcount;i++){
-		blockColorIndex[localShapedBlocks["stone"][i]] = selectedcolor;
-	   }
-	  }
-	  if((document.getElementById("painttarget").value=="lead")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
-	   var blockcount =  localShapedBlocks["lead"].length;
-	   for(var i=0;i<blockcount;i++){
-		blockColorIndex[localShapedBlocks["lead"][i]] = selectedcolor;
-	   }
-	  }
 	 }
 	}
 	
@@ -1852,6 +1903,7 @@ function updateBluePrint(fi){
 	//paint blocks
 	function colorblocks(blocks){
 	 var SClist=blocks.SCs;
+	 var deleteblock=false;
 	 //blocks.designChanged = true;
 	 for(var scID = 0; scID < SClist.length; scID++){
 	  if(!(SClist[scID].COL)){
@@ -1867,10 +1919,16 @@ function updateBluePrint(fi){
 			colorlist[blockIndex] = 1+Math.floor((Math.random() * 4));
 		  }else if (newcolor==33){
 			colorlist[blockIndex] = 28+Math.floor((Math.random() * 4));
+		  }else if (newcolor==34){
+			blocklist[blockIndex] = -1;
+			deleteblock=true;
 		  }else if (newcolor>=0){
 		   colorlist[blockIndex] = newcolor;
 		  }
 		}
+	 }
+	 if(deleteblock){
+		cleanBlueprint(blocks);
 	 }
 	}
 
@@ -3882,6 +3940,23 @@ function updateBluePrint(fi){
 }
 
 function updateBluePrintTO(fi){
+
+	if(document.getElementById("paint").checked){
+	  
+	    if(document.getElementById("painttarget").value=="blockfilter"){
+			blockFilterTable={};
+			$('#table1.hasFilters tbody tr:visible').each(function(){
+				/*
+				console.log($(this).attr("blockid"));
+				console.log(ItemDic[$(this).attr("blockid")]);
+				*/
+				blockFilterTable[ItemDic[$(this).attr("blockid")]]=true;
+			
+			});		
+			
+	    }
+	}
+	
 	setTimeout(function(){
 		try{
 			updateBluePrint(fi);
@@ -4907,6 +4982,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="paintothers"> None of the above
 										</option>
+										<option value="blockfilter"> Use Block Filter
+										</option>										
 									</select>
 								</label>
 							</div>
@@ -5005,6 +5082,10 @@ function roundToTwo(num) {
 													<br>Camo
 												</div>
 											</button>
+											<button id="deletebutton" class="ui-btn ui-btn-inline">
+												<div class="camo-big-overlay sp-preview-inner deletebutton">Delete
+												</div>
+											</button>											
 										</div>
 									</div>
 								</div>
@@ -5371,7 +5452,7 @@ function roundToTwo(num) {
 						</div>
 					</div>
 					<div id="blockcountpanel" data-role="collapsible" >
-						<h4>Block Count
+						<h4>Block Count / Filter
 						</h4>
 						<table id="table1"  class="table1 tablesorter">
 							<thead>
