@@ -1694,8 +1694,19 @@ function updateBluePrint(fi){
 		 }
 		}
 	   }
-	  }  
+	  }
 	 }
+	 if(document.getElementById("tosolidclip").checked){
+		for(var guid in toSolid){
+			conversionIndex[GuidToID[guid]]=GuidToID[toSolid[guid]];	
+		}
+	 
+	 }else if(document.getElementById("fromsolidclip").checked){
+		for(var guid in fromSolid){
+			conversionIndex[GuidToID[guid]]=GuidToID[fromSolid[guid]];	
+		}	 
+	 }	 
+	 
 	}
 
 						
@@ -5167,6 +5178,15 @@ function roundToTwo(num) {
 								<label>
 								<input id="becomeFortress" type="checkbox" data-mini="true">Turn blueprint into a Fortress (Use with caution!)
 								</label>
+							</div>						
+						</div>	
+						<div class="ui-grid-a">
+							<div class="ui-block-a">
+								<label><input id="tosolidclip" type="checkbox" data-mini="true">Convert APS ammo clips to solid clips</label>
+							</div>
+							<div class="ui-block-b">
+								<label>
+								<input id="fromsolidclip" type="checkbox" data-mini="true">Convert APS ammo clips to regular/open? clips</label>
 							</div>						
 						</div>						
 						<hr>
