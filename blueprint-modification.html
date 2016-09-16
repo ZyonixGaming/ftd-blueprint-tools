@@ -123,6 +123,39 @@
 		tbody tr:nth-child(odd) td:nth-child(odd){
 			background: #F0F0F0
 		}
+		.fullscreen{
+			position: absolute;
+			top: 12pt;
+			left: 5%;
+			width: 90%;
+			z-index:10;
+		}
+		.fullscreen-overlay{
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%; height: 100%;
+			z-index:4;
+			display: none;
+			background-color:rgba(10,10,10,0.4);
+		}
+		
+		#expand{
+			position: absolute;
+			top:11px;
+			  right: 12px;   /* must be equal to parent's right padding */
+			  width:22px;
+			  height:22px;
+			display:none;
+			z-index:9;
+
+		}
+		
+		#expand:after{
+			  position: absolute;
+		}
+		
+		
 	</style>
 	<script src="js/links.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
@@ -227,6 +260,10 @@ $( document ).on("pageshow", function() {
   $(".lb").prop('disabled',false);
   $(".lb").parent().removeClass('ui-state-disabled');
   ga('send', 'event', 'bpmod', 'pageload');
+  
+ 
+  
+  
 });//pageshow
 				
 				
@@ -860,9 +897,20 @@ function processData(fi){
 		  $.mobile.loading("hide");
 		}
 				   , 200);
+	  }else{
+		onWindowResize();
 	  }
+
+
+	},
+	collapse: function(event,ui){
+		 $("#renderpanel").removeClass("fullscreen");
+		 $(".fullscreen-overlay").hide();
+		 $("#expand").show();
+		 //console.log("oops");
 	}
   });
+  
   if(!($("#renderpanel").collapsible( "option", "collapsed"))){
 	if(!alreadyrender){
 	  //$("#container").width($("#renderpanel").innerWidth());
@@ -874,6 +922,34 @@ function processData(fi){
 				 , 200);
 	}
   }
+  
+  
+		$("#renderpanel").removeClass("fullscreen");
+		 $(".fullscreen-overlay").hide();
+		 $("#expand").show();
+  
+	  $(".fullscreen-overlay").click(function(){
+		 $("#renderpanel").removeClass("fullscreen");
+		 $(".fullscreen-overlay").hide();
+		 $("#expand").show();
+		 if(alreadyrender){
+			onWindowResize();
+		 }		 
+	  });
+
+	  
+	  $("#expand").click(function(event){
+		  event.stopPropagation()
+		  $(".fullscreen-overlay").show();
+		  $("#renderpanel").addClass("fullscreen");	  
+		  $("#expand").hide();
+		  $("#renderpanel").collapsible("expand");
+		  //console.log("expand");
+		  
+	  });  
+  
+  
+  
   //$(".dl").prop('disabled',false);
   //$(".dl").parent().removeClass('ui-state-disabled');
   return true;
@@ -4661,7 +4737,9 @@ function roundToTwo(num) {
 </head>
 
 <body>
+
 	<div data-role="page">
+		<div class="fullscreen-overlay"></div>
 		<div data-role="header">
 			<a href="#popupMenu" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-gear ui-btn-icon-left ui-btn-a">Links
 			</a>
@@ -5466,10 +5544,14 @@ function roundToTwo(num) {
 
 					</div>				
 					<div id="renderpanel" data-role="collapsible">
-						<h4>3D Preview
+						<h4><span>3D Preview</span><span id="expand" class="ui-btn-icon-notext ui-icon-arrow-u-l"></span>
 						</h4>
+						
 						<div id="container">
 						</div>
+							
+						
+						
 					</div>
 					<div id="blockcountpanel" data-role="collapsible" >
 						<h4>Block Count / Filter
