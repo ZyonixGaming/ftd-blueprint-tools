@@ -1219,6 +1219,8 @@ function updateBluePrint(fi){
 	 var ae2=-1;
 	 var ae3=-1;
 	 
+	 var kca1,kca2,kcas1,kcas2,kcas3;
+	 
 	 
 	 blockToBeam={};
 	 beamToBlock={};
@@ -1323,6 +1325,16 @@ function updateBluePrint(fi){
 	   g2m=keyint;//heavyarmour beam
 	  }else if(val=="49714981-369a-4158-aff6-e562ee5f98d5"){
 	   g3m=keyint;//heavyarmour beam
+	  }else if(val=="96ae1b17-7b4f-4878-aae5-7f3aa378ae29"){
+	   kca1=keyint;//after cat kca block
+	  }else if(val=="8a521c5d-ed3e-4013-b973-add51d8abf81"){
+	   kca2=keyint;//after cat kca beam 4m
+	  }else if(val=="c7c660a6-c9e2-48d5-8947-e73e9474f84f"){
+	   kcas1=keyint;//after cat kca slope
+	  }else if(val=="6ff9df4c-6daa-4f86-bd19-5ef1125f827f"){
+	   kcas2=keyint;//after cat kca slope 4m
+	  }else if(val=="63d66024-1a53-4dd8-a0df-8d2b0fbf6566"){
+	   kcas3=keyint;//after cat kca slope 4m mirrored
 	  }
 	  
 
@@ -1401,6 +1413,17 @@ function updateBluePrint(fi){
 			beamToBlock2m[g2m]=g1;	
 			beamToBlock3m[g3m]=g1;	
 		 }
+	 }
+	 
+	 if(kca1!==undefined&&kca2!==undefined){
+		blockToBeam[kca1]=kca2;
+		beamToBlock[kca2]=kca1;
+	 }
+	 
+	 if(kcas1!==undefined&&kcas2!==undefined&&kcas3!==undefined){
+		slopeBlockToBeam[kcas1]=kcas2;
+		slopeBeamToBlock[kcas2]=kcas1;
+	    slopeBeamToBlockM[kcas3]=kcas1;
 	 }
 	 
 	 slopeBlockToBeam[aa1]=aa2;
@@ -1588,51 +1611,81 @@ function updateBluePrint(fi){
 		  if((document.getElementById("painttarget").value=="wood")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
 		   var blockcount =  localShapedBlocks["wood"].length;
 		   for(var i=0;i<blockcount;i++){
-			blockColorIndex[localShapedBlocks["wood"][i]] = selectedcolor;
-			
+			var tempid=localShapedBlocks["wood"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
+	
 		   }
 		  }
 		  
 		  if((document.getElementById("painttarget").value=="metal")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
 		   var blockcount =  localShapedBlocks["metal"].length;
 		   for(var i=0;i<blockcount;i++){
-			blockColorIndex[localShapedBlocks["metal"][i]] = selectedcolor;
+			var tempid=localShapedBlocks["metal"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
 		   }
 		  }  
 
 		  if((document.getElementById("painttarget").value=="alloy")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
 		   var blockcount =  localShapedBlocks["alloy"].length;
 		   for(var i=0;i<blockcount;i++){
-			blockColorIndex[localShapedBlocks["alloy"][i]] = selectedcolor;
+			var tempid=localShapedBlocks["alloy"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
 		   }
 		  } 
 
 		  if((document.getElementById("painttarget").value=="glass")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
 		   var blockcount =  localShapedBlocks["glass"].length;
 		   for(var i=0;i<blockcount;i++){
-			blockColorIndex[localShapedBlocks["glass"][i]] = selectedcolor;
+			var tempid=localShapedBlocks["glass"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
 		   }
 		  }
 		  
 		  if((document.getElementById("painttarget").value=="heavyarmour")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
 		   var blockcount =  localShapedBlocks["heavyarmour"].length;
 		   for(var i=0;i<blockcount;i++){
-			blockColorIndex[localShapedBlocks["heavyarmour"][i]] = selectedcolor;
+			var tempid=localShapedBlocks["heavyarmour"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
 		   }
 		  }
 		  
 		  if((document.getElementById("painttarget").value=="stone")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
 		   var blockcount =  localShapedBlocks["stone"].length;
 		   for(var i=0;i<blockcount;i++){
-			blockColorIndex[localShapedBlocks["stone"][i]] = selectedcolor;
+			var tempid=localShapedBlocks["stone"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
 		   }
 		  }
 		  if((document.getElementById("painttarget").value=="lead")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
 		   var blockcount =  localShapedBlocks["lead"].length;
 		   for(var i=0;i<blockcount;i++){
-			blockColorIndex[localShapedBlocks["lead"][i]] = selectedcolor;
+			var tempid=localShapedBlocks["lead"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
 		   }
 		  }
+		  if((document.getElementById("painttarget").value=="kca")||(document.getElementById("painttarget").value=="paintstruct")||(document.getElementById("painttarget").value=="paintothers")){
+		   var blockcount =  localShapedBlocks["kca"].length;
+		   for(var i=0;i<blockcount;i++){
+			var tempid=localShapedBlocks["kca"][i];
+			if(tempid!==undefined&&tempid>=0){
+				blockColorIndex[tempid] = selectedcolor;
+			}
+		   }
+		  }		  
 	   }
 	 }
 	}
@@ -1763,11 +1816,16 @@ function updateBluePrint(fi){
 		if (newmat!=mat){
 		var blockcount = localShapedBlocks[mat].length;
 		for(var i=0;i<blockcount;i++){
-		   if(newmat==0){
-			conversionIndex[localShapedBlocks[mat][i]]=-1;
-		   }else if ((i<localShapedBlocks[newmat].length)&&(localShapedBlocks[newmat][i]>=0)){
-		  conversionIndex[localShapedBlocks[mat][i]] = localShapedBlocks[newmat][i];
-		 }
+			var tempid=localShapedBlocks[mat][i];
+			if(tempid!==undefined&&tempid>=0){
+			   if(newmat==0){
+				conversionIndex[tempid]=-1;
+			   }else if ((i<localShapedBlocks[newmat].length)&&(localShapedBlocks[newmat][i]>=0)){
+				conversionIndex[tempid] = localShapedBlocks[newmat][i];
+			   }			
+			}
+
+		 
 		}
 	   }
 	  }
@@ -1893,7 +1951,10 @@ function updateBluePrint(fi){
 	 keepIndex = {};
 	 for(var mat in shapedBlocks){
 		for (var key in shapedBlocks[mat].blockGuid){
-			keepIndex[GuidToID[key]] = true;
+			if(GuidToID[key]!==undefined){
+				keepIndex[GuidToID[key]] = true;
+			}
+			
 		}
 		/*
 	  var blockcount =  shapedBlocks[mat].blockGuid.length;
@@ -4889,6 +4950,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
+										<option value="kca">to KCA
+										</option>										
 										<option value="0" >delete!
 										</option>
 									</select>
@@ -4914,6 +4977,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
+										<option value="kca">to KCA
+										</option>										
 										<option value="0" >delete!
 										</option>
 									</select>
@@ -4939,6 +5004,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
+										<option value="kca">to KCA
+										</option>										
 										<option value="0" >delete!
 										</option>
 									</select>
@@ -4964,6 +5031,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
+										<option value="kca">to KCA
+										</option>										
 										<option value="0" >delete!
 										</option>
 									</select>
@@ -4989,6 +5058,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
+										<option value="kca">to KCA
+										</option>										
 										<option value="0" >delete!
 										</option>
 									</select>
@@ -5014,6 +5085,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
+										<option value="kca">to KCA
+										</option>										
 										<option value="0" >delete!
 										</option>
 									</select>
@@ -5039,12 +5112,41 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead" selected="selected">to Lead
 										</option>
+										<option value="kca">to KCA
+										</option>										
 										<option value="0" >delete!
 										</option>
 									</select>
 								</label>
 							</div>
 						</div>
+						<div class="ui-grid-solo">
+							<div class="ui-block-a">
+								<label class="checkbox" >
+									<input class="bigbox" id="kca" type="checkbox" data-role="none">Convert KCA: 
+									<select id="kcato" data-role="none">
+										<option value="wood" > to Wood
+										</option>
+										<option value="alloy" >to Alloy
+										</option>
+										<option value="metal">to Metal
+										</option>
+										<option value="glass">to Glass
+										</option>
+										<option value="heavyarmour">to Heavy Armour
+										</option>
+										<option value="stone">to Stone
+										</option>
+										<option value="lead">to Lead
+										</option>
+										<option value="kca"  selected="selected">to KCA
+										</option>										
+										<option value="0" >delete!
+										</option>
+									</select>
+								</label>
+							</div>
+						</div>						
 						<hr>
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
@@ -5067,6 +5169,8 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead"> Lead 
 										</option>
+										<option value="kca"> KCA 
+										</option>										
 										<option value="paintstruct"> All of the above 
 										</option>
 										<option value="paintothers"> None of the above
