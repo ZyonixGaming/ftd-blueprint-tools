@@ -30,12 +30,10 @@ background: #D0D0FF !important;
 	padding: 0.8em;
 }
 
-
-#disqus_thread{
-	margin: 0 0;
-	padding: 0.8em;
+.mod-ac{
+	display:none;
 }
-
+		
 tbody tr:nth-child(even) td:nth-child(odd){background: #E0E0F0}
 tbody tr:nth-child(odd) td:nth-child(even){background: #FFFFFF}
 tbody tr:nth-child(even) td:nth-child(even){background: #F0F0FF}
@@ -47,7 +45,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/widgets/widget-filter.min.js"></script>	
-	<script src="js/itemtable.js"></script>
+	<script src="js/itemtable-AC.js"></script>
 	
 <script>
 
@@ -103,6 +101,8 @@ $( document ).on("pageshow", function() {
 
 
 	$("#version").text(ftdversion);
+    $("#mod-ac-version").text(" + "+modacversion);
+
 
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -259,6 +259,9 @@ function processData(i){
 		ItemDic[i] =  CurrentBlueprint[i].ItemDictionary;
 		for(var key in ItemDic[i]) {
 			val = ItemDic[i][key];
+			if(val=="96ae1b17-7b4f-4878-aae5-7f3aa378ae29"){	
+				$(".mod-ac").show();
+			}
 			if(i==0){
 				var tempkey=Math.round(parseFloat(key));
 				lookupTable[val]=tempkey;		
@@ -847,7 +850,8 @@ function download(filename, data) {
         <ul id="linklist" data-role="listview" data-inset="true" style="min-width:210px;">
         </ul>
 	</div>
-	<p>Last updated for FTD <span id="version">v1.95864</span></p>
+	<p>Last updated for FTD <span id="version">v1.95864</span><span id="mod-ac-version" class="mod-ac">&nbsp;</span>
+	</p>
 	<p>Click on the buttons to load 2 blueprints to compare or combine.</p>
 	<p>To combine the main hull of both vehicles will need to have a origin block. The blueprints will be combined such that both origin blocks will merge as one. Orientation of the origin blocks matter.</p>
 	<p>Scroll to the bottom to find the 'Combine and Download' button.</p>
