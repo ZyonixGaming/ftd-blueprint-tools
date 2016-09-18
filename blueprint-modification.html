@@ -1501,7 +1501,7 @@ function updateBluePrint(fi){
 					}
 					beiIndex+=beiIncrement;
 					newbeiindex+=beiIncrement;
-				}else if ((beilist[beiIndex])&&(beilist[beiIndex]<blockIndex)){
+				}else if ((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]<blockIndex)){
 					console.log ("hmmm");
 				}
 				currentIndex +=1;
@@ -1512,7 +1512,7 @@ function updateBluePrint(fi){
 					beiIndex+=beiIncrement;
 				}
 			}
-			if((beilist[beiIndex])&&(beilist[beiIndex]<blockIndex)){
+			if((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]<blockIndex)){
 			var beiIncrement = beilist[beiIndex+1]+2;
 			beiIndex+=beiIncrement;
 			}
@@ -3004,7 +3004,7 @@ function updateBluePrint(fi){
 				blocks.BP1[currentIndex]=bp1list[blockIndex];
 				blocks.BP2[currentIndex]=bp2list[blockIndex];
 				blocks.BCI[currentIndex]=colorlist[blockIndex];
-				if((beilist[beiIndex])&&(beilist[beiIndex]==blockIndex)){
+				if((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]==blockIndex)){
 					blocks.BEI[currentBeiIndex]=currentIndex;
 					var beiIncrement = beilist[beiIndex+1]+2;
 					for(var i=1;i<beiIncrement;i++){
@@ -3012,7 +3012,7 @@ function updateBluePrint(fi){
 					}
 					beiIndex+=beiIncrement;
 					currentBeiIndex+=beiIncrement;
-				}else if((beilist[beiIndex])&&(beilist[beiIndex]<blockIndex)){				
+				}else if((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]<blockIndex)){				
 					var beiIncrement = beilist[beiIndex+1]+2;
 					beiIndex+=beiIncrement;
 				}		
@@ -3102,7 +3102,7 @@ function updateBluePrint(fi){
 				blocks.BP1[currentIndex]=bp1list[blockIndex];
 				blocks.BP2[currentIndex]=bp2list[blockIndex];
 				blocks.BCI[currentIndex]=colorlist[blockIndex];
-				if((beilist[beiIndex])&&(beilist[beiIndex]==blockIndex)){
+				if((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]==blockIndex)){
 					blocks.BEI[currentBeiIndex]=currentIndex;
 					var beiIncrement = beilist[beiIndex+1]+2;
 					for(var i=1;i<beiIncrement;i++){
@@ -3110,7 +3110,7 @@ function updateBluePrint(fi){
 					}
 					beiIndex+=beiIncrement;
 					currentBeiIndex+=beiIncrement;
-				}else if((beilist[beiIndex])&&(beilist[beiIndex]<blockIndex)){				
+				}else if((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]<blockIndex)){				
 					var beiIncrement = beilist[beiIndex+1]+2;
 					beiIndex+=beiIncrement;
 				}		
