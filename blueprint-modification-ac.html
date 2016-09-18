@@ -155,6 +155,10 @@
 			  position: absolute;
 		}
 		
+		.mod-ac{
+			display:none;
+		}
+		
 		
 	</style>
 	<script src="js/links.js"></script>
@@ -243,6 +247,7 @@ var colorTableInverse=[];
 
 $( document ).on("pageshow", function() {
   $("#version").text(ftdversion);
+  $("#mod-ac-version").text(" + "+modacversion);
   (function(i,s,o,g,r,a,m){
 	i['GoogleAnalyticsObject']=r;
 	i[r]=i[r]||function(){
@@ -808,10 +813,13 @@ function processData(fi){
   //document.getElementById("container").innerHTML="";
   document.getElementById("filecontent").style.display="none";
   alreadyrender=false;
-
+  $(".mod-ac").hide();
   for(var key in ItemDic) {
 	var keyint = parseInt(key);
 	val = ItemDic[keyint];
+	if(val=="96ae1b17-7b4f-4878-aae5-7f3aa378ae29"){	
+	   $(".mod-ac").show();
+	}
 	if(ItemTable[val]){
 	  nameID[keyint]=(ItemTable[val]).Name;
 	  ItemTable[val].BlockId=keyint;
@@ -1447,6 +1455,7 @@ function updateBluePrint(fi){
 	}	
 	
 	function cleanBlueprint(blocks){
+		console.log(blocks.Name);
 		var SClist=blocks.SCs;
 		var blocklist=blocks.BlockIds;
 		var blrlist=blocks.BLR;
@@ -1484,7 +1493,7 @@ function updateBluePrint(fi){
 				bp2new[currentIndex]=bp2list[blockIndex];   
 				bcinew[currentIndex]=bcilist[blockIndex];   
 
-				if((beilist[beiIndex])&&(beilist[beiIndex]==blockIndex)){
+				if((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]==blockIndex)){
 					beilist[beiIndex]=currentIndex;
 					var beiIncrement = beilist[beiIndex+1]+2;
 					for(var i=0;i<beiIncrement;i++){
@@ -1492,11 +1501,13 @@ function updateBluePrint(fi){
 					}
 					beiIndex+=beiIncrement;
 					newbeiindex+=beiIncrement;
+				}else if ((beilist[beiIndex])&&(beilist[beiIndex]<blockIndex)){
+					console.log ("hmmm");
 				}
 				currentIndex +=1;
 			}else{
 				//need to remove stringid references if block is removed
-				if((beilist[beiIndex])&&(beilist[beiIndex]==blockIndex)){
+				if((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]==blockIndex)){
 					var beiIncrement = beilist[beiIndex+1]+2;
 					beiIndex+=beiIncrement;
 				}
@@ -4816,6 +4827,8 @@ function roundToTwo(num) {
 			<p>Last updated for FTD 
 				<span id="version">v1.95864
 				</span>
+				<span id="mod-ac-3version" class="mod-ac">&nbsp;
+				</span>
 			</p>
 			<p>The version for FTD v1.9572 can be found 
 				<a data-ajax='false' href="blueprint-modification-1.9572.html">here
@@ -4950,7 +4963,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
-										<option value="kca">to KCA
+										<option value="kca" class="mod-ac">to KCA
 										</option>										
 										<option value="0" >delete!
 										</option>
@@ -4977,7 +4990,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
-										<option value="kca">to KCA
+										<option value="kca" class="mod-ac">to KCA
 										</option>										
 										<option value="0" >delete!
 										</option>
@@ -5004,7 +5017,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
-										<option value="kca">to KCA
+										<option value="kca" class="mod-ac">to KCA
 										</option>										
 										<option value="0" >delete!
 										</option>
@@ -5031,7 +5044,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
-										<option value="kca">to KCA
+										<option value="kca" class="mod-ac">to KCA
 										</option>										
 										<option value="0" >delete!
 										</option>
@@ -5058,7 +5071,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
-										<option value="kca">to KCA
+										<option value="kca" class="mod-ac">to KCA
 										</option>										
 										<option value="0" >delete!
 										</option>
@@ -5085,7 +5098,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead">to Lead
 										</option>
-										<option value="kca">to KCA
+										<option value="kca" class="mod-ac">to KCA
 										</option>										
 										<option value="0" >delete!
 										</option>
@@ -5112,7 +5125,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead" selected="selected">to Lead
 										</option>
-										<option value="kca">to KCA
+										<option value="kca" class="mod-ac">to KCA
 										</option>										
 										<option value="0" >delete!
 										</option>
@@ -5120,7 +5133,7 @@ function roundToTwo(num) {
 								</label>
 							</div>
 						</div>
-						<div class="ui-grid-solo">
+						<div class="ui-grid-solo mod-ac">
 							<div class="ui-block-a">
 								<label class="checkbox" >
 									<input class="bigbox" id="kca" type="checkbox" data-role="none">Convert KCA: 
@@ -5169,7 +5182,7 @@ function roundToTwo(num) {
 										</option>
 										<option value="lead"> Lead 
 										</option>
-										<option value="kca"> KCA 
+										<option value="kca" class="mod-ac"> KCA 
 										</option>										
 										<option value="paintstruct"> All of the above 
 										</option>
