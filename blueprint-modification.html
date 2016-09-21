@@ -1455,7 +1455,7 @@ function updateBluePrint(fi){
 	}	
 	
 	function cleanBlueprint(blocks){
-		console.log(blocks.Name);
+		//console.log(blocks.Name);
 		var SClist=blocks.SCs;
 		var blocklist=blocks.BlockIds;
 		var blrlist=blocks.BLR;
@@ -1502,7 +1502,7 @@ function updateBluePrint(fi){
 					beiIndex+=beiIncrement;
 					newbeiindex+=beiIncrement;
 				}else if ((beilist[beiIndex]!==undefined)&&(beilist[beiIndex]<blockIndex)){
-					console.log ("hmmm");
+					//console.log ("hmmm");
 				}
 				currentIndex +=1;
 			}else{
@@ -1850,7 +1850,12 @@ function updateBluePrint(fi){
 		for(var guid in fromSolid){
 			conversionIndex[GuidToID[guid]]=GuidToID[fromSolid[guid]];	
 		}	 
-	 }	 
+	 }
+	 
+	 
+		if(document.getElementById("cramSwap").checked){
+			conversionIndex[GuidToID[document.getElementById("cramFrom").value]]=GuidToID[document.getElementById("cramTo").value];
+		}
 	 
 	}
 
@@ -5159,7 +5164,45 @@ function roundToTwo(num) {
 									</select>
 								</label>
 							</div>
-						</div>						
+						</div>
+						<hr>
+						<div class="ui-grid-solo">
+							<div class="ui-block-a">
+								<label class="checkbox" >
+									<input class="bigbox" id="cramSwap" type="checkbox" data-role="none">Swap CRAM Pellets: 
+									<select id="cramFrom" data-role="none">
+										<option value="4bd38234-b485-4a94-bc2d-d3fc80d89955" >High Explosive
+										</option>
+										<option value="47c8ddc8-9dca-4363-a39e-95dd28008e30" >Hardener
+										</option>
+										<option value="87142f81-71ce-4d60-9b81-4fe5674112db">EMP
+										</option>
+										<option value="379c94e6-7f27-42ab-ab45-66e3533ecde8">Fragmentationn
+										</option>
+									</select> 
+									&nbsp; to &nbsp; 
+									<select id="cramTo" data-role="none">
+										<option value="4bd38234-b485-4a94-bc2d-d3fc80d89955" >High Explosive
+										</option>
+										<option value="47c8ddc8-9dca-4363-a39e-95dd28008e30" >Hardener
+										</option>
+										<option value="87142f81-71ce-4d60-9b81-4fe5674112db">EMP
+										</option>
+										<option value="379c94e6-7f27-42ab-ab45-66e3533ecde8">Fragmentationn
+										</option>
+									</select>									
+								</label>
+							</div>
+						</div>
+						<div class="ui-grid-a">
+							<div class="ui-block-a">
+								<label class="checkbox" ><input class="bigbox" id="tosolidclip" type="checkbox" data-role="none">Convert APS ammo clips to solid clips</label>
+							</div>
+							<div class="ui-block-b">
+							<label class="checkbox" >
+								<input class="bigbox" id="fromsolidclip" type="checkbox" data-role="none">Convert APS ammo clips to regular/open? clips</label>
+							</div>						
+						</div>
 						<hr>
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
@@ -5375,15 +5418,7 @@ function roundToTwo(num) {
 								</label>
 							</div>						
 						</div>	
-						<div class="ui-grid-a">
-							<div class="ui-block-a">
-								<label><input id="tosolidclip" type="checkbox" data-mini="true">Convert APS ammo clips to solid clips</label>
-							</div>
-							<div class="ui-block-b">
-								<label>
-								<input id="fromsolidclip" type="checkbox" data-mini="true">Convert APS ammo clips to regular/open? clips</label>
-							</div>						
-						</div>						
+						
 						<hr>
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
