@@ -755,6 +755,8 @@ function openFile(source) {
 			if(runningCount>runningTimeOut){
 				console.log("Time Out during processing.");
 			}
+			console.log("test1");
+			console.log(fileIndex);
 			if(fileIndex>0){
 			
 				$("#table3 tbody").append(outputstring); 
@@ -780,8 +782,10 @@ function openFile(source) {
 				}
 				
 				$(".dl").prop('disabled',false);
-				$(".dl").parent().removeClass('ui-state-disabled');				
+				$(".dl").parent().removeClass('ui-state-disabled');	
+				console.log("test2");
 			}
+			console.log("test3");
 			$.mobile.loading( "hide" );	
 			
 		}
@@ -2701,12 +2705,14 @@ function updateBluePrint(fi){
 		cleanBlueprint(blocks);
 	}
 
-	function cutInHalf(blocks,xshift){
+	function cutInHalf(blocks,xshift,originID){
 		blocks.designChanged = true;
 		var SClist=blocks.SCs;
 		var minx=0;
 		var maxx=0;
 		var midx=0;
+		var originfound=false;
+		var orix=0;
 		var blocklist=blocks.BlockIds;
 		var positionList=blocks.BLP;
 		for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
@@ -2716,8 +2722,17 @@ function updateBluePrint(fi){
 			var curx = Math.round(tpa[0]);
 			minx=Math.min(curx,minx);
 			maxx=Math.max(curx,maxx);
+			if(currentBlock==originID){
+				originfound=true;
+				orix=Math.round(tpa[0]);
+			}			
 		}
-		midx=((minx+maxx)/2)+xshift;
+		if(originfound){
+			midx=orix+xshift;		
+		}else{
+			midx=((minx+maxx)/2)+xshift;				
+		}
+		
 
 		for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
 			var currentBlock = blocklist[blockIndex];
@@ -2749,7 +2764,7 @@ function updateBluePrint(fi){
 
 
 	//need to modify when we can check for parts sticking out
-	function widenVehicle(blocks,xdist,xshift){
+	function widenVehicle(blocks,xdist,xshift,originID){
 		blocks.designChanged = true;
 		var blockPositionData={};
 		var SClist=blocks.SCs;
@@ -2766,6 +2781,8 @@ function updateBluePrint(fi){
 		var bestls;
 		var bestrp;
 		var bestlp;	
+		var originfound=false;
+		var orix=0;		
 		var xmove=Math.round(parseFloat(xdist));
 		var maxmirrorx=0;
 		var rightconnected=false;
@@ -2796,10 +2813,18 @@ function updateBluePrint(fi){
 			maxy=Math.max(tpa[1],maxy);
 			minz=Math.min(tpa[2],minz);
 			maxz=Math.max(tpa[2],maxz);
+			if(currentBlock==originID){
+				originfound=true;
+				orix=Math.round(tpa[0]);
+			}			
 		}
 		var midy=Math.round((miny+maxy)/2);
 		var midz=Math.round((minz+maxz)/2);	
-		midx=((minx+maxx)/2)+parseFloat(xshift);
+		if(originfound){
+			midx=orix+xshift;	
+		}else{
+			midx=((minx+maxx)/2)+xshift;				
+		}				
 		midx=Math.round(midx-0.2);
 		leftx=midx;
 		rightx=leftx+1;	
@@ -2951,7 +2976,7 @@ function updateBluePrint(fi){
 
 
 	//need to modify when we can check for parts sticking out
-	function cutAndMirror(blocks,xshift,even){
+	function cutAndMirror(blocks,xshift,even,originID){
 		blocks.designChanged = true;
 		var SClist=blocks.SCs;
 		var minx=0;
@@ -2959,6 +2984,8 @@ function updateBluePrint(fi){
 		var midx=0;
 		var xmove=0;
 		var maxmirrorx=0;
+		var originfound=false;
+		var orix=0;			
 		var blocklist=blocks.BlockIds;
 		var positionList=blocks.BLP;
 		var rotationList=blocks.BLR;
@@ -2979,9 +3006,16 @@ function updateBluePrint(fi){
 			var curx = Math.round(tpa[0]);
 			minx=Math.min(curx,minx);
 			maxx=Math.max(curx,maxx);
+			if(currentBlock==originID){
+				originfound=true;
+				orix=Math.round(tpa[0]);
+			}			
 		}
-		
-		midx=((minx+maxx)/2)+xshift;
+		if(originfound){
+			midx=orix+xshift;	
+		}else{
+			midx=((minx+maxx)/2)+xshift;				
+		}				
 		midx=Math.round(midx-0.2);
 		
 		if(even){
@@ -3955,6 +3989,10 @@ function updateBluePrint(fi){
 
 	//process
 	  localProcessData();
+		var originID=GuidToID["f817665f-e59a-43a0-9c86-0d39f64b594a"];
+		if(originID==undefined){
+			originID=-2;
+		}	  
 	  if(document.getElementById("paintrestrict").checked){
 		allowedcolor=tempallowedcolor;
 	  }
@@ -3972,12 +4010,12 @@ function updateBluePrint(fi){
 	  }
 	  if(document.getElementById("cutinhalf").checked){
 		var xshift=parseInt(document.getElementById("centershift").value);
-		cutInHalf(CurrentBlueprint.Blueprint,xshift);
+		cutInHalf(CurrentBlueprint.Blueprint,xshift,originID);
 	  }
 	  if(document.getElementById("cutandmirror").checked){
 		var xshift=parseInt(document.getElementById("cloneshift").value);
 		var even=document.getElementById("evenclone1").checked;
-		cutAndMirror(CurrentBlueprint.Blueprint,xshift,even);
+		cutAndMirror(CurrentBlueprint.Blueprint,xshift,even,originID);
 		removeOverlap(CurrentBlueprint.Blueprint);
 	  }
 	  if(document.getElementById("jointmirror").checked){
@@ -3988,7 +4026,7 @@ function updateBluePrint(fi){
 	  if(document.getElementById("widen").checked){
 		var xdist=parseInt(document.getElementById("widendistance").value);
 		var xshift=parseInt(document.getElementById("widenshift").value);
-		widenVehicle(CurrentBlueprint.Blueprint,xdist,xshift);
+		widenVehicle(CurrentBlueprint.Blueprint,xdist,xshift,originID);
 		removeOverlap(CurrentBlueprint.Blueprint);
 	  }
 
