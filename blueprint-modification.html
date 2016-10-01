@@ -755,8 +755,6 @@ function openFile(source) {
 			if(runningCount>runningTimeOut){
 				console.log("Time Out during processing.");
 			}
-			console.log("test1");
-			console.log(fileIndex);
 			if(fileIndex>0){
 			
 				$("#table3 tbody").append(outputstring); 
@@ -783,9 +781,7 @@ function openFile(source) {
 				
 				$(".dl").prop('disabled',false);
 				$(".dl").parent().removeClass('ui-state-disabled');	
-				console.log("test2");
 			}
-			console.log("test3");
 			$.mobile.loading( "hide" );	
 			
 		}
@@ -1127,7 +1123,7 @@ function processMC(currentData,filename){
 		}
 	
 	}
-	download("test.txt",JSON.stringify(vp));
+	//download("test.txt",JSON.stringify(vp));
 	return vp; 
 };
 
