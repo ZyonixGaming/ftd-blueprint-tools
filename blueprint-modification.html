@@ -181,6 +181,7 @@
 
 <script>
 //main scripts
+"use strict";
 
 localforage.config();
 var QuatTable = {
@@ -655,13 +656,17 @@ function loadError(message){
 
 function openFile(source) {
 
+  var selectedFiles = document.getElementById(source).files;
+  if (selectedFiles==undefined||selectedFiles.length==undefined||selectedFiles.length<=0){
+	return;
+  }
 	$.mobile.loading("show", {
 		text: "Loading...",
 		textVisible: true,
 		textonly: true,
 	});
   
-  var selectedFiles = document.getElementById(source).files;
+
   var selectedFile;
   var outputstring = "";
   currentBlueprints=[];
@@ -816,7 +821,7 @@ function processData(fi){
   $(".mod-ac").hide();
   for(var key in ItemDic) {
 	var keyint = parseInt(key);
-	val = ItemDic[keyint];
+	var val = ItemDic[keyint];
 	if(val=="96ae1b17-7b4f-4878-aae5-7f3aa378ae29"){	
 	   $(".mod-ac").show();
 	}
@@ -4691,7 +4696,7 @@ function getpalette(blocks){
   var palettedata = blocks.COL;
   if(palettedata){
 	for(var palID = 0; palID < palettedata.length; palID++){
-	  palStr = "" + palID;
+	  var palStr = "" + palID;
 	  if (palStr.length<2){
 		palStr = "0" + palStr;
 	  }
