@@ -1251,7 +1251,7 @@ function updateBluePrint(fi){
 	 
 	 for(var key in ItemDic) {
 	  var keyint = parseInt(key);
-	  val = ItemDic[keyint];
+	  var val = ItemDic[keyint];
 	  if(ItemTable[val]){
 	   nameID[keyint]=(ItemTable[val]).Name;
 	   //ItemTable[val].BlockId=keyint;
@@ -1828,7 +1828,7 @@ function updateBluePrint(fi){
 	 conversionIndex = {};
 	 for(var mat in shapedBlocks){
 	  if(document.getElementById(mat).checked){
-	   newmat=document.getElementById(mat+"to").value;
+	   var newmat=document.getElementById(mat+"to").value;
 		if (newmat!=mat){
 		var blockcount = localShapedBlocks[mat].length;
 		for(var i=0;i<blockcount;i++){
