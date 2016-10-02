@@ -181,6 +181,7 @@
 
 <script>
 //main scripts
+//"use strict";
 
 localforage.config();
 var QuatTable = {
@@ -1749,7 +1750,7 @@ function updateBluePrint(fi){
 		
 		}
 		var tempBlockIndex=blocklist.length;
-		for(position in blockPosData){
+		for(var position in blockPosData){
 			var tempBlock=blockPosData[position];
 			if(tempBlock.overlap){
 					var tempbtb=0;
@@ -2381,7 +2382,7 @@ function updateBluePrint(fi){
 	   
 	   
 	   result = true;
-	   for(i=1;i<4;i++){
+	   for(var i=1;i<4;i++){
 		var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
 		if((blockPositionData[tempPosition]!==undefined)&&(blocklist[blockPositionData[tempPosition]]==currentBlock)&&(colorlist[blockPositionData[tempPosition]]==currentColor)){
 		 
@@ -2390,7 +2391,7 @@ function updateBluePrint(fi){
 		}
 	   }
 	   if(result){    
-		for(i=1;i<4;i++){
+		for(var i=1;i<4;i++){
 		 var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
 		 blocklist[blockPositionData[tempPosition]]=-1;
 		}
@@ -2421,7 +2422,7 @@ function updateBluePrint(fi){
 	   
 	   
 	   result = true;
-	   for(i=1;i<3;i++){
+	   for(var i=1;i<3;i++){
 		var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
 		if((blockPositionData[tempPosition]!==undefined)&&(blocklist[blockPositionData[tempPosition]]==currentBlock)&&(colorlist[blockPositionData[tempPosition]]==currentColor)){
 		 
@@ -2430,7 +2431,7 @@ function updateBluePrint(fi){
 		}
 	   }
 	   if(result){
-		for(i=1;i<3;i++){
+		for(var i=1;i<3;i++){
 		 var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
 		 blocklist[blockPositionData[tempPosition]]=-1;
 		}
@@ -2460,7 +2461,7 @@ function updateBluePrint(fi){
 	   
 	   
 	   result = true;
-	   for(i=1;i<2;i++){
+	   for(var i=1;i<2;i++){
 		var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
 		if((blockPositionData[tempPosition]!==undefined)&&(blocklist[blockPositionData[tempPosition]]==currentBlock)&&(colorlist[blockPositionData[tempPosition]]==currentColor)){
 		 
@@ -2469,7 +2470,7 @@ function updateBluePrint(fi){
 		}
 	   }
 	   if(result){
-		for(i=1;i<2;i++){
+		for(var i=1;i<2;i++){
 		 var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
 		 blocklist[blockPositionData[tempPosition]]=-1;
 		}
@@ -3436,7 +3437,7 @@ function updateBluePrint(fi){
 				var localPositionData = {};
 				getLocalArray(blockIndex,blocklist,colorlist,positionList,blockPositionData,localPositionData);			
 				while(true){
-					for(position in localPositionData){
+					for(var position in localPositionData){
 						if((blocklist[localPositionData[position].blockIndex]!==currentBlock)||(localPositionData[position].score>199)){
 							delete localPositionData[position];
 						}else{
@@ -3446,7 +3447,7 @@ function updateBluePrint(fi){
 					//scoring start
 					var localScore=0;
 					var beamAxis=0;
-					for(position in localPositionData){
+					for(var position in localPositionData){
 						var blockscore=false;
 						var currentData=localPositionData[position];
 						var lpa = stoar(position);
@@ -3493,7 +3494,7 @@ function updateBluePrint(fi){
 						//permutate possible beams and scores, then sort
 						var minscore=200;
 						var scorecap=11;
-						for(position in localPositionData){
+						for(var position in localPositionData){
 							var currentData=localPositionData[position];
 							var lpa = stoar(position);
 							var tempdir1;
@@ -3515,7 +3516,7 @@ function updateBluePrint(fi){
 										if(!dedup[tempLocalPosition]){
 											var templength=1;
 											for(var temptempindex=1;temptempindex<4;temptempindex++){											
-												temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
+												var temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
 												if((localPositionData[temptempLocalPosition]!==undefined)&&(localPositionData[temptempLocalPosition].score>=4)){
 													templength+=1;
 												}else{
@@ -3555,7 +3556,7 @@ function updateBluePrint(fi){
 						var bestscore=199;
 						while(scoreTable.length>0){
 							scoreTable.sort(function(a, b){
-								res=(a[0].score+a[1].score+a[2].score+a[3].score)-(b[0].score+b[1].score+b[2].score+b[3].score);
+								var res=(a[0].score+a[1].score+a[2].score+a[3].score)-(b[0].score+b[1].score+b[2].score+b[3].score);
 								if(res==0){
 									var resa=(a[5]-b[5]);
 									if(resa==0){
@@ -3568,7 +3569,7 @@ function updateBluePrint(fi){
 								}
 							});
 
-							currentScoreBlock=scoreTable[0];
+							var currentScoreBlock=scoreTable[0];
 							if((currentScoreBlock[0].score+currentScoreBlock[1].score+currentScoreBlock[2].score+currentScoreBlock[3].score)>bestscore){
 								break;
 							}else{
@@ -3629,7 +3630,7 @@ function updateBluePrint(fi){
 				var localPositionData = {};
 				getLocalArray(blockIndex,blocklist,colorlist,positionList,blockPositionData,localPositionData);			
 				while(true){
-					for(position in localPositionData){
+					for(var position in localPositionData){
 						if((blocklist[localPositionData[position].blockIndex]!==currentBlock)||(localPositionData[position].score>199)){
 							delete localPositionData[position];
 						}else{
@@ -3639,7 +3640,7 @@ function updateBluePrint(fi){
 					//scoring start
 					var localScore=0;
 					var beamAxis=0;
-					for(position in localPositionData){
+					for(var position in localPositionData){
 						var blockscore=false;
 						var currentData=localPositionData[position];
 						var lpa = stoar(position);
@@ -3686,7 +3687,7 @@ function updateBluePrint(fi){
 						//permutate possible beams and scores, then sort
 						var minscore=150;
 						var scorecap=7;
-						for(position in localPositionData){
+						for(var position in localPositionData){
 							var currentData=localPositionData[position];
 							var lpa = stoar(position);
 							var tempdir1;
@@ -3708,7 +3709,7 @@ function updateBluePrint(fi){
 										if(!dedup[tempLocalPosition]){
 											var templength=1;
 											for(var temptempindex=1;temptempindex<3;temptempindex++){											
-												temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
+												var temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
 												if((localPositionData[temptempLocalPosition]!==undefined)&&(localPositionData[temptempLocalPosition].score>=3)){
 													templength+=1;
 												}else{
@@ -3748,7 +3749,7 @@ function updateBluePrint(fi){
 						var bestscore=149;
 						while(scoreTable.length>0){
 							scoreTable.sort(function(a, b){
-								res=(a[0].score+a[1].score+a[2].score)-(b[0].score+b[1].score+b[2].score);
+								var res=(a[0].score+a[1].score+a[2].score)-(b[0].score+b[1].score+b[2].score);
 								if(res==0){
 									var resa=(a[5]-b[5]);
 									if(resa==0){
@@ -3761,7 +3762,7 @@ function updateBluePrint(fi){
 								}
 							});
 
-							currentScoreBlock=scoreTable[0];
+							var currentScoreBlock=scoreTable[0];
 							if((currentScoreBlock[0].score+currentScoreBlock[1].score+currentScoreBlock[2].score)>bestscore){
 								break;
 							}else{
@@ -3823,7 +3824,7 @@ function updateBluePrint(fi){
 				var localPositionData = {};
 				getLocalArray(blockIndex,blocklist,colorlist,positionList,blockPositionData,localPositionData);			
 				while(true){
-					for(position in localPositionData){
+					for(var position in localPositionData){
 						if((blocklist[localPositionData[position].blockIndex]!==currentBlock)||(localPositionData[position].score>199)){
 							delete localPositionData[position];
 						}else{
@@ -3833,7 +3834,7 @@ function updateBluePrint(fi){
 					//scoring start
 					var localScore=0;
 					var beamAxis=0;
-					for(position in localPositionData){
+					for(var position in localPositionData){
 						var blockscore=false;
 						var currentData=localPositionData[position];
 						var lpa = stoar(position);
@@ -3880,7 +3881,7 @@ function updateBluePrint(fi){
 						//permutate possible beams and scores, then sort
 						var minscore=100;
 						var scorecap=2;
-						for(position in localPositionData){
+						for(var position in localPositionData){
 							var currentData=localPositionData[position];
 							var lpa = stoar(position);
 							var tempdir1;
@@ -3902,7 +3903,7 @@ function updateBluePrint(fi){
 										if(!dedup[tempLocalPosition]){
 											var templength=1;
 											for(var temptempindex=1;temptempindex<2;temptempindex++){											
-												temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
+												var temptempLocalPosition = "" + (llpa[0]+tempdir2[0]*temptempindex)+","+(llpa[1]+tempdir2[1]*temptempindex)+","+(llpa[2]+tempdir2[2]*temptempindex);
 												if((localPositionData[temptempLocalPosition]!==undefined)&&(localPositionData[temptempLocalPosition].score>=2)){
 													templength+=1;
 												}else{
@@ -3942,7 +3943,7 @@ function updateBluePrint(fi){
 						var bestscore=99;
 						while(scoreTable.length>0){
 							scoreTable.sort(function(a, b){
-								res=(a[0].score+a[1].score)-(b[0].score+b[1].score);
+								var res=(a[0].score+a[1].score)-(b[0].score+b[1].score);
 								if(res==0){
 									var resa=(a[5]-b[5]);
 									if(resa==0){
@@ -3955,7 +3956,7 @@ function updateBluePrint(fi){
 								}
 							});
 
-							currentScoreBlock=scoreTable[0];
+							var currentScoreBlock=scoreTable[0];
 							if((currentScoreBlock[0].score+currentScoreBlock[1].score)>bestscore){
 								break;
 							}else{
