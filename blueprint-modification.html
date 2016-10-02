@@ -2112,8 +2112,8 @@ function updateBluePrint(fi){
 	 var colorlist=blocks.BCI;
 	 var positionList=blocks.BLP;
 	 var rotationList = blocks.BLR; 
-	 newBlockIndex=blocklist.length;
-	 blockcount=blocklist.length;
+	 var newBlockIndex=blocklist.length;
+	 var blockcount=blocklist.length;
 	 for(var blockIndex = 0; blockIndex < blockcount; blockIndex++){
 	  var currentBlock = blocklist[blockIndex];
 	  if(ItemDic[currentBlock]&&beamToBlock[currentBlock]){
@@ -2197,8 +2197,8 @@ function updateBluePrint(fi){
 	 var colorlist=blocks.BCI;
 	 var positionList=blocks.BLP;
 	 var rotationList = blocks.BLR; 
-	 newBlockIndex=blocklist.length;
-	 blockcount=blocklist.length;
+	 var newBlockIndex=blocklist.length;
+	 var blockcount=blocklist.length;
 	 for(var blockIndex = 0; blockIndex < blockcount; blockIndex++){
 	  var currentBlock = blocklist[blockIndex];
 	  var currentRotation = rotationList[blockIndex];
@@ -2342,7 +2342,7 @@ function updateBluePrint(fi){
 	   
 	   
 	   result = true;
-	   for(i=1;i<4;i++){
+	   for(var i=1;i<4;i++){
 		var tempPosition = "" + (posArray[0]+x*i)+","+(posArray[1]+y*i)+","+(posArray[2]+z*i);
 		if((blockPositionData[tempPosition]!==undefined)&&(blocklist[blockPositionData[tempPosition]]==currentBlock)&&(colorlist[blockPositionData[tempPosition]]==currentColor)&&(sameSlopeBlockOrientation(rotationList[blockPositionData[tempPosition]],currentRotation))){
 		 
@@ -4449,7 +4449,7 @@ function blockRotate(blockrotate,dir){
 }
 //rotate block position
 function positionRotate(position,dir){
-  pa=stoar(position);
+  var pa=stoar(position);
   return atos(posTransform(pa,getQuat(dir)));
 }
 //rotate block quat
@@ -4591,7 +4591,7 @@ function verifyName(name){
   return checker.test(name);
 }
 function savePalette(){
-  palettename=$("#palettename").val();
+  var palettename=$("#palettename").val();
   //verify palette;
   if(verifyName(palettename)){
 	localforage.setItem("ftdpal:"+palettename, getCurrentPalette(), function (err) {
@@ -4620,7 +4620,7 @@ function loadPalette(palettename){
 	  console.log("error loading palette: "+palettename + "error: "+err);
 	}
 	else{
-	  tempnameArray=palettename.split(':');
+	  var tempnameArray=palettename.split(':');
 	  if(tempnameArray.length>1){
 		for(var palID = 0; palID < 32; palID++){
 		  var colorArray = value[palID];
@@ -4679,7 +4679,7 @@ function loadPalettes(){
 	else{
 	  //console.log(value);
 	  for(var i=0;i<value.length;i++){
-		tempnameArray=value[i].split(':');
+		var tempnameArray=value[i].split(':');
 		if(tempnameArray.length>1){
 		  $('#palettelist').append('<option value="'+value[i]+'">'+tempnameArray[1]+'</option>');
 		}
