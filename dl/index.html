@@ -10,6 +10,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.3/pako.min.js"></script>
 <script>
 
+$( document ).ready(function() {
+  var id=getParameterByName("id");
+  if(id!==undefined&&id){
+	getFileName(id);
+  }  
+});
+
 function _(el){
 	return document.getElementById(el);
 }
@@ -79,6 +86,16 @@ function download(filename, data) {
         elem.click();        
         document.body.removeChild(elem);
     }
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 </script>

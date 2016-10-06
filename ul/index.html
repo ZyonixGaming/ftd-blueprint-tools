@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>FTD Blueprint Uploader</title>
+<link rel='shortcut icon' href='../ico/favicon.ico' type='image/x-icon'>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/blaze/2.13.0/blaze.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.3/pako.min.js"></script>
@@ -15,7 +16,7 @@ function completeHandler(event){
 	
 	responsedata=JSON.parse(event.target.responseText);
 	if(responsedata.id!==undefined&&responsedata.id>=0){
-		//window.location="/ftd/dl/?id="+ responsedata.id;
+		window.location="../dl/?id="+ responsedata.id;
 	}
 	
 	
