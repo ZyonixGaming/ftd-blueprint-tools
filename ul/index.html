@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FTD Blueprint Uploader</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/blaze/2.13.0/blaze.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.3/pako.min.js"></script>
+<script>
+function _(el){
+	return document.getElementById(el);
+}
+
+function completeHandler(event){
+	//_("status").innerHTML = event.target.responseText;
+	
+	responsedata=JSON.parse(event.target.responseText);
+	if(responsedata.id!==undefined&&responsedata.id>=0){
+		//window.location="/ftd/dl/?id="+ responsedata.id;
+	}
+	
+	
+	//console.log(pako.inflate(atob(responsedata.blueprint),{ to: 'string' }));
+	//console.log(atob(responsedata.blueprint));
+	//console.log(atob(responsedata.blueprint));
+	//_("dl-link").value=pako.inflate(atob(responsedata.blueprint));
+	//download(responsedata.filename, atob(responsedata.blueprint));
+}
+function errorHandler(event){
+	//_("status").innerHTML = "Upload Failed";
+}
+function abortHandler(event){
+	//_("status").innerHTML = "Upload Aborted";
+}
+
+
+function uploadFile() {
+ var selectedFile = document.getElementById('blueprintfile').files[0];
+ if (selectedFile){
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+   try{    
+     if(evt){
+		//console.log(pako.deflate(evt.target.result));
+		var filedata=btoa(pako.deflate(evt.target.result,{ to: 'string' }));		
+		var formdata = new FormData();
+		formdata.append("filedata", filedata);
+		formdata.append("extradata", selectedFile.name);
+		var ajax = new XMLHttpRequest();
+		ajax.addEventListener("load", completeHandler, false);
+		ajax.addEventListener("error", errorHandler, false);
+		ajax.addEventListener("abort", abortHandler, false);
+		ajax.open("POST", "https://zyonixgaming.tk/ftd/ul/upload2.php");
+		ajax.send(formdata);	 
+     
+    }else{
+     console.log("unable to load blueprint");
+    }
+   }
+   catch(err){
+	console.log(err);
+    } 
+  };
+  reader.readAsText(selectedFile);
+ }else{
+  //no file selected;
+ }
+};
+
+
+
+function download(filename, data) {
+    var blob = new Blob([data], {type: 'text/plain'});
+    if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else{
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;        
+        document.body.appendChild(elem)
+        elem.click();        
+        document.body.removeChild(elem);
+    }
+}
+
+
+
+</script>
+</head>
+<body>
+<body style="background-color:gray;">
+<div class="u-absolute-center o-container--small">
+<div class="c-card c-card--primary" style="background-color:white;">
+
+
+<div class='c-card__content c-card__content--divider'>Blueprint Uploader</div>
+<div class='c-card__item'>
+<form id="upload_form" enctype="multipart/form-data" method="post">
+  <input type="file" id="blueprintfile" accept=".blueprint" onchange="uploadFile()">
+</form>
+</div>
+</div>
+</div>
+
+
+</body>
+</html>
