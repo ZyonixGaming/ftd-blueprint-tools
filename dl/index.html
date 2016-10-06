@@ -39,14 +39,14 @@ function completeFilNameHandler(event){
 	if(responsedata.id){
 		console.log("yes");
 		var tempfilename=responsedata.filename;
-		$("#filename").innerHTML=tempfilename;
+		$("#filename").html(tempfilename);
 		$("#downloadbutton").click(function() {
 		  downloadFile(responsedata.id);
 		});
-		$("#downloadbutton").disabled=false;
+		$("#downloadbutton").prop('disabled', false);
 	}else{
-		$("#filename").innerHTML="Not Found";
-		$("#downloadbutton").disabled=true;
+		$("#filename").html("Not Found");
+		$("#downloadbutton").prop('disabled', true);
 	}
 	
 
