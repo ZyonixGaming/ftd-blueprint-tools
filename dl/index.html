@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FTD Blueprint Downloader</title>
+<link rel='shortcut icon' href='../ico/favicon.ico' type='image/x-icon'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/blaze/2.13.0/blaze.min.css">
+<style>
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.3/pako.min.js"></script>
+<script>
+
+function _(el){
+	return document.getElementById(el);
+}
+
+function getFileName(id){
+	//var file = _("file1").files[0];
+	// alert(file.name+" | "+file.size+" | "+file.type);
+	var ajax = new XMLHttpRequest();	
+	ajax.addEventListener("load", completeFilNameHandler, false);
+	ajax.addEventListener("error", errorHandler, false);
+	ajax.addEventListener("abort", abortHandler, false);
+	ajax.open("GET", "https://zyonixgaming.tk/ftd/dl/getname.php?id="+id);
+	ajax.send();
+}
+
+function completeFilNameHandler(event){
+	responsedata=JSON.parse(event.target.responseText);	
+	if(responsedata.id){
+		var tempfilename=responsedata.filename
+		$("#filename").innerHTML=tempfilename;
+		$("#downloadbutton").click(function() {
+		  downloadFile(responsedata.id);
+		});
+		$("#downloadbutton").disabled=false;
+	}else{
+		$("#filename").innerHTML="Not Found";
+		$("#downloadbutton").disabled=true;
+	}
+	
+
+}
+
+function downloadFile(id){
+	//var file = _("file1").files[0];
+	// alert(file.name+" | "+file.size+" | "+file.type);
+	var ajax = new XMLHttpRequest();	
+	ajax.addEventListener("load", completeHandler, false);
+	ajax.addEventListener("error", errorHandler, false);
+	ajax.addEventListener("abort", abortHandler, false);
+	ajax.open("GET", "https://zyonixgaming.tk/ftd/dl/download2.php?id="+id);
+	ajax.send();
+}
+
+function completeHandler(event){
+	//_("status").innerHTML = event.target.responseText;
+	//_("progressBar").value = 0;
+	responsedata=JSON.parse(event.target.responseText);	
+	download(responsedata.filename,pako.inflate(atob(responsedata.blueprint),{ to: 'string' }));
+}
+function errorHandler(event){
+	//_("status").innerHTML = "Upload Failed";
+}
+function abortHandler(event){
+	//_("status").innerHTML = "Upload Aborted";
+}
+
+function download(filename, data) {
+    var blob = new Blob([data], {type: 'text/plain'});
+    if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else{
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;        
+        document.body.appendChild(elem)
+        elem.click();        
+        document.body.removeChild(elem);
+    }
+}
+
+</script>
+
+</head>
+<body style="background-color:gray;">
+<div class="u-absolute-center o-container--small">
+<div class="c-card c-card--primary" style="background-color:white;">
+
+
+
+
+
+
+//header('Content-type: application/json');
+//echo json_encode($d);
+?>
+			<div id="filename" class='c-card__content c-card__content--divider'>Loading</div>
+			<input type='button' id='downloadbutton' value='Download' disabled><br>
+			<div class='c-card__item' style='text-align: center;' ><input type='button' class='c-button c-button--success' id='downloadbutton' value='Download' onclick='downloadFile(" . $id . ")'></div>
+				
+
+<div class="c-card__item">
+<a href="../ul/">Click here to upload a blueprint.</a>
+</div>
+
+</div>
+</div>
+</body>
+</html>
