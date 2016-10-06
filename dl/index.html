@@ -37,7 +37,8 @@ function completeFilNameHandler(event){
 	responsedata=JSON.parse(event.target.responseText);	
 	console.log("rid: "+responsedata.id);
 	if(responsedata.id){
-		var tempfilename=responsedata.filename
+		console.log("yes");
+		var tempfilename=responsedata.filename;
 		$("#filename").innerHTML=tempfilename;
 		$("#downloadbutton").click(function() {
 		  downloadFile(responsedata.id);
