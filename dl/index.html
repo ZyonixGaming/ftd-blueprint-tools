@@ -34,6 +34,7 @@ function getFileName(id){
 
 function completeFilNameHandler(event){
 	responsedata=JSON.parse(event.target.responseText);	
+	console.log("rid: "+responsedata.id);
 	if(responsedata.id){
 		var tempfilename=responsedata.filename
 		$("#filename").innerHTML=tempfilename;
@@ -50,6 +51,7 @@ function completeFilNameHandler(event){
 }
 
 function downloadFile(id){
+	console.log("id: "+id);
 	//var file = _("file1").files[0];
 	// alert(file.name+" | "+file.size+" | "+file.type);
 	var ajax = new XMLHttpRequest();	
@@ -108,11 +110,6 @@ function getParameterByName(name, url) {
 
 
 
-
-
-//header('Content-type: application/json');
-//echo json_encode($d);
-?>
 			<div id="filename" class='c-card__content c-card__content--divider'>Loading</div>
 			<input type='button' id='downloadbutton' value='Download' disabled><br>
 			<div class='c-card__item' style='text-align: center;' ><input type='button' class='c-button c-button--success' id='downloadbutton' value='Download' onclick='downloadFile(" . $id . ")'></div>
