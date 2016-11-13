@@ -207,6 +207,8 @@ var blockRenderIndex = 0;
 //blockID:blockname
 var nameID = {
 }
+
+var modID = {}
 //blockID:blockcount
 var countID = {
 }
@@ -248,7 +250,7 @@ var colorTableInverse=[];
 
 $( document ).on("pageshow", function() {
   $("#version").text(ftdversion);
-  $("#mod-ac-version").text(" + "+modacversion);
+  //$("#mod-ac-version").text(" + "+modacversion);
   (function(i,s,o,g,r,a,m){
 	i['GoogleAnalyticsObject']=r;
 	i[r]=i[r]||function(){
@@ -808,6 +810,7 @@ function processData(fi){
   }
   countID = {
   }
+  
   /*
   blockCountData = {
   }
@@ -829,10 +832,12 @@ function processData(fi){
 	  nameID[keyint]=(ItemTable[val]).Name;
 	  ItemTable[val].BlockId=keyint;
 	  colorID[keyint]=(ItemTable[val]).lodcol;
+	  modID[keyint]=(ItemTable[val]).ModName;
 	}
 	else{
 	  nameID[keyint]=val;
 	  colorID[keyint]=[80,80,80,1];
+	  modID[keyint]="unknown";
 	}
 	countID[keyint]=0;
 	
@@ -868,7 +873,7 @@ function processData(fi){
 	if(countID[blockID] >0) {
 	  //blockCountData[nameID[blockID]] =  countID[blockID];
 	  totalcount+=countID[blockID];
-	  outputstring +=  "<tr blockid='"+blockID+"'><td>" + nameID[blockID]  + "</td><td><b>" + countID[blockID] + "</b></td></tr>";
+	  outputstring +=  "<tr blockid='"+blockID+"'><td>" + nameID[blockID]  + "</td><td><b>" + countID[blockID] + "</b></td><td>" + modID[blockID] + "</td></tr>";
 	}
   }
   totalstats["Block Count"] = totalcount;
@@ -5750,13 +5755,16 @@ function roundToTwo(num) {
 						<table id="table1"  class="table1 tablesorter">
 							<thead>
 								<tr>
-									<td colspan="2" align="center" class="b1name">Blueprint
+									<td colspan="3" align="center" class="b1name">Blueprint
 									</td>
 								</tr>
 								<tr>
 									<th>Block
 									</th>
 									<th>Count
+									</th>
+									<th>
+										Mod
 									</th>
 								</tr>
 							</thead>
