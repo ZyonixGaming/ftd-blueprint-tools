@@ -170,7 +170,7 @@
 	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/OrbitControls.js"></script>	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.1/pako_inflate.min.js"></script>	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.2/jszip.min.js"></script>		
-	<script src="js/itemtable-AC.js"></script>
+	<script src="js/itemtable-full.js"></script>
 	<script src="js/preview3d.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.4.2/localforage.min.js"></script>
@@ -1558,11 +1558,11 @@ function updateBluePrint(fi){
 			var curBlock = getBlock(blockID);
 			var xdiff=Math.round(curBlock.XDiff);
 
-			if(curBlock.MirrorBlock){
-				var tempBlock=ItemTable[curBlock.MirrorBlock];
-				if(GuidToID[curBlock.MirrorBlock]!==undefined){
+			if(curBlock.MirB){
+				var tempBlock=ItemTable[curBlock.MirB];
+				if(GuidToID[curBlock.MirB]!==undefined){
 					//newBlock=tempBlock.BlockId;
-					newBlock=GuidToID[curBlock.MirrorBlock];
+					newBlock=GuidToID[curBlock.MirB];
 					xdiff=Math.round((xdiff+tempBlock.XDiff)/2);	
 					
 				}
@@ -2629,7 +2629,7 @@ function updateBluePrint(fi){
 	 var blocklist=blocks.BlockIds;
 	 for(var blockIndex = start; blockIndex < blocklist.length; blockIndex++){
 	  var currentBlockInfo = getBlock(blocklist[blockIndex]);
-	  if((currentBlockInfo)&&(!currentBlockInfo.PlaceableOnStructure)){
+	  if((currentBlockInfo)&&(!currentBlockInfo.pStruc)){
 	   deletecount+=1;
 	   blocklist[blockIndex]=-1;
 	  }
@@ -2650,7 +2650,7 @@ function updateBluePrint(fi){
 	 var blocklist=blocks.BlockIds;
 	 for(var blockIndex = 0; blockIndex < blocklist.length; blockIndex++){
 	  var currentBlockInfo = getBlock(blocklist[blockIndex]);
-	  if((currentBlockInfo)&&(!currentBlockInfo.PlaceableOnVehicle)){
+	  if((currentBlockInfo)&&(!currentBlockInfo.pVeh)){
 	   deletecount+=1;
 	   blocklist[blockIndex]=-1;
 	  }
@@ -2678,7 +2678,7 @@ function updateBluePrint(fi){
 	 var blocklist=blocks.BlockIds;
 	 for(var blockIndex = start; blockIndex < blocklist.length; blockIndex++){
 	  var currentBlockInfo = getBlock(blocklist[blockIndex]);
-	  if((currentBlockInfo)&&(!currentBlockInfo.PlaceableOnFortress)){
+	  if((currentBlockInfo)&&(!currentBlockInfo.pFort)){
 	   deletecount+=1;
 	   blocklist[blockIndex]=-1;
 	  }
@@ -4816,8 +4816,8 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 	  negy=currentBlock.negy;
 	  posz=currentBlock.posz;
 	  negz=currentBlock.negz;
-	  totalstats["Material Cost"]+=currentBlock.Material;
-	  totalstats["Volume"]+=currentBlock.Volume;
+	  totalstats["Material Cost"]+=currentBlock.Mats;
+	  totalstats["Volume"]+=currentBlock.Vol;
 	}
 	tempRender.position=tempPosition;
 	tempRender.rotation=tempRotation;

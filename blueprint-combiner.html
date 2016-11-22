@@ -45,7 +45,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/jquery.tablesorter.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/widgets/widget-filter.min.js"></script>	
-	<script src="js/itemtable-AC.js"></script>
+	<script src="js/itemtable-full.js"></script>
 	
 <script>
 
@@ -406,8 +406,8 @@ function countblocks(blocks,index,isMain){
 		}		
 		var currentBlock = getBlock(blocklist[blockIndex],index);		
 		if(currentBlock){
-			totalstats["Material Cost"][index]+=currentBlock.Material;
-			totalstats["Volume"][index]+=currentBlock.Volume;
+			totalstats["Material Cost"][index]+=currentBlock.Mats;
+			totalstats["Volume"][index]+=currentBlock.Vol;
 		}
 	}
 }

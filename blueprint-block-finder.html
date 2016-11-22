@@ -63,7 +63,7 @@ tbody tr:nth-child(odd) td:nth-child(odd){background: #F0F0F0}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.26.0/js/widgets/widget-filter.min.js"></script>	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r80/three.min.js"></script>
 	<script src="https://cdn.rawgit.com/ZyonixGaming/ftd-blueprint-tools/gh-pages/js/OrbitControls.js"></script>		
-	<script src="js/itemtable.js"></script>		
+	<script src="js/itemtable-full.js"></script>		
 	<script src="js/preview3d.js"></script>
 
 <script>
@@ -781,8 +781,8 @@ function countblocksR(blocks,notmain,parentpalette,parentposition,parentrotation
 			negy=currentBlock.negy;
 			posz=currentBlock.posz;
 			negz=currentBlock.negz;   
-			totalstats["Material Cost"]+=currentBlock.Material;
-			totalstats["Volume"]+=currentBlock.Volume;			
+			totalstats["Material Cost"]+=currentBlock.Mats;
+			totalstats["Volume"]+=currentBlock.Vol;			
 		}
 		tempRender.position=tempPosition;
 		tempRender.rotation=tempRotation;
